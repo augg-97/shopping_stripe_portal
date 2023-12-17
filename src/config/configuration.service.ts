@@ -1,7 +1,16 @@
 import { Injectable } from "@nestjs/common";
 import { IConfig } from "./config";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class ConfigurationService implements IConfig {
-  constructor();
+  constructor(private configService: ConfigService<IConfig, true>) {}
+
+  get nodeEnv(): string {
+    return this.configService.get("nodeEnv");
+  }
+
+  get port(): number {
+    return this.configService.get("port");
+  }
 }

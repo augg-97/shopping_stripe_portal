@@ -1,0 +1,20 @@
+version: '3.5'
+
+services:
+  sps_db:
+    container_name: sps_db
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bQ5UroNM9PqslBs}
+      POSTGRES_USER: ${POSTGRES_USER:-admin}
+      POSTGRES_DB: ${POSTGRES_DB:-sps_db}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    restart: on-failure
+
+  sps_cache:
+    container_name: sps_cache
+    image: redis:7.2-rc3-alpine
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    restart: on-failure
