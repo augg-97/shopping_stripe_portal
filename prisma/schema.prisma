@@ -11,46 +11,57 @@ datasource db {
 }
 
 model User {
-  id             Int       @id @default(autoincrement())
-  email          String    @unique
-  fullName       String
-  profileImageId Int?
-  coverImageId   Int?
-  salt           String?
-  passwordHashed String?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt()
-  deletedAt      DateTime?
-  profileImage   Media?    @relation(name: "profile", fields: [profileImageId], references: [id])
-  coverImage     Media?    @relation(name: "cover", fields: [coverImageId], references: [id])
+  id                        Int                       @id @default(autoincrement())
+  email                     String                    @unique
+  fullName                  String
+  profileImageId            Int?
+  coverImageId              Int?
+  salt                      String?
+  passwordHashed            String?
+  createdAt                 DateTime                  @default(now())
+  updatedAt                 DateTime                  @updatedAt()
+  deletedAt                 DateTime?
+  profileImage              Media?                    @relation(name: "profile", fields: [profileImageId], references: [id])
+  coverImage                Media?                    @relation(name: "cover", fields: [coverImageId], references: [id])
 }
 
 model Media {
-  id          Int      @id @default(autoincrement())
-  code        String
-  url         String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt()
-  userProfile User[]   @relation(name: "profile")
-  userCover   User[]   @relation(name: "cover")
+  id                        Int                       @id @default(autoincrement())
+  code                      String
+  url                       String
+  productId                 Int?
+  createdAt                 DateTime                  @default(now())
+  updatedAt                 DateTime                  @updatedAt()
+  userProfile               User[]                    @relation(name: "profile")
+  userCover                 User[]                    @relation(name: "cover")
+  product                   Product?                  @relation(fields: [productId], references: [id])
+  storeProfile              Store[]                   @relation(name: "profile")
+  storeCover                Store[]                   @relation(name: "cover")
 }
 
 model Product {
-  id        Int      @id @default(autoincrement())
-  name      String
-  stock     Int
-  price     Int
-  storeId   Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt()
-  store     Store    @relation(fields: [storeId], references: [id])
+  id                        Int                       @id @default(autoincrement())
+  name                      String
+  descrition                String
+  info                      String?
+  stock                     Int
+  price                     Int
+  storeId                   Int
+  createdAt                 DateTime                  @default(now())
+  updatedAt                 DateTime                  @updatedAt()
+  store                     Store                     @relation(fields: [storeId], references: [id])
+  media                     Media[]
 }
 
 model Store {
-  id        Int       @id @default(autoincrement())
-  name      String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt()
-  deletedAt DateTime?
-  Product   Product[]
+  id                        Int                       @id @default(autoincrement())
+  name                      String
+  profileImageId            Int?
+  coverImageId              Int?
+  createdAt                 DateTime                  @default(now())
+  updatedAt                 DateTime                  @updatedAt()
+  deletedAt                 DateTime?
+  product                   Product[]
+  profileImage              Media?                    @relation(name: "profile", fields: [profileImageId], references: [id])
+  coverImage                Media?                    @relation(name: "cover", fields: [coverImageId], references: [id])
 }

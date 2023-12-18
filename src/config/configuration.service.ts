@@ -13,4 +13,8 @@ export class ConfigurationService implements IConfig {
   get port(): number {
     return this.configService.get("port");
   }
+
+  get saltRounds(): number {
+    return this.configService.get("saltRounds");
+  }
 }
