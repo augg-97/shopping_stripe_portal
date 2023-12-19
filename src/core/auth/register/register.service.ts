@@ -13,9 +13,16 @@ export class RegisterService {
 
   async execute(payload: RegisterPayload) {
     const { email, password, fullName } = payload;
-    const hasUser = await this.prismaService.user.findUnique({
+    const hasUser = await this.prismaService.user.findFirst({
       where: {
-        email,
+        AND: [
+          {
+            email,
+          },
+          {
+            deletedAt: null,
+          },
+        ],
       },
     });
 

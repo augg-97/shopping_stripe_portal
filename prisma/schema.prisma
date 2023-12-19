@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,57 +8,60 @@ datasource db {
 }
 
 model User {
-  id                        Int                       @id @default(autoincrement())
-  email                     String                    @unique
-  fullName                  String
-  profileImageId            Int?
-  coverImageId              Int?
-  salt                      String?
-  passwordHashed            String?
-  createdAt                 DateTime                  @default(now())
-  updatedAt                 DateTime                  @updatedAt()
-  deletedAt                 DateTime?
-  profileImage              Media?                    @relation(name: "profile", fields: [profileImageId], references: [id])
-  coverImage                Media?                    @relation(name: "cover", fields: [coverImageId], references: [id])
+  id             Int       @id @default(autoincrement())
+  email          String
+  fullName       String
+  profileImageId Int?
+  coverImageId   Int?
+  salt           String?
+  passwordHashed String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime? @updatedAt
+  deletedAt      DateTime?
+  coverImage     Media?    @relation("cover", fields: [coverImageId], references: [id])
+  profileImage   Media?    @relation("profile", fields: [profileImageId], references: [id])
+
+  @@unique([email, deletedAt], map: "unique_email_deletedAt_uniq")
+  @@index([email], map: "User_email_key")
 }
 
 model Media {
-  id                        Int                       @id @default(autoincrement())
-  code                      String
-  url                       String
-  productId                 Int?
-  createdAt                 DateTime                  @default(now())
-  updatedAt                 DateTime                  @updatedAt()
-  userProfile               User[]                    @relation(name: "profile")
-  userCover                 User[]                    @relation(name: "cover")
-  product                   Product?                  @relation(fields: [productId], references: [id])
-  storeProfile              Store[]                   @relation(name: "profile")
-  storeCover                Store[]                   @relation(name: "cover")
+  id           Int       @id @default(autoincrement())
+  code         String
+  url          String
+  productId    Int?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime? @updatedAt
+  product      Product?  @relation(fields: [productId], references: [id])
+  storeCover   Store[]   @relation("cover")
+  storeProfile Store[]   @relation("profile")
+  userCover    User[]    @relation("cover")
+  userProfile  User[]    @relation("profile")
 }
 
 model Product {
-  id                        Int                       @id @default(autoincrement())
-  name                      String
-  descrition                String
-  info                      String?
-  stock                     Int
-  price                     Int
-  storeId                   Int
-  createdAt                 DateTime                  @default(now())
-  updatedAt                 DateTime                  @updatedAt()
-  store                     Store                     @relation(fields: [storeId], references: [id])
-  media                     Media[]
+  id         Int       @id @default(autoincrement())
+  name       String
+  descrition String
+  info       String?
+  stock      Int
+  price      Int
+  storeId    Int
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime? @updatedAt
+  media      Media[]
+  store      Store     @relation(fields: [storeId], references: [id])
 }
 
 model Store {
-  id                        Int                       @id @default(autoincrement())
-  name                      String
-  profileImageId            Int?
-  coverImageId              Int?
-  createdAt                 DateTime                  @default(now())
-  updatedAt                 DateTime                  @updatedAt()
-  deletedAt                 DateTime?
-  product                   Product[]
-  profileImage              Media?                    @relation(name: "profile", fields: [profileImageId], references: [id])
-  coverImage                Media?                    @relation(name: "cover", fields: [coverImageId], references: [id])
+  id             Int       @id @default(autoincrement())
+  name           String
+  profileImageId Int?
+  coverImageId   Int?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime? @updatedAt
+  deletedAt      DateTime?
+  product        Product[]
+  coverImage     Media?    @relation("cover", fields: [coverImageId], references: [id])
+  profileImage   Media?    @relation("profile", fields: [profileImageId], references: [id])
 }
