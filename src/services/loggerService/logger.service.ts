@@ -8,20 +8,30 @@ export class LoggerService extends ConsoleLogger {
 
   constructor() {
     super();
-    const { combine, timestamp, metadata, printf } = format;
+    const { combine, timestamp, printf, colorize } = format;
     this.logger = createLogger({
       format: combine(
-        timestamp(),
-        metadata(),
-        printf((data) => {
-          const { correlationId, timestamp, ...meta } = data.metadata;
-          return `[${data.level}] - [${timestamp}] - [${correlationId || ""}] ${
-            data.message
-          } ${JSON.stringify(meta, null, 2)}`;
-        }),
+        timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+        printf(
+          ({ level, timestamp, message, correlationId = "", ...metadata }) => {
+            const data =
+              metadata[Symbol.for("splat")][0]
+                .map((item: any) => JSON.stringify(item, null, 2))
+                .join("\n") || "";
+
+            if (!correlationId) {
+              return `[${timestamp}] [${level.toUpperCase()}] ${message} ${data}`;
+            }
+
+            return `[${timestamp}] [${level.toUpperCase()}] [${correlationId}] ${message} ${data}`;
+          },
+        ),
       ),
       transports: [
-        new transports.Console({ level: "debug" }),
+        new transports.Console({
+          level: "debug",
+          format: colorize({ all: true }),
+        }),
         new transports.File({
           filename: "public/logs/rtc_logs.log",
           level: "debug",
@@ -42,18 +52,18 @@ export class LoggerService extends ConsoleLogger {
   }
 
   log(message: string, ...meta: any[]) {
-    this.logger.info(message, ...meta);
+    this.logger.info(message, meta);
   }
 
   warn(message: string, ...meta: any[]) {
-    this.logger.warn(message, ...meta);
+    this.logger.warn(message, meta);
   }
 
   error(message: string, ...meta: any[]) {
-    this.logger.error(message, ...meta);
+    this.logger.error(message, meta);
   }
 
   debug(message: string, ...meta: any[]) {
-    this.logger.debug(message, ...meta);
+    this.logger.debug(message, meta);
   }
 }
