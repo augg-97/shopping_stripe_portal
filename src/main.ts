@@ -4,10 +4,11 @@ import { ConfigurationService } from "./config/configuration.service";
 import { LoggerService } from "./services/loggerService/logger.service";
 import { correlationMiddleware } from "./middlewares/correlation.middleware";
 import { ValidationPipe, VersioningType } from "@nestjs/common";
-import { HttpExceptionFilter } from "./exceptions/httpException.filter";
+import { GlobalExceptionFilter } from "./exceptions/globalException.filter";
 import { useContainer } from "class-validator";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
-import { TokenInvalidException } from "./exceptions/unauthorized/tokenInvalid.exception";
+import { ValidatorException } from "./exceptions/badRequest/validator.exception";
+import { getValidatorError } from "./helpers/getValidatorErrorMessage";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -33,13 +34,12 @@ async function bootstrap() {
       transform: true,
       whitelist: true,
       exceptionFactory(errors) {
-        console.log("errors::", errors);
-
-        throw new TokenInvalidException();
+        const message = getValidatorError(errors);
+        throw new ValidatorException(message);
       },
     }),
   );
-  app.useGlobalFilters(new HttpExceptionFilter(loggerService));
+  app.useGlobalFilters(new GlobalExceptionFilter(loggerService));
 
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
