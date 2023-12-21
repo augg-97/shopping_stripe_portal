@@ -1,13 +1,15 @@
 import { HttpException, HttpStatus } from "@nestjs/common";
 
 export class ExistsUserException extends HttpException {
-  message: string;
+  // message: string;
   constructor() {
-    super("BadRequest", HttpStatus.BAD_REQUEST);
-    this.message = "User is exists";
+    super(
+      { errorCode: "USER_ALREADY_EXISTS", message: "User already exists" },
+      HttpStatus.BAD_REQUEST,
+    );
   }
 
-  getResponse(): string | object {
-    return this.message;
-  }
+  // getResponse(): string | object {
+  //   return this.message;
+  // }
 }

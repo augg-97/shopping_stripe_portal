@@ -1,5 +1,31 @@
 import { Type } from "class-transformer";
-import { IsEmail, IsNotEmpty, IsString, Matches } from "class-validator";
+import {
+  IsArray,
+  IsDefined,
+  IsEmail,
+  IsNotEmpty,
+  IsNotEmptyObject,
+  IsNumber,
+  IsObject,
+  IsString,
+  Matches,
+  MaxLength,
+  Min,
+  ValidateNested,
+} from "class-validator";
+
+class Info {
+  @Min(1)
+  @IsNumber()
+  @IsDefined()
+  @Type(() => Number)
+  age = 0;
+
+  @IsString()
+  @IsNotEmpty()
+  @Type(() => String)
+  born = "";
+}
 
 export class RegisterPayload {
   @IsEmail()
@@ -24,4 +50,11 @@ export class RegisterPayload {
   @IsNotEmpty()
   @Type(() => String)
   fullName = "";
+
+  @IsDefined()
+  @IsNotEmptyObject()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => Info)
+  info: Info;
 }

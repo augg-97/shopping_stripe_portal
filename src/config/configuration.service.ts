@@ -17,4 +17,28 @@ export class ConfigurationService implements IConfig {
   get saltRounds(): number {
     return this.configService.get("saltRounds");
   }
+
+  get redisHost(): string {
+    return this.configService.get("redisHost");
+  }
+
+  get redisPort(): number {
+    return this.configService.get("redisPort");
+  }
+
+  get accessTokenKey(): string {
+    return this.configService.get("accessTokenKey");
+  }
+
+  get accessTokenExpiredIn(): number {
+    return this.configService.get("accessTokenExpiredIn");
+  }
+
+  get refreshTokenKey(): string {
+    return this.configService.get("refreshTokenKey");
+  }
+
+  get refreshTokenExpiredIn(): number {
+    return this.configService.get("refreshTokenExpiredIn");
+  }
 }

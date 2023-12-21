@@ -7,6 +7,7 @@ import { ValidationPipe, VersioningType } from "@nestjs/common";
 import { HttpExceptionFilter } from "./exceptions/httpException.filter";
 import { useContainer } from "class-validator";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { TokenInvalidException } from "./exceptions/unauthorized/tokenInvalid.exception";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -31,6 +32,11 @@ async function bootstrap() {
     new ValidationPipe({
       transform: true,
       whitelist: true,
+      exceptionFactory(errors) {
+        console.log("errors::", errors);
+
+        throw new TokenInvalidException();
+      },
     }),
   );
   app.useGlobalFilters(new HttpExceptionFilter(loggerService));

@@ -4,8 +4,9 @@ import {
   ExceptionFilter,
   HttpException,
   HttpStatus,
+  ValidationPipe,
 } from "@nestjs/common";
-import { isString } from "class-validator";
+import { ValidationError, isString } from "class-validator";
 import { Request, Response } from "express";
 import { LoggerService } from "src/services/loggerService/logger.service";
 
@@ -17,24 +18,41 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const context = host.switchToHttp();
     const response = context.getResponse<Response>();
     const request = context.getRequest<Request>();
-    const status = exception.getStatus();
-    const message = exception.getResponse();
     const correlationId = request.headers["correlationId"];
+
+    // this.loggerService.error(
+    //   `Error occur in request ${request.url}`,
+    //   exception,
+    // );
+    const status = exception.getStatus();
+    const exceptionRes = exception.getResponse();
+    console.log(
+      "🚀 ~ file: httpException.filter.ts:29 ~ HttpExceptionFilter ~ exceptionRes:",
+      exceptionRes,
+    );
+
+    if (isString(exceptionRes)) {
+      const errorRes = {
+        correlationId,
+        statusCode: status,
+        timestamp: new Date().toISOString(),
+        path: request.url,
+        message: exceptionRes,
+      };
+      // this.loggerService.error(
+      //   `Error occur in request ${request.url}`,
+      //   errorRes,
+      // );
+      return response.status(status).json(errorRes);
+    }
 
     const errorRes = {
       correlationId,
       statusCode: status,
-      status: HttpStatus[status],
       timestamp: new Date().toISOString(),
       path: request.url,
-      message:
-        !isString(message) &&
-        "message" in message &&
-        Array.isArray(message.message)
-          ? message.message[0]
-          : message,
+      ...exceptionRes,
     };
-    this.loggerService.error(`Error occur in request ${request.url}`, errorRes);
 
     return response.status(status).json(errorRes);
   }
