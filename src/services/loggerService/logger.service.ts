@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ConsoleLogger, Injectable } from "@nestjs/common";
+import { ConfigurationService } from "src/config/configuration.service";
 import { Logger, createLogger, format, transports } from "winston";
 
 @Injectable()
 export class LoggerService extends ConsoleLogger {
   private logger: Logger;
 
-  constructor() {
+  constructor(private configurationService: ConfigurationService) {
     super();
     const { combine, timestamp, printf, colorize } = format;
     this.logger = createLogger({
@@ -27,16 +28,24 @@ export class LoggerService extends ConsoleLogger {
           },
         ),
       ),
-      transports: [
-        new transports.Console({
-          level: "debug",
-          format: colorize({ all: true }),
-        }),
-        new transports.File({
-          filename: "public/logs/rtc_logs.log",
-          level: "debug",
-        }),
-      ],
+      transports:
+        this.configurationService.nodeEnv === "development"
+          ? [
+              new transports.Console({
+                level: "debug",
+                format: colorize({ all: true }),
+              }),
+              new transports.File({
+                filename: "public/logs/rtc_logs.log",
+                level: "debug",
+              }),
+            ]
+          : [
+              new transports.Console({
+                level: "debug",
+                format: colorize({ all: true }),
+              }),
+            ],
     });
   }
 

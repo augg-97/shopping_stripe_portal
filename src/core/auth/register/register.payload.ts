@@ -1,38 +1,12 @@
 import { Type } from "class-transformer";
-import {
-  IsArray,
-  IsDefined,
-  IsEmail,
-  IsNotEmpty,
-  IsNotEmptyObject,
-  IsNumber,
-  IsObject,
-  IsString,
-  Matches,
-  MaxLength,
-  Min,
-  ValidateNested,
-} from "class-validator";
-
-class Info {
-  @Min(1)
-  @IsNumber()
-  @IsDefined()
-  @Type(() => Number)
-  age = 0;
-
-  @IsString()
-  @IsNotEmpty()
-  @Type(() => String)
-  born = "";
-}
+import { IsEmail, IsNotEmpty, IsString, Matches } from "class-validator";
 
 export class RegisterPayload {
   @IsEmail()
   @IsString()
   @IsNotEmpty()
   @Type(() => String)
-  email = "";
+  email: string;
 
   @Matches(
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~!@#$%^\s])[A-Za-z\d~!@#$%^\s]{8,16}$/g,
@@ -44,17 +18,10 @@ export class RegisterPayload {
   @IsString()
   @IsNotEmpty()
   @Type(() => String)
-  password = "";
+  password: string;
 
   @IsString()
   @IsNotEmpty()
   @Type(() => String)
-  fullName = "";
-
-  @IsDefined()
-  @IsNotEmptyObject()
-  @IsObject()
-  @ValidateNested()
-  @Type(() => Info)
-  info: Info;
+  fullName: string;
 }
