@@ -106,13 +106,33 @@ export class TokenService {
   constructor(
     @Inject(MODULE_TOKEN) private tokenInfo: TokenInfo,
     private redisService: RedisService,
+    private jwtService: JwtService,
   ) {}
 
-  async tokenGenerator(payload: IAuthUser) {
-    const redisKey = this.redisService.genRedisKey(
-      this.tokenInfo.redisKey,
-      payload.id,
-    );
-    const getTokenByRedis = await this.redisService.get(redisKey);
+  async tokenGenerator(payload: IAuthUser, clientId?: string) {
+    const token = await this.jwtService.signAsync(payload, {
+      secret: this.tokenInfo.secretKey,
+      expiresIn: this.tokenInfo.expiration,
+    });
+
+    const redisKey = `${this.tokenInfo.redisKey}_${payload.id}`;
+
+    if (!clientId) {
+      await this.redisService.rPush(redisKey, token);
+      return token;
+    }
+
+    const getTokens = await this.redisService.lRange(redisKey);
+    const tokens = getTokens.map((item) => JSON.parse(item));
+    const hasToken = tokens.find((item) => {
+      if (item.clientId && item.clientId === clientId) {
+        return item;
+      }
+    });
+
+    const index = tokens.indexOf();
+
+    if (hasToken) {
+    }
   }
 }

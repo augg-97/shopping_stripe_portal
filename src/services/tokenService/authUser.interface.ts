@@ -9,6 +9,7 @@ export const MODULE_TOKEN = "MODULE_TOKEN";
 
 export type TokenInfo = {
   redisKey: REDIS_KEY;
-  key: string;
+  secretKey: string;
   expiration: number;
+  clientId: string;
 };
