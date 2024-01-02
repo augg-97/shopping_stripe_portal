@@ -2,8 +2,11 @@ import { Inject, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigurationService } from "src/config/configuration.service";
 import { RedisService } from "../redisService/redis.service";
-import { IAuthUser, MODULE_TOKEN, TokenInfo } from "./authUser.interface";
+import { IAuthUser, TOKEN_INFO, TokenInfo } from "./authUser.interface";
 import { REDIS_KEY } from "../redisService/redisKey";
+import { JwtPayload } from "jsonwebtoken";
+import { TokenInvalidException } from "src/exceptions/unauthorized/tokenInvalid.exception";
+import { AccessTokenExpiredException } from "src/exceptions/unauthorized/accessTokenExpired.exception";
 
 // @Injectable()
 // export class TokenService {
@@ -104,7 +107,7 @@ import { REDIS_KEY } from "../redisService/redisKey";
 @Injectable()
 export class TokenService {
   constructor(
-    @Inject(MODULE_TOKEN) private tokenInfo: TokenInfo,
+    @Inject(TOKEN_INFO) private tokenInfo: TokenInfo,
     private redisService: RedisService,
     private jwtService: JwtService,
   ) {}
@@ -118,21 +121,61 @@ export class TokenService {
     const redisKey = `${this.tokenInfo.redisKey}_${payload.id}`;
 
     if (!clientId) {
-      await this.redisService.rPush(redisKey, token);
+      await this.redisService.rPush(redisKey, JSON.stringify({ token }));
       return token;
     }
 
     const getTokens = await this.redisService.lRange(redisKey);
     const tokens = getTokens.map((item) => JSON.parse(item));
-    const hasToken = tokens.find((item) => {
-      if (item.clientId && item.clientId === clientId) {
-        return item;
-      }
-    });
-
-    const index = tokens.indexOf();
+    const hasToken = tokens.find(
+      (item) => item.clientId && item.clientId === clientId,
+    );
 
     if (hasToken) {
+      await this.redisService.lRem(redisKey, JSON.stringify(hasToken));
+    }
+
+    await this.redisService.rPush(
+      redisKey,
+      JSON.stringify({ token, clientId }),
+    );
+
+    return token;
+  }
+
+  async tokenVerify(token: string, clientId?: string) {
+    try {
+      const payload = await this.jwtService.verifyAsync<IAuthUser & JwtPayload>(
+        token,
+        {
+          secret: this.tokenInfo.secretKey,
+        },
+      );
+
+      const authUser: IAuthUser = {
+        id: payload.id,
+        email: payload.email,
+      };
+
+      const redisKey = `${this.tokenInfo.redisKey}_${authUser.id}`;
+      const getTokens = await this.redisService.lRange(redisKey);
+      const tokens = getTokens.map((item) => JSON.parse(item));
+      const hasToken = tokens.find(
+        (item) =>
+          item.token && item.token === token && item?.clientId === clientId,
+      );
+
+      if (!hasToken) {
+        throw new TokenInvalidException();
+      }
+
+      return authUser;
+    } catch (error) {
+      if (error instanceof Error && error.name === "TokenExpiredError") {
+        throw new AccessTokenExpiredException();
+      }
+
+      throw new TokenInvalidException();
     }
   }
 }

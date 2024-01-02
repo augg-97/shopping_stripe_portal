@@ -5,7 +5,7 @@ export interface IAuthUser {
   email: string;
 }
 
-export const MODULE_TOKEN = "MODULE_TOKEN";
+export const TOKEN_INFO = "TOKEN_INFO";
 
 export type TokenInfo = {
   redisKey: REDIS_KEY;
