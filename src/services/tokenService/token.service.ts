@@ -118,7 +118,9 @@ export class TokenService {
       expiresIn: this.tokenInfo.expiration,
     });
 
-    const redisKey = `${this.tokenInfo.redisKey}_${payload.id}`;
+    const redisKey = clientId
+      ? `${this.tokenInfo.redisKey}_${payload.id}_${clientId}`
+      : `${this.tokenInfo.redisKey}_${payload.id}`;
 
     if (!clientId) {
       await this.redisService.rPush(redisKey, JSON.stringify({ token }));
