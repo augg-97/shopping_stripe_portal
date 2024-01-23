@@ -11,4 +11,6 @@ export interface IConfig {
   accessTokenExpiredIn: number;
   refreshTokenKey: string;
   refreshTokenExpiredIn: number;
+
+  encryptionPrivateKey: string;
 }

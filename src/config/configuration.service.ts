@@ -41,4 +41,8 @@ export class ConfigurationService implements IConfig {
   get refreshTokenExpiredIn(): number {
     return this.configService.get("refreshTokenExpiredIn");
   }
+
+  get encryptionPrivateKey(): string {
+    return this.configService.get("encryptionPrivateKey");
+  }
 }
