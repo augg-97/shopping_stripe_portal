@@ -1,12 +1,11 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import { ConfigurationService } from "src/config/configuration.service";
 import { RedisService } from "../redisService/redis.service";
 import { IAuthUser, TOKEN_INFO, TokenInfo } from "./authUser.interface";
 import { REDIS_KEY } from "../redisService/redisKey";
 import { JwtPayload } from "jsonwebtoken";
-import { TokenInvalidException } from "src/exceptions/unauthorized/tokenInvalid.exception";
-import { AccessTokenExpiredException } from "src/exceptions/unauthorized/accessTokenExpired.exception";
+import { TokenInvalidException } from "../../exceptions/unauthorized/tokenInvalid.exception";
+import { AccessTokenExpiredException } from "../../exceptions/unauthorized/accessTokenExpired.exception";
 
 // @Injectable()
 // export class TokenService {

@@ -1,6 +1,6 @@
 import { Type } from "class-transformer";
 import { IsEmail, IsNotEmpty, IsString } from "class-validator";
-import { PasswordValidator } from "src/validators/Password.validator";
+import { PasswordValidator } from "../../../validators/Password.validator";
 
 export class RegisterPayload {
   @IsEmail()
@@ -13,7 +13,7 @@ export class RegisterPayload {
   @IsString()
   @IsNotEmpty()
   @Type(() => String)
-  password: string;
+  preHashPassword: string;
 
   @IsString()
   @IsNotEmpty()

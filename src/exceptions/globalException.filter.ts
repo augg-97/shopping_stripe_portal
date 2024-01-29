@@ -7,7 +7,7 @@ import {
 } from "@nestjs/common";
 import { isString } from "class-validator";
 import { Request, Response } from "express";
-import { LoggerService } from "src/services/loggerService/logger.service";
+import { LoggerService } from "../services/loggerService/logger.service";
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {

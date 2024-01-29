@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { uuidGenerator } from "src/pkgs/uuidGenerator";
-import { LoggerService } from "src/services/loggerService/logger.service";
+import { LoggerService } from "../services/loggerService/logger.service";
+import { uuidGenerator } from "../pkgs/uuidGenerator";
 
 export const correlationMiddleware = (logger: LoggerService) => {
   return (req: Request, res: Response, next: NextFunction) => {

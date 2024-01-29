@@ -13,21 +13,32 @@ import { decryptPassword } from "../helpers/decryptPassword";
 @ValidatorConstraint({ name: "PasswordValidator", async: false })
 @Injectable()
 export class PasswordValidatorRule implements ValidatorConstraintInterface {
-  constructor(private configurationService: ConfigurationService) {}
+  private passwordRegex: RegExp;
+
+  constructor(private configurationService: ConfigurationService) {
+    this.passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~!@#$%^\s])[A-Za-z\d~!@#$%^\s]{8,16}$/g;
+  }
 
   validate(value: string): boolean {
-    const passwordDecrypted = decryptPassword(
-      value,
-      this.configurationService.encryptionPrivateKey,
-    );
-    console.log(
-      "🚀 ~ PasswordValidatorRule ~ validate ~ passwordDecrypted:",
-      passwordDecrypted,
-    );
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~!@#$%^\s])[A-Za-z\d~!@#$%^\s]{8,16}$/g;
+    try {
+      const passwordDecrypted = decryptPassword(
+        value,
+        this.configurationService.encryptionPrivateKey,
+      );
 
-    return matches(passwordDecrypted, passwordRegex);
+      return matches(passwordDecrypted, this.passwordRegex);
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        "code" in error &&
+        error.code === "ERR_OSSL_UNSUPPORTED"
+      ) {
+        return matches(value, this.passwordRegex);
+      }
+
+      return false;
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { PasswordService } from "./password.service";
-import { ConfigurationModule } from "src/config/configuration.module";
+import { ConfigurationModule } from "../../config/configuration.module";
 
 @Module({
   imports: [ConfigurationModule],

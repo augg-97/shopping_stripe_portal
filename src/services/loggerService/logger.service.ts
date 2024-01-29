@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ConsoleLogger, Injectable } from "@nestjs/common";
-import { ConfigurationService } from "src/config/configuration.service";
 import { Logger, createLogger, format, transports } from "winston";
+import { ConfigurationService } from "../../config/configuration.service";
 
 @Injectable()
 export class LoggerService extends ConsoleLogger {
