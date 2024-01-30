@@ -39,9 +39,9 @@ async function bootstrap() {
       },
     }),
   );
-  app.useGlobalFilters(new GlobalExceptionFilter(loggerService));
-
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
+
+  app.useGlobalFilters(new GlobalExceptionFilter(loggerService));
 
   // Swagger
   const swaggerConfig = new DocumentBuilder()
@@ -51,7 +51,7 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup("api", app, document);
+  SwaggerModule.setup("api/docs", app, document);
 
   const configurationService = app.get(ConfigurationService);
   const port = configurationService.port;

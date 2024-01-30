@@ -33,8 +33,10 @@ export class RegisterService {
       throw new ExistsUserException();
     }
 
-    const { passwordHashed, salt } =
-      await this.passwordService.hashPassword(preHashPassword);
+    const { passwordHashed, salt } = await this.passwordService.hashPassword(
+      preHashPassword,
+      email,
+    );
     const user = await this.prismaService.user.create({
       data: {
         email,

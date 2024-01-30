@@ -1,6 +1,5 @@
-import { Type } from "class-transformer";
-import { IsEmail, IsNotEmpty, IsString } from "class-validator";
-import { PasswordValidator } from "../../../validators/Password.validator";
+import { Transform, Type } from "class-transformer";
+import { IsEmail, IsNotEmpty, IsString, Matches } from "class-validator";
 
 export class RegisterPayload {
   @IsEmail()
@@ -9,7 +8,13 @@ export class RegisterPayload {
   @Type(() => String)
   email: string;
 
-  @PasswordValidator()
+  @Matches(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~!@#$%^\s])[A-Za-z\d~!@#$%^\s]{8,16}$/g,
+    {
+      message:
+        "Password must have a combination of lower and upper case letters, numbers, and special characters, between 8 and 16 characters in length.",
+    },
+  )
   @IsString()
   @IsNotEmpty()
   @Type(() => String)

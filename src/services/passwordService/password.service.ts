@@ -8,10 +8,12 @@ export class PasswordService {
 
   async hashPassword(
     password: string,
+    email: string,
   ): Promise<{ salt: string; passwordHashed: string }> {
     const saltRounds = this.configurationService.saltRounds;
     const salt = await genSalt(saltRounds);
-    const passwordHashed = await hash(password, salt);
+    const plainPassword = `${password}${email.toLowerCase()}`;
+    const passwordHashed = await hash(plainPassword, salt);
 
     return {
       salt,
@@ -21,8 +23,10 @@ export class PasswordService {
 
   async comparePassword(
     password: string,
+    email: string,
     passwordHashed: string,
   ): Promise<boolean> {
-    return await compare(password, passwordHashed);
+    const plainPassword = `${password}${email.toLowerCase()}`;
+    return await compare(plainPassword, passwordHashed);
   }
 }

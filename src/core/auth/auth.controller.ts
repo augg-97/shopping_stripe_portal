@@ -6,11 +6,14 @@ import {
   HttpStatus,
   Post,
   Req,
+  UsePipes,
+  ValidationPipe,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { RegisterService } from "./register/register.service";
 import { RegisterPayload } from "./register/register.payload";
 import { Request } from "express";
+import { PasswordDecryptPipe } from "../../pipes/passwordDecrypt.pipe";
 
 @ApiTags("auth")
 @Controller("auth")

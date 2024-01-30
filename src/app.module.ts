@@ -6,7 +6,7 @@ import { LoggerModule } from "./services/loggerService/logger.module";
 import { PrismaModule } from "./services/prismaService/prisma.module";
 import { AuthModule } from "./core/auth/auth.module";
 import { TokenModule } from "./services/tokenService/token.module";
-import { PasswordValidatorRule } from "./validators/Password.validator";
+import { PasswordDecryptPipe } from "./pipes/passwordDecrypt.pipe";
 
 @Module({
   imports: [
@@ -17,6 +17,6 @@ import { PasswordValidatorRule } from "./validators/Password.validator";
     TokenModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PasswordValidatorRule],
+  providers: [AppService],
 })
 export class AppModule {}
