@@ -20,6 +20,7 @@ import { PasswordDecryptPipe } from "../../pipes/passwordDecrypt.pipe";
 export class AuthController {
   constructor(private registerService: RegisterService) {}
 
+  @UsePipes(PasswordDecryptPipe)
   @Post("register")
   @HttpCode(HttpStatus.OK)
   async register(@Body() payload: RegisterPayload) {

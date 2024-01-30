@@ -11,6 +11,7 @@
 // import { decryptPassword } from "../helpers/decryptPassword";
 
 import { ArgumentMetadata, Injectable, PipeTransform } from "@nestjs/common";
+import { ConfigurationService } from "../config/configuration.service";
 
 // @ValidatorConstraint({ name: "PasswordValidator", async: false })
 // @Injectable()
@@ -63,10 +64,12 @@ import { ArgumentMetadata, Injectable, PipeTransform } from "@nestjs/common";
 // }
 
 @Injectable()
-export class PasswordDecryptPipe implements PipeTransform {
+export class PasswordDecryptPipe<T> implements PipeTransform {
+  constructor(private configurationService: ConfigurationService) {}
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
-  transform(value: any, metadata: ArgumentMetadata) {
-    console.log("value::", value);
+  transform(value: T, metadata: ArgumentMetadata) {
+    console.log("🚀 ~ PasswordDecryptPipe ~ transform ~ value:", value);
+
     return value;
   }
 }

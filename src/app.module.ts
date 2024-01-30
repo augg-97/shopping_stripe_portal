@@ -17,6 +17,6 @@ import { PasswordDecryptPipe } from "./pipes/passwordDecrypt.pipe";
     TokenModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, PasswordDecryptPipe],
 })
 export class AppModule {}

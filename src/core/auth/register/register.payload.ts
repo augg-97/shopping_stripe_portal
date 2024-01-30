@@ -6,7 +6,7 @@ export class RegisterPayload {
   @IsString()
   @IsNotEmpty()
   @Type(() => String)
-  email: string;
+  readonly email: string;
 
   @Matches(
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~!@#$%^\s])[A-Za-z\d~!@#$%^\s]{8,16}$/g,
@@ -18,10 +18,10 @@ export class RegisterPayload {
   @IsString()
   @IsNotEmpty()
   @Type(() => String)
-  preHashPassword: string;
+  readonly preHashPassword: string;
 
   @IsString()
   @IsNotEmpty()
   @Type(() => String)
-  fullName: string;
+  readonly fullName: string;
 }
