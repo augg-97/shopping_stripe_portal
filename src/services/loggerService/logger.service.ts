@@ -12,7 +12,7 @@ export class LoggerService extends ConsoleLogger {
     const { combine, timestamp, printf, colorize } = format;
     this.logger = createLogger({
       format: combine(
-        timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+        timestamp(),
         printf(
           ({ level, timestamp, message, correlationId = "", ...metadata }) => {
             const data =

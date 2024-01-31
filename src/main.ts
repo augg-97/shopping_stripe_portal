@@ -3,7 +3,11 @@ import { AppModule } from "./app.module";
 import { ConfigurationService } from "./config/configuration.service";
 import { LoggerService } from "./services/loggerService/logger.service";
 import { correlationMiddleware } from "./middlewares/correlation.middleware";
-import { ValidationPipe, VersioningType } from "@nestjs/common";
+import {
+  ClassSerializerInterceptor,
+  ValidationPipe,
+  VersioningType,
+} from "@nestjs/common";
 import { GlobalExceptionFilter } from "./exceptions/globalException.filter";
 import { useContainer } from "class-validator";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
@@ -33,6 +37,8 @@ async function bootstrap() {
     new ValidationPipe({
       transform: true,
       whitelist: true,
+      forbidNonWhitelisted: true,
+      stopAtFirstError: true,
       exceptionFactory(errors) {
         const message = getValidatorError(errors);
         throw new ValidatorException(message);
@@ -45,9 +51,9 @@ async function bootstrap() {
 
   // Swagger
   const swaggerConfig = new DocumentBuilder()
-    .setTitle("Real time chat apis")
-    .setDescription("Real time chat API description")
-    .setVersion("0.1")
+    .setTitle("Shopping stripe apis")
+    .setDescription("Shopping stripe API document")
+    .setVersion("v1.0")
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);
