@@ -63,17 +63,17 @@
 //   };
 // }
 
-// import { ArgumentMetadata, Injectable, PipeTransform } from "@nestjs/common";
-// import { ConfigurationService } from "../config/configuration.service";
+import { ArgumentMetadata, Injectable, PipeTransform } from "@nestjs/common";
+import { ConfigurationService } from "../config/configuration.service";
 
-// @Injectable()
-// export class PasswordValidatorRule<T> implements PipeTransform {
-//   constructor(private configurationService: ConfigurationService) {}
+@Injectable()
+export class PasswordValidatorRule<T> implements PipeTransform {
+  constructor(private configurationService: ConfigurationService) {}
 
-//   // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
-//   transform(value: T, metadata: ArgumentMetadata) {
-//     console.log("🚀 ~ PasswordDecryptPipe ~ transform ~ value:", value);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+  transform(value: T, metadata: ArgumentMetadata) {
+    console.log("🚀 ~ PasswordDecryptPipe ~ transform ~ value:", value);
 
-//     return value;
-//   }
-// }
+    return value;
+  }
+}

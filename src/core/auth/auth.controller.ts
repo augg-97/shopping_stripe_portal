@@ -15,15 +15,18 @@ import { ApiTags } from "@nestjs/swagger";
 import { RegisterService } from "./register/register.service";
 import { RegisterPayload } from "./register/register.payload";
 import { Request } from "express";
+import { PasswordValidatorRule } from "../../pipes/passwordDecrypt.pipe";
+import { RawBody } from "../../decorator/rawBody.decorator";
 
 @ApiTags("auth")
 @Controller("auth")
 export class AuthController {
   constructor(private registerService: RegisterService) {}
 
+  // @UsePipes(new PasswordValidatorRule<RegisterPayload>(), new ValidationPipe())
   @Post("register")
   @HttpCode(HttpStatus.OK)
-  async register(@Body() payload: RegisterPayload) {
+  async register(@RawBody() payload: RegisterPayload) {
     return payload;
     // return await this.registerService.execute(payload);
   }
