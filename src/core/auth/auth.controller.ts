@@ -26,7 +26,7 @@ export class AuthController {
   // @UsePipes(new PasswordValidatorRule<RegisterPayload>(), new ValidationPipe())
   @Post("register")
   @HttpCode(HttpStatus.OK)
-  async register(@RawBody() payload: RegisterPayload) {
+  async register(@Req() payload: RegisterPayload) {
     return payload;
     // return await this.registerService.execute(payload);
   }

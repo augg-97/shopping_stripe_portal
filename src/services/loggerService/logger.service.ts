@@ -9,40 +9,45 @@ export class LoggerService extends ConsoleLogger {
 
   constructor(private configurationService: ConfigurationService) {
     super();
-    const { combine, timestamp, printf, colorize } = format;
+    const { combine, timestamp, printf, colorize, metadata } = format;
     this.logger = createLogger({
       format: combine(
+        format.label({
+          label: "SPS_API_LOGGER",
+        }),
         timestamp(),
-        printf(
-          ({ level, timestamp, message, correlationId = "", ...metadata }) => {
-            const data =
-              metadata[Symbol.for("splat")][0]
-                .map((item: any) => JSON.stringify(item, null, 2))
-                .join("\n") || "";
+        metadata(),
+        printf((data) => {
+          console.log("🚀 ~ LoggerService ~ printf ~ data:", data);
+          const {
+            level,
+            message,
+            [Symbol.for("splat")]: sSplat,
+            metadata: { correlationId, timestamp, label },
+          } = data;
 
-            if (!correlationId) {
-              return `[${timestamp}] [${level.toUpperCase()}] ${message} ${data}`;
-            }
-
-            return `[${timestamp}] [${level.toUpperCase()}] [${correlationId}] ${message} ${data}`;
-          },
-        ),
+          const meta = sSplat[0]
+            .map((item: any) => {
+              return JSON.stringify(item, Object.getOwnPropertyNames(item));
+            })
+            .join("\n");
+          return `[${label}] [${timestamp}] [${level.toUpperCase()}]${
+            correlationId ? ` [${correlationId}] ` : ""
+          }${message} ${meta}`;
+        }),
       ),
       transports:
         this.configurationService.nodeEnv === "development"
           ? [
               new transports.Console({
-                level: "debug",
                 format: colorize({ all: true }),
               }),
               new transports.File({
                 filename: "public/logs/rtc_logs.log",
-                level: "debug",
               }),
             ]
           : [
               new transports.Console({
-                level: "debug",
                 format: colorize({ all: true }),
               }),
             ],
