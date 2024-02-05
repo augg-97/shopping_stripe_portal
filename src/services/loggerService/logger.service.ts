@@ -18,7 +18,6 @@ export class LoggerService extends ConsoleLogger {
         timestamp(),
         metadata(),
         printf((data) => {
-          console.log("🚀 ~ LoggerService ~ printf ~ data:", data);
           const {
             level,
             message,

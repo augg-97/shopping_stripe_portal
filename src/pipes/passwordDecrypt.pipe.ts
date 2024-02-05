@@ -68,10 +68,14 @@ import { ConfigurationService } from "../config/configuration.service";
 
 @Injectable()
 export class PasswordValidatorRule<T> implements PipeTransform {
-  constructor(private configurationService: ConfigurationService) {}
+  constructor() {}
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
   transform(value: T, metadata: ArgumentMetadata) {
+    console.log(
+      "🚀 ~ PasswordValidatorRule<T> ~ transform ~ metadata:",
+      metadata,
+    );
     console.log("🚀 ~ PasswordDecryptPipe ~ transform ~ value:", value);
 
     return value;
