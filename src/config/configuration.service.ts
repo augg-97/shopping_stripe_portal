@@ -14,6 +14,10 @@ export class ConfigurationService implements IConfig {
     return this.configService.get("port");
   }
 
+  get debugQuery(): boolean {
+    return this.configService.get("debugQuery");
+  }
+
   get saltRounds(): number {
     return this.configService.get("saltRounds");
   }
@@ -24,6 +28,10 @@ export class ConfigurationService implements IConfig {
 
   get redisPort(): number {
     return this.configService.get("redisPort");
+  }
+
+  get redisPassword(): string {
+    return this.configService.get("redisPassword");
   }
 
   get accessTokenKey(): string {
@@ -42,7 +50,35 @@ export class ConfigurationService implements IConfig {
     return this.configService.get("refreshTokenExpiredIn");
   }
 
-  get encryptionPrivateKey(): string {
-    return this.configService.get("encryptionPrivateKey");
+  get imageBaseUrl(): string {
+    return this.configService.get("imageBaseUrl");
+  }
+
+  get emailServiceHost(): string {
+    return this.configService.get("emailServiceHost");
+  }
+
+  get emailServiceUserName(): string {
+    return this.configService.get("emailServiceUserName");
+  }
+
+  get emailServicePassword(): string {
+    return this.configService.get("emailServicePassword");
+  }
+
+  get emailServicePort(): number {
+    return this.configService.get("emailServicePort");
+  }
+
+  get emailServiceSender(): string {
+    return this.configService.get("emailServiceSender");
+  }
+
+  get resetPasswordUIUrl(): string {
+    return this.configService.get("resetPasswordUIUrl");
+  }
+
+  get verifyEmailUIUrl(): string {
+    return this.configService.get("verifyEmailUIUrl");
   }
 }

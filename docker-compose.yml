@@ -15,6 +15,17 @@ services:
   sps_cache:
     container_name: sps_cache
     image: redis:7.2-rc3-alpine
+    command: "redis-server --requirepass Password"
     ports:
       - "${REDIS_PORT:-6379}:6379"
+    restart: on-failure
+
+  sps_web_server:
+    container_name: sps_web_server
+    image: nginx:alpine
+    volumes:
+      - ./public/nginx/upload.conf:/etc/nginx/conf.d/upload.conf
+      - ./public/assets:/usr/share/nginx/html/upload/
+    ports:
+      - "8080:80"
     restart: on-failure

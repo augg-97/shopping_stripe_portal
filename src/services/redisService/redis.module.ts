@@ -13,7 +13,8 @@ import { ConfigurationModule } from "../../config/configuration.module";
       useFactory: async (configurationService: ConfigurationService) => {
         const redisHost = configurationService.redisHost;
         const redisPort = configurationService.redisPort;
-        const url = `redis://${redisHost}:${redisPort}`;
+        const redisPassword = configurationService.redisPassword;
+        const url = `redis://:${redisPassword}@${redisHost}:${redisPort}`;
 
         const redisClient = createClient({
           url,

@@ -27,7 +27,7 @@ export class LoggerService extends ConsoleLogger {
 
           const meta = sSplat[0]
             .map((item: any) => {
-              return JSON.stringify(item, Object.getOwnPropertyNames(item));
+              return JSON.stringify(item, Object.getOwnPropertyNames(item), 2);
             })
             .join("\n");
           return `[${label}] [${timestamp}] [${level.toUpperCase()}]${
