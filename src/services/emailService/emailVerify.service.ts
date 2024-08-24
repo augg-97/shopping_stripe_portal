@@ -1,10 +1,10 @@
-import { Provider } from "@nestjs/common";
-import { EMAIL_CLIENT, EMAIL_VERIFY_SERVICE } from "../../helpers/constant";
-import { ConfigurationService } from "../../config/configuration.service";
-import { Transporter } from "nodemailer";
-import { EmailInfo, EmailService } from "./email.service";
-import { join } from "path";
-import { LoggerService } from "../loggerService/logger.service";
+import { Provider } from '@nestjs/common';
+import { EMAIL_CLIENT, EMAIL_VERIFY_SERVICE } from '../../helpers/constant';
+import { ConfigurationService } from '../../config/configuration.service';
+import { Transporter } from 'nodemailer';
+import { EmailInfo, EmailService } from './email.service';
+import { join } from 'path';
+import { LoggerService } from '../loggerService/logger.service';
 
 export const emailVerifyService: Provider = {
   provide: EMAIL_VERIFY_SERVICE,
@@ -16,9 +16,9 @@ export const emailVerifyService: Provider = {
     const emailInfo: EmailInfo = {
       template: join(
         __dirname,
-        "../../../public/emailTemplate/verifyEmail.html",
+        '../../../public/emailTemplate/verifyEmail.html',
       ),
-      subject: "SPS VERIFY YOUR EMAIL",
+      subject: 'SPS VERIFY YOUR EMAIL',
     };
 
     return new EmailService(

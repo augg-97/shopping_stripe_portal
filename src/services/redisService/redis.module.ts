@@ -1,15 +1,16 @@
-import { Module } from "@nestjs/common";
-import { createClient } from "@redis/client";
-import { RedisService } from "./redis.service";
-import { ConfigurationService } from "../../config/configuration.service";
-import { ConfigurationModule } from "../../config/configuration.module";
+import { Global, Module } from '@nestjs/common';
+import { createClient } from '@redis/client';
+import { RedisService } from './redis.service';
+import { ConfigurationService } from '../../config/configuration.service';
+import { ConfigurationModule } from '../../config/configuration.module';
 
+@Global()
 @Module({
   imports: [ConfigurationModule],
   controllers: [],
   providers: [
     {
-      provide: "REDIS_CLIENT",
+      provide: 'REDIS_CLIENT',
       useFactory: async (configurationService: ConfigurationService) => {
         const redisHost = configurationService.redisHost;
         const redisPort = configurationService.redisPort;

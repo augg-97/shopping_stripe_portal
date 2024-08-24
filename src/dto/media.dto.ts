@@ -1,21 +1,14 @@
-import { Media } from "@prisma/client";
+import { Media } from '@prisma/client';
+import { AbstractDto } from './abstract.dto';
+import { Exclude } from 'class-transformer';
 
-export class MediaDto {
-  id: number;
+export class MediaDto extends AbstractDto implements Media {
   fileName: string;
   url: string;
-  createdAt: string;
-  updatedAt: string;
 
-  builder(media: Media) {
-    this.id = media.id;
-    this.fileName = media.fileName;
-    this.url = media.url;
-    this.createdAt = media.createdAt.toISOString();
-    this.updatedAt = media.updatedAt.toISOString();
-  }
+  @Exclude()
+  productId: number | null;
 
-  toResponse(): MediaDto {
-    return { ...this };
-  }
+  @Exclude()
+  uploaderId: number;
 }

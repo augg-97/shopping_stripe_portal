@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ConsoleLogger, Injectable } from "@nestjs/common";
-import { Logger, createLogger, format, transports } from "winston";
-import { ConfigurationService } from "../../config/configuration.service";
+import { ConsoleLogger, Injectable } from '@nestjs/common';
+import { Logger, createLogger, format, transports } from 'winston';
+import { ConfigurationService } from '../../config/configuration.service';
 
 @Injectable()
 export class LoggerService extends ConsoleLogger {
@@ -13,7 +13,7 @@ export class LoggerService extends ConsoleLogger {
     this.logger = createLogger({
       format: combine(
         format.label({
-          label: "SPS_API_LOGGER",
+          label: 'SPS_API_LOGGER',
         }),
         timestamp(),
         metadata(),
@@ -21,28 +21,28 @@ export class LoggerService extends ConsoleLogger {
           const {
             level,
             message,
-            [Symbol.for("splat")]: sSplat,
+            [Symbol.for('splat')]: sSplat,
             metadata: { correlationId, timestamp, label },
           } = data;
 
           const meta = sSplat[0]
-            .map((item: any) => {
-              return JSON.stringify(item, Object.getOwnPropertyNames(item), 2);
-            })
-            .join("\n");
+            .map((item: any) =>
+              JSON.stringify(item, Object.getOwnPropertyNames(item), 2),
+            )
+            .join('\n');
           return `[${label}] [${timestamp}] [${level.toUpperCase()}]${
-            correlationId ? ` [${correlationId}] ` : ""
+            correlationId ? ` [${correlationId}] ` : ''
           }${message} ${meta}`;
         }),
       ),
       transports:
-        this.configurationService.nodeEnv === "development"
+        this.configurationService.nodeEnv === 'development'
           ? [
               new transports.Console({
                 format: colorize({ all: true }),
               }),
               new transports.File({
-                filename: "public/logs/rtc_logs.log",
+                filename: 'public/logs/rtc_logs.log',
               }),
             ]
           : [

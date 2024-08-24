@@ -4,19 +4,19 @@ import {
   Inject,
   Injectable,
   NestInterceptor,
-} from "@nestjs/common";
-import { AuthUser } from "../services/tokenService/authUser";
-import { TokenService } from "../services/tokenService/token.service";
-import { Request } from "express";
-import { Observable, map } from "rxjs";
-import { LoggerService } from "../services/loggerService/logger.service";
-import { PrismaService } from "../services/prismaService/prisma.service";
-import { TokenConflictException } from "../exceptions/conflict/tokenConflict.exception";
-import { UserDto } from "../dto/user.dto";
+} from '@nestjs/common';
+import { AuthUser } from '../services/tokenService/authUser';
+import { TokenService } from '../services/tokenService/token.service';
+import { Request } from 'express';
+import { Observable, mergeMap } from 'rxjs';
+import { LoggerService } from '../services/loggerService/logger.service';
+import { PrismaService } from '../services/prismaService/prisma.service';
+import { TokenConflictException } from '../exceptions/conflict/tokenConflict.exception';
+import { UserDto } from '../dto/user.dto';
 import {
   ACCESS_TOKEN_SERVICE,
   REFRESH_TOKEN_SERVICE,
-} from "../helpers/constant";
+} from '../helpers/constant';
 
 @Injectable()
 export class TokenInterceptor implements NestInterceptor {
@@ -32,19 +32,20 @@ export class TokenInterceptor implements NestInterceptor {
   async intercept(
     context: ExecutionContext,
     next: CallHandler<UserDto>,
-  ): Promise<Observable<Promise<UserDto>>> {
+  ): Promise<Observable<UserDto>> {
     const req = context.switchToHttp().getRequest<Request>();
     const res = context.switchToHttp().getResponse();
-    const clientId = req.headers["client_id"];
+    const clientId = req.headers['client_id'];
 
     return next.handle().pipe(
-      map(async (data) => {
+      mergeMap(async (data) => {
         try {
           const payload: AuthUser = {
             id: data.id.toString(),
-            email: data.email || "",
-            role: data.role,
+            email: data.email || '',
+            type: data.type,
             isVerify: data.isVerify,
+            storeId: (data.store && data.store.id) || undefined,
           };
 
           const accessToken = await this.accessTokenService.tokenGenerator(
@@ -55,13 +56,14 @@ export class TokenInterceptor implements NestInterceptor {
             payload,
             clientId?.toString(),
           );
-          res.setHeader("Authorization", accessToken);
-          res.setHeader("refresh_token", refreshToken);
+
+          res.setHeader('Authorization', accessToken);
+          res.setHeader('refresh_token', refreshToken);
 
           return data;
         } catch (error) {
           this.loggerService.error(
-            "🚀 ~ AuthInterception ~ map ~ error:",
+            '🚀 ~ AuthInterception ~ map ~ error:',
             error,
           );
           await this.prismaService.user.delete({

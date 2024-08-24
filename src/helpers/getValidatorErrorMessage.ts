@@ -1,8 +1,8 @@
-import { ValidationError } from "@nestjs/common";
+import { ValidationError } from '@nestjs/common';
 
 export const getValidatorError = (errors: ValidationError[]): string => {
   if (errors.length === 0) {
-    return "";
+    return '';
   }
 
   const error = errors[0];
@@ -10,5 +10,5 @@ export const getValidatorError = (errors: ValidationError[]): string => {
     return getValidatorError(error.children);
   }
 
-  return error.constraints ? Object.values(error.constraints)[0] : "";
+  return error.constraints ? Object.values(error.constraints)[0] : '';
 };

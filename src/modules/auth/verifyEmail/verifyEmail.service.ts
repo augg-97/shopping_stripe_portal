@@ -1,11 +1,13 @@
-import { Injectable } from "@nestjs/common";
-import { VerifyEmailPayload } from "./verifyEmail.payload";
-import { UserNotExistsException } from "../../../exceptions/badRequest/userNotExists.exception";
-import { REDIS_KEY } from "../../../services/redisService/redisKey";
-import { UserDto } from "../../../dto/user.dto";
-import { ValidateEmailTokenService } from "../resetPassword/validateEmailToken.service";
-import { UserRepository } from "../../users/user.repository";
-import { ConflictException } from "../../../exceptions/conflict/conflict.exception";
+import { Injectable } from '@nestjs/common';
+import { VerifyEmailPayload } from './verifyEmail.payload';
+import { UserNotExistsException } from '../../../exceptions/badRequest/userNotExists.exception';
+import { REDIS_KEY } from '../../../services/redisService/redisKey';
+import { ValidateEmailTokenService } from '../resetPassword/validateEmailToken.service';
+import { UserRepository } from '../../user/user.repository';
+import { ConflictException } from '../../../exceptions/conflict/conflict.exception';
+import { UserDto } from '../../../dto/user.dto';
+import { plainToClass } from 'class-transformer';
+import { EXPOSE_GROUP_PRIVATE } from '../../../helpers/constant';
 
 @Injectable()
 export class VerifyEmailService {
@@ -14,7 +16,7 @@ export class VerifyEmailService {
     private readonly validateEmailTokenService: ValidateEmailTokenService,
   ) {}
 
-  async execute(payload: VerifyEmailPayload) {
+  async execute(payload: VerifyEmailPayload): Promise<UserDto> {
     const { email, token } = payload;
 
     await this.validateEmailTokenService.execute(
@@ -35,14 +37,13 @@ export class VerifyEmailService {
 
     if (!userUpdated) {
       throw new ConflictException(
-        "VERIFY_EMAIL_ERROR",
-        "Unable to verify email at this time",
+        'VERIFY_EMAIL_ERROR',
+        'Unable to verify email at this time',
       );
     }
 
-    const { profileImage, coverImage, ...userInfo } = userUpdated;
-    const userDtoInstance = new UserDto();
-    userDtoInstance.builder(userInfo, profileImage, coverImage, userInfo.id);
-    return userDtoInstance.toResponse();
+    return plainToClass(UserDto, userUpdated, {
+      groups: [EXPOSE_GROUP_PRIVATE],
+    });
   }
 }

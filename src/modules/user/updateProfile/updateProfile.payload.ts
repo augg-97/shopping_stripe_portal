@@ -1,17 +1,17 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { Type } from "class-transformer";
+import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
   Min,
-} from "class-validator";
+} from 'class-validator';
 
 export class UpdateProfilePayload {
   @ApiProperty({
-    description: "fullName",
-    default: "mock user",
+    description: 'fullName',
+    default: 'mock user',
     required: false,
   })
   @IsString()
@@ -21,8 +21,8 @@ export class UpdateProfilePayload {
   fullName?: string;
 
   @ApiProperty({
-    description: "profileImageId",
-    default: "1",
+    description: 'profileImageId',
+    default: '1',
     required: false,
   })
   @Min(1)
@@ -32,8 +32,8 @@ export class UpdateProfilePayload {
   profileImageId?: number;
 
   @ApiProperty({
-    description: "coverImageId",
-    default: "1",
+    description: 'coverImageId',
+    default: '1',
     required: false,
   })
   @Min(1)

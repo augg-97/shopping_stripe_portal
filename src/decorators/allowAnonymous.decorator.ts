@@ -1,3 +1,3 @@
-import { SetMetadata } from "@nestjs/common";
+import { SetMetadata } from '@nestjs/common';
 
-export const Public = (isPublic = true) => SetMetadata("isPublic", isPublic);
+export const Public = (isPublic = true) => SetMetadata('isPublic', isPublic);

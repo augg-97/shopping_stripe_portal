@@ -1,11 +1,11 @@
-import { HttpException, HttpStatus } from "@nestjs/common";
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 export class ForbiddenException extends HttpException {
-  constructor() {
+  constructor(errorCode?: string, message?: string) {
     super(
       {
-        errorCode: "FORBIDDEN_ERROR",
-        message: "You can't access this resource",
+        errorCode: errorCode || 'FORBIDDEN_ERROR',
+        message: message || "You can't access this resource",
       },
       HttpStatus.FORBIDDEN,
     );

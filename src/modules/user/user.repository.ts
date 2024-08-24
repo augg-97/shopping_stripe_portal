@@ -1,7 +1,22 @@
-import { Injectable } from "@nestjs/common";
-import { PrismaService } from "../../services/prismaService/prisma.service";
-import { Prisma } from "@prisma/client";
-import { LoggerService } from "../../services/loggerService/logger.service";
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../../services/prismaService/prisma.service';
+import { Prisma } from '@prisma/client';
+import { LoggerService } from '../../services/loggerService/logger.service';
+
+export const userInclude = Prisma.validator<Prisma.UserInclude>()({
+  profileImage: true,
+  coverImage: true,
+  stores: {
+    include: {
+      profileImage: true,
+      coverImage: true,
+    },
+  },
+});
+
+export type UserIncludeType = Prisma.UserGetPayload<{
+  include: typeof userInclude;
+}>;
 
 @Injectable()
 export class UserRepository {
@@ -23,14 +38,11 @@ export class UserRepository {
             },
           ],
         },
-        include: {
-          profileImage: true,
-          coverImage: true,
-        },
+        include: userInclude,
       });
     } catch (err) {
       this.loggerService.error(
-        "🚀 ~ UserRepository ~ findUserByEmail ~ err:",
+        '🚀 ~ UserRepository ~ findUserByEmail ~ err:',
         err,
       );
       return null;
@@ -50,14 +62,11 @@ export class UserRepository {
             },
           ],
         },
-        include: {
-          profileImage: true,
-          coverImage: true,
-        },
+        include: userInclude,
       });
     } catch (err) {
       this.loggerService.error(
-        "🚀 ~ UserRepository ~ findUserByEmail ~ err:",
+        '🚀 ~ UserRepository ~ findUserByEmail ~ err:',
         err,
       );
 
@@ -69,13 +78,10 @@ export class UserRepository {
     try {
       return await this.prismaService.user.create({
         data,
-        include: {
-          profileImage: true,
-          coverImage: true,
-        },
+        include: userInclude,
       });
     } catch (err) {
-      this.loggerService.error("🚀 ~ UserRepository ~ createUser ~ err:", err);
+      this.loggerService.error('🚀 ~ UserRepository ~ createUser ~ err:', err);
       return null;
     }
   }
@@ -87,13 +93,10 @@ export class UserRepository {
         where: {
           id,
         },
-        include: {
-          profileImage: true,
-          coverImage: true,
-        },
+        include: userInclude,
       });
     } catch (err) {
-      console.log("🚀 ~ UserRepository ~ updateUserById ~ err:", err);
+      console.log('🚀 ~ UserRepository ~ updateUserById ~ err:', err);
       return null;
     }
   }

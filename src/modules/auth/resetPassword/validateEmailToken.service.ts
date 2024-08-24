@@ -1,7 +1,7 @@
-import { Injectable } from "@nestjs/common";
-import { RedisService } from "../../../services/redisService/redis.service";
-import { REDIS_KEY } from "../../../services/redisService/redisKey";
-import { BadRequestException } from "../../../exceptions/badRequest/badRequest.exception";
+import { Injectable } from '@nestjs/common';
+import { RedisService } from '../../../services/redisService/redis.service';
+import { REDIS_KEY } from '../../../services/redisService/redisKey';
+import { BadRequestException } from '../../../exceptions/badRequest/badRequest.exception';
 
 @Injectable()
 export class ValidateEmailTokenService {
@@ -13,15 +13,15 @@ export class ValidateEmailTokenService {
 
     if (!getToken) {
       throw new BadRequestException(
-        "REQUEST_IS_EXPIRED",
-        "Your reset password request is expired",
+        'REQUEST_IS_EXPIRED',
+        'Your reset password request is expired',
       );
     }
 
     if (getToken !== token) {
       throw new BadRequestException(
-        "REQUEST_INVALID",
-        "Your reset password request invalid",
+        'REQUEST_INVALID',
+        'Your reset password request invalid',
       );
     }
 

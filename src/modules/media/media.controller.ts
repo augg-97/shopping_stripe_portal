@@ -6,20 +6,21 @@ import {
   Req,
   UploadedFiles,
   UseInterceptors,
-} from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
-import { MediaService } from "./media.service";
-import { FilesInterceptor } from "@nestjs/platform-express";
-import { Request } from "express";
+} from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { MediaService } from './media.service';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { Request } from 'express';
 
-@ApiTags("media")
-@Controller("media")
+@ApiBearerAuth()
+@ApiTags('media')
+@Controller('media')
 export class MediaController {
   constructor(private readonly mediaService: MediaService) {}
 
-  @Post("images/upload")
+  @Post('images/upload')
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(FilesInterceptor("images"))
+  @UseInterceptors(FilesInterceptor('images'))
   async uploadImages(
     @Req() req: Request,
     @UploadedFiles() images: Express.Multer.File[],

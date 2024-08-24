@@ -1,9 +1,9 @@
-import { NestFactory } from "@nestjs/core";
-import { AppModule } from "./app.module";
-import { ConfigurationService } from "./config/configuration.service";
-import { setupApp } from "./setup";
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { ConfigurationService } from './config/configuration.service';
+import { setupApp } from './setup';
 
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
   await setupApp(app);
 

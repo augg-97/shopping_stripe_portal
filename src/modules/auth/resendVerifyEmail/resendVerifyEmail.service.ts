@@ -1,19 +1,19 @@
-import { Inject, Injectable } from "@nestjs/common";
-import { AuthUser } from "../../../services/tokenService/authUser";
-import { UserNotExistsException } from "../../../exceptions/badRequest/userNotExists.exception";
-import { BadRequestException } from "../../../exceptions/badRequest/badRequest.exception";
+import { Inject, Injectable } from '@nestjs/common';
+import { AuthUser } from '../../../services/tokenService/authUser';
+import { UserNotExistsException } from '../../../exceptions/badRequest/userNotExists.exception';
+import { BadRequestException } from '../../../exceptions/badRequest/badRequest.exception';
 import {
   EmailUIUrlParams,
   EmailUIUrlService,
-} from "../register/emailUIUrl.service";
+} from '../register/emailUIUrl.service';
 import {
   EMAIL_VERIFY_SERVICE,
   VERIFY_EMAIL_TOKEN_EXPIRED,
-} from "../../../helpers/constant";
-import { EmailService } from "../../../services/emailService/email.service";
-import { ConfigurationService } from "../../../config/configuration.service";
-import { REDIS_KEY } from "../../../services/redisService/redisKey";
-import { UserRepository } from "../../users/user.repository";
+} from '../../../helpers/constant';
+import { EmailService } from '../../../services/emailService/email.service';
+import { ConfigurationService } from '../../../config/configuration.service';
+import { REDIS_KEY } from '../../../services/redisService/redisKey';
+import { UserRepository } from '../../user/user.repository';
 
 @Injectable()
 export class ResendVerifyEmailService {
@@ -25,7 +25,7 @@ export class ResendVerifyEmailService {
     private readonly configurationService: ConfigurationService,
   ) {}
 
-  async execute(authUser: AuthUser) {
+  async execute(authUser: AuthUser): Promise<void> {
     const { email } = authUser;
 
     const user = await this.userRepository.findUserByEmail(email);
@@ -36,8 +36,8 @@ export class ResendVerifyEmailService {
 
     if (user.isVerify) {
       throw new BadRequestException(
-        "EMAIL_VERIFIED",
-        "Your email was verified",
+        'EMAIL_VERIFIED',
+        'Your email was verified',
       );
     }
 

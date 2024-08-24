@@ -1,24 +1,24 @@
-import { Inject, Injectable } from "@nestjs/common";
-import { Transporter } from "nodemailer";
-import { ConfigurationService } from "../../config/configuration.service";
-import { readFile } from "fs/promises";
-import { LoggerService } from "../loggerService/logger.service";
-import Mail from "nodemailer/lib/mailer";
-import { compile } from "handlebars";
-import { retry } from "../../helpers/retry";
+import { Inject, Injectable } from '@nestjs/common';
+import { Transporter } from 'nodemailer';
+import { ConfigurationService } from '../../config/configuration.service';
+import { readFile } from 'fs/promises';
+import { LoggerService } from '../loggerService/logger.service';
+import Mail from 'nodemailer/lib/mailer';
+import { compile } from 'handlebars';
+import { retry } from '../../helpers/retry';
 import {
   DELAY_RETRY_EMAIL,
   EMAIL_CLIENT,
   EMAIL_INFO,
   RETRIES_EMAIL_NUMBER,
-} from "../../helpers/constant";
+} from '../../helpers/constant';
 
 export type EmailInfo = {
   template: string;
   subject: string;
 };
-export type ForgotPasswordParam = Record<"resetPasswordUrl", string>;
-export type VerifyEmailParam = Record<"verifyEmailUrl", string>;
+export type ForgotPasswordParam = Record<'resetPasswordUrl', string>;
+export type VerifyEmailParam = Record<'verifyEmailUrl', string>;
 export type EmailParam = ForgotPasswordParam | VerifyEmailParam;
 
 @Injectable()
@@ -44,12 +44,12 @@ export class EmailService {
     try {
       const info = await this.emailClient.sendMail(emailOptions);
       this.loggerService.log(
-        "🚀 ~ EmailService ~ sendResetPasswordEmail ~ info:",
+        '🚀 ~ EmailService ~ sendResetPasswordEmail ~ info:',
         info,
       );
     } catch (error) {
       this.loggerService.error(
-        "🚀 ~ EmailService ~ sendResetPasswordEmail ~ error:",
+        '🚀 ~ EmailService ~ sendResetPasswordEmail ~ error:',
         error,
       );
       await retry(
@@ -62,6 +62,6 @@ export class EmailService {
   }
 
   private async readEmailTemplate(template: string): Promise<string> {
-    return await readFile(template, { encoding: "utf-8" });
+    return await readFile(template, { encoding: 'utf-8' });
   }
 }

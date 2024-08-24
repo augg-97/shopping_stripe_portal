@@ -1,10 +1,11 @@
-import { Module } from "@nestjs/common";
-import { ConfigurationModule } from "../../config/configuration.module";
-import { accessTokenService } from "./accessToken.service";
-import { refreshTokenService } from "./refreshToken.service";
-import { RedisModule } from "../redisService/redis.module";
-import { JwtModule } from "@nestjs/jwt";
+import { Global, Module } from '@nestjs/common';
+import { ConfigurationModule } from '../../config/configuration.module';
+import { accessTokenService } from './accessToken.service';
+import { refreshTokenService } from './refreshToken.service';
+import { RedisModule } from '../redisService/redis.module';
+import { JwtModule } from '@nestjs/jwt';
 
+@Global()
 @Module({
   imports: [ConfigurationModule, RedisModule, JwtModule],
   controllers: [],

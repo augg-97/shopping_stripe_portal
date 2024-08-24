@@ -1,15 +1,15 @@
-import { Inject, Injectable } from "@nestjs/common";
-import { RedisClientType } from "redis";
+import { Inject, Injectable } from '@nestjs/common';
+import { RedisClientType } from 'redis';
 
 @Injectable()
 export class RedisService {
-  constructor(@Inject("REDIS_CLIENT") private redisClient: RedisClientType) {}
+  constructor(@Inject('REDIS_CLIENT') private redisClient: RedisClientType) {}
 
   async get(key: string) {
     return await this.redisClient.get(key);
   }
 
-  async set(key: string, value: string, expireTime: number) {
+  async set(key: string, value: string, expireTime?: number) {
     await this.redisClient.set(key, value, {
       EX: expireTime,
     });

@@ -1,8 +1,7 @@
-import { Injectable } from "@nestjs/common";
-import { UploadService } from "../../services/uploadService/upload.service";
-import { AuthUser } from "../../services/tokenService/authUser";
-import { MediaDto } from "../../dto/media.dto";
-import { MediaBulkInput, MediaRepository } from "./media.repository";
+import { Injectable } from '@nestjs/common';
+import { UploadService } from '../../services/uploadService/upload.service';
+import { AuthUser } from '../../services/tokenService/authUser';
+import { MediaBulkInput, MediaRepository } from './media.repository';
 
 @Injectable()
 export class MediaService {
@@ -21,10 +20,6 @@ export class MediaService {
     const savedImages =
       await this.mediaRepository.createBulkMedia(imageBulkInput);
 
-    const mediaDtoInstance = new MediaDto();
-    return savedImages.map((item) => {
-      mediaDtoInstance.builder(item);
-      return mediaDtoInstance.toResponse();
-    });
+    return savedImages.map((item) => item);
   }
 }

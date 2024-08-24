@@ -1,48 +1,45 @@
-import { Media, USER_ROLE, User } from "@prisma/client";
-import { MediaDto } from "./media.dto";
+import { USER_TYPE, User } from '@prisma/client';
+import { AbstractDto } from './abstract.dto';
+import { Exclude, Expose, plainToClass, Transform } from 'class-transformer';
+import { MediaDto } from './media.dto';
+import { StoreDto } from './store.dto';
+import { EXPOSE_GROUP_PRIVATE } from '../helpers/constant';
 
-export class UserDto {
-  id: number;
+export class UserDto extends AbstractDto implements User {
+  @Expose({ groups: ['private'] })
+  email: string;
+
   fullName: string;
-  email?: string;
-  role: USER_ROLE;
+
   isVerify: boolean;
-  createdAt: string;
-  updatedAt: string;
-  profileImage?: MediaDto;
-  coverImage?: MediaDto;
 
-  builder(
-    user: User,
-    profileImage: Media | null,
-    coverImage: Media | null,
-    authUserId?: number,
-  ) {
-    this.id = user.id;
-    this.fullName = user.fullName;
-    this.role = user.role;
-    this.isVerify = user.isVerify;
-    this.createdAt = user.createdAt.toISOString();
-    this.updatedAt = user.updatedAt.toISOString();
+  @Expose({ groups: [EXPOSE_GROUP_PRIVATE] })
+  type: USER_TYPE;
 
-    if (authUserId && user.id === authUserId) {
-      this.email = user.email;
-    }
+  @Expose()
+  @Transform(({ value }) => plainToClass(MediaDto, value))
+  profileImage: MediaDto | null;
 
-    if (profileImage) {
-      const mediaInstance = new MediaDto();
-      mediaInstance.builder(profileImage);
-      this.profileImage = mediaInstance.toResponse();
-    }
+  @Expose()
+  @Transform(({ value }) => plainToClass(MediaDto, value))
+  coverImage: MediaDto | null;
 
-    if (coverImage) {
-      const mediaInstance = new MediaDto();
-      mediaInstance.builder(coverImage);
-      this.coverImage = mediaInstance.toResponse();
-    }
-  }
+  @Expose()
+  @Transform(({ obj }) => plainToClass(StoreDto, obj.stores[0]))
+  store: StoreDto | null;
 
-  toResponse(): UserDto {
-    return { ...this };
-  }
+  @Exclude()
+  passwordHashed: string | null;
+
+  @Exclude()
+  salt: string | null;
+
+  @Exclude()
+  profileImageId: number | null;
+
+  @Exclude()
+  coverImageId: number | null;
+
+  @Exclude()
+  stores: StoreDto[];
 }

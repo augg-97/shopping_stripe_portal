@@ -12,7 +12,7 @@ model User {
   email          String
   fullName       String
   isVerify       Boolean    @default(false)
-  role           USER_ROLE  @default(USER)
+  type           USER_TYPE  @default(USER)
   profileImageId Int?
   coverImageId   Int?
   salt           String?
@@ -23,6 +23,8 @@ model User {
   coverImage     Media?    @relation("cover", fields: [coverImageId], references: [id])
   profileImage   Media?    @relation("profile", fields: [profileImageId], references: [id])
   mediaUploader  Media[]
+  stores         Store[]
+  products       Product[]
 
   @@unique([email, deletedAt], map: "unique_email_deletedAt_uniq")
   @@index([email], map: "User_email_key")
@@ -47,15 +49,17 @@ model Media {
 model Product {
   id         Int       @id @default(autoincrement())
   name       String
-  descrition String
+  description String
   info       String?
   stock      Int
-  price      Int
+  price      Decimal    @db.Money
   storeId    Int
+  createdUser Int
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @default(now()) @updatedAt
   media      Media[]
   store      Store     @relation(fields: [storeId], references: [id])
+  createdBy  User      @relation(fields: [createdUser], references: [id])
 }
 
 model Store {
@@ -63,15 +67,17 @@ model Store {
   name           String
   profileImageId Int?
   coverImageId   Int?
+  ownerId        Int
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @default(now()) @updatedAt
   deletedAt      DateTime?
-  product        Product[]
+  products       Product[]
   coverImage     Media?    @relation("cover", fields: [coverImageId], references: [id])
   profileImage   Media?    @relation("profile", fields: [profileImageId], references: [id])
+  owner          User      @relation(fields: [ownerId], references: [id])
 }
 
-enum USER_ROLE {
+enum USER_TYPE {
   ADMIN
   USER
 }

@@ -3,13 +3,13 @@ import {
   ExecutionContext,
   Inject,
   Injectable,
-} from "@nestjs/common";
-import { Reflector } from "@nestjs/core";
-import { TokenService } from "../services/tokenService/token.service";
-import { Request } from "express";
-import { TokenNotProvidedException } from "../exceptions/unauthorized/tokenNotProvided.exception";
-import { extractToken } from "../helpers/extractToken";
-import { ACCESS_TOKEN_SERVICE } from "../helpers/constant";
+} from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { TokenService } from '../services/tokenService/token.service';
+import { Request } from 'express';
+import { TokenNotProvidedException } from '../exceptions/unauthorized/tokenNotProvided.exception';
+import { extractToken } from '../helpers/extractToken';
+import { ACCESS_TOKEN_SERVICE } from '../helpers/constant';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -25,7 +25,7 @@ export class AuthGuard implements CanActivate {
     const token = bearerToken && extractToken(bearerToken);
     if (token) {
       const clientId =
-        req.headers["client_id"] && req.headers["client_id"].toString();
+        req.headers['client_id'] && req.headers['client_id'].toString();
       const authUser = await this.accessTokenService.tokenVerify(
         token,
         clientId,
@@ -35,8 +35,8 @@ export class AuthGuard implements CanActivate {
       return true;
     }
 
-    const isPublic = this.reflector.get<boolean>(
-      "isPublic",
+    const isPublic = this.reflector.get<boolean | undefined>(
+      'isPublic',
       context.getHandler(),
     );
     if (!isPublic) {

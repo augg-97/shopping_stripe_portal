@@ -1,12 +1,13 @@
-import { USER_ROLE } from "@prisma/client";
-import { TokenExpiredException } from "../../exceptions/unauthorized/tokenExpired.exception";
-import { REDIS_KEY } from "../redisService/redisKey";
+import { USER_TYPE } from '@prisma/client';
+import { TokenExpiredException } from '../../exceptions/unauthorized/tokenExpired.exception';
+import { REDIS_KEY } from '../redisService/redisKey';
 
 export type AuthUser = {
   id: string;
   email: string;
-  role: USER_ROLE;
+  type: USER_TYPE;
   isVerify: boolean;
+  storeId?: number;
 };
 
 export type TokenInfo = {

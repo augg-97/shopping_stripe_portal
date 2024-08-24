@@ -4,10 +4,10 @@ import {
   ExceptionFilter,
   HttpException,
   HttpStatus,
-} from "@nestjs/common";
-import { isString } from "class-validator";
-import { Request, Response } from "express";
-import { LoggerService } from "../services/loggerService/logger.service";
+} from '@nestjs/common';
+import { isString } from 'class-validator';
+import { Request, Response } from 'express';
+import { LoggerService } from '../services/loggerService/logger.service';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
@@ -17,7 +17,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const context = host.switchToHttp();
     const response = context.getResponse<Response>();
     const request = context.getRequest<Request>();
-    const correlationId = request.headers["correlationId"];
+    const correlationId = request.headers['correlationId'];
 
     this.loggerService.error(
       `Error occur in request ${request.url}`,
@@ -43,8 +43,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
       timestamp: new Date().toISOString(),
       path: request.url,
-      errorCode: "INTERNAL_SERVER_ERROR",
-      message: "Something went wrong!",
+      errorCode: 'INTERNAL_SERVER_ERROR',
+      message: 'Something went wrong!',
     });
   }
 
@@ -57,18 +57,18 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     }
 
     if (
-      "message" in exceptionData === false ||
+      'message' in exceptionData === false ||
       !isString(exceptionData.message)
     ) {
       return {
         errorCode: HttpStatus[status],
-        message: "Something went wrong!",
+        message: 'Something went wrong!',
       };
     }
 
     if (
-      "error" in exceptionData ||
-      "errorCode" in exceptionData === false ||
+      'error' in exceptionData ||
+      'errorCode' in exceptionData === false ||
       !isString(exceptionData.errorCode)
     ) {
       return { errorCode: HttpStatus[status], message: exceptionData.message };

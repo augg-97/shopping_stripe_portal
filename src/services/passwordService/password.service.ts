@@ -1,6 +1,6 @@
-import { Injectable } from "@nestjs/common";
-import { compare, genSalt, hash } from "bcrypt";
-import { ConfigurationService } from "../../config/configuration.service";
+import { Injectable } from '@nestjs/common';
+import { compare, genSalt, hash } from 'bcrypt';
+import { ConfigurationService } from '../../config/configuration.service';
 
 @Injectable()
 export class PasswordService {

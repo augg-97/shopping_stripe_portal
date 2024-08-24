@@ -1,7 +1,7 @@
-import { Provider } from "@nestjs/common";
-import { ConfigurationService } from "../../config/configuration.service";
-import { Transporter, createTransport } from "nodemailer";
-import { EMAIL_CLIENT } from "../../helpers/constant";
+import { Provider } from '@nestjs/common';
+import { ConfigurationService } from '../../config/configuration.service';
+import { Transporter, createTransport } from 'nodemailer';
+import { EMAIL_CLIENT } from '../../helpers/constant';
 
 export const emailClientService: Provider = {
   provide: EMAIL_CLIENT,

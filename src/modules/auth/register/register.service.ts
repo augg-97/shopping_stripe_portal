@@ -1,19 +1,21 @@
-import { Inject, Injectable } from "@nestjs/common";
-import { RegisterPayload } from "./register.payload";
-import { PasswordService } from "../../../services/passwordService/password.service";
-import { ExistsUserException } from "../../../exceptions/badRequest/existsUser.exception";
+import { Inject, Injectable } from '@nestjs/common';
+import { RegisterPayload } from './register.payload';
+import { PasswordService } from '../../../services/passwordService/password.service';
+import { ExistsUserException } from '../../../exceptions/badRequest/existsUser.exception';
 import {
   EMAIL_VERIFY_SERVICE,
+  EXPOSE_GROUP_PRIVATE,
   VERIFY_EMAIL_TOKEN_EXPIRED,
-} from "../../../helpers/constant";
-import { EmailService } from "../../../services/emailService/email.service";
-import { EmailUIUrlParams, EmailUIUrlService } from "./emailUIUrl.service";
-import { ConfigurationService } from "../../../config/configuration.service";
-import { REDIS_KEY } from "../../../services/redisService/redisKey";
-import { UserDto } from "../../../dto/user.dto";
-import { UserRepository } from "../../users/user.repository";
-import { Prisma } from "@prisma/client";
-import { ConflictException } from "../../../exceptions/conflict/conflict.exception";
+} from '../../../helpers/constant';
+import { EmailService } from '../../../services/emailService/email.service';
+import { EmailUIUrlParams, EmailUIUrlService } from './emailUIUrl.service';
+import { ConfigurationService } from '../../../config/configuration.service';
+import { REDIS_KEY } from '../../../services/redisService/redisKey';
+import { UserRepository } from '../../user/user.repository';
+import { Prisma } from '@prisma/client';
+import { ConflictException } from '../../../exceptions/conflict/conflict.exception';
+import { plainToClass } from 'class-transformer';
+import { UserDto } from '../../../dto/user.dto';
 
 @Injectable()
 export class RegisterService {
@@ -26,7 +28,7 @@ export class RegisterService {
     private readonly configurationService: ConfigurationService,
   ) {}
 
-  async execute(payload: RegisterPayload) {
+  async execute(payload: RegisterPayload): Promise<UserDto> {
     const { email, password, fullName } = payload;
 
     const user = await this.userRepository.findUserByEmail(email);
@@ -50,8 +52,8 @@ export class RegisterService {
 
     if (!newUser) {
       throw new ConflictException(
-        "REGISTER_USER_ERROR",
-        "Unable to register users at this time",
+        'REGISTER_USER_ERROR',
+        'Unable to register users at this time',
       );
     }
 
@@ -64,9 +66,6 @@ export class RegisterService {
     const url = await this.emailUIUrlService.execute(params);
     await this.emailVerifyService.sendEmail(email, { verifyEmailUrl: url });
 
-    const { profileImage, coverImage, ...userInfo } = newUser;
-    const userDtoInstance = new UserDto();
-    userDtoInstance.builder(userInfo, profileImage, coverImage, newUser.id);
-    return userDtoInstance.toResponse();
+    return plainToClass(UserDto, newUser, { groups: [EXPOSE_GROUP_PRIVATE] });
   }
 }

@@ -1,13 +1,13 @@
-import { Provider } from "@nestjs/common";
+import { Provider } from '@nestjs/common';
 import {
   EMAIL_CLIENT,
   EMAIL_FORGOT_PASSWORD_SERVICE,
-} from "../../helpers/constant";
-import { ConfigurationService } from "../../config/configuration.service";
-import { Transporter } from "nodemailer";
-import { EmailInfo, EmailService } from "./email.service";
-import { join } from "path";
-import { LoggerService } from "../loggerService/logger.service";
+} from '../../helpers/constant';
+import { ConfigurationService } from '../../config/configuration.service';
+import { Transporter } from 'nodemailer';
+import { EmailInfo, EmailService } from './email.service';
+import { join } from 'path';
+import { LoggerService } from '../loggerService/logger.service';
 
 export const emailForgotPasswordService: Provider = {
   provide: EMAIL_FORGOT_PASSWORD_SERVICE,
@@ -19,9 +19,9 @@ export const emailForgotPasswordService: Provider = {
     const emailInfo: EmailInfo = {
       template: join(
         __dirname,
-        "../../../public/emailTemplate/resetPassword.html",
+        '../../../public/emailTemplate/resetPassword.html',
       ),
-      subject: "SPS RESET PASSWORD",
+      subject: 'SPS RESET PASSWORD',
     };
 
     return new EmailService(

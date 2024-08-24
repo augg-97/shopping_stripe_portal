@@ -1,13 +1,15 @@
-import { Injectable } from "@nestjs/common";
-import { ResetPasswordPayload } from "./resetPassword.payload";
-import { UserNotExistsException } from "../../../exceptions/badRequest/userNotExists.exception";
-import { REDIS_KEY } from "../../../services/redisService/redisKey";
-import { PasswordService } from "../../../services/passwordService/password.service";
-import { ValidateEmailTokenService } from "./validateEmailToken.service";
-import { UserRepository } from "../../users/user.repository";
-import { Prisma } from "@prisma/client";
-import { ConflictException } from "../../../exceptions/conflict/conflict.exception";
-import { UserDto } from "../../../dto/user.dto";
+import { Injectable } from '@nestjs/common';
+import { ResetPasswordPayload } from './resetPassword.payload';
+import { UserNotExistsException } from '../../../exceptions/badRequest/userNotExists.exception';
+import { REDIS_KEY } from '../../../services/redisService/redisKey';
+import { PasswordService } from '../../../services/passwordService/password.service';
+import { ValidateEmailTokenService } from './validateEmailToken.service';
+import { UserRepository } from '../../user/user.repository';
+import { Prisma } from '@prisma/client';
+import { ConflictException } from '../../../exceptions/conflict/conflict.exception';
+import { plainToClass } from 'class-transformer';
+import { UserDto } from '../../../dto/user.dto';
+import { EXPOSE_GROUP_PRIVATE } from '../../../helpers/constant';
 
 @Injectable()
 export class ResetPasswordService {
@@ -17,7 +19,7 @@ export class ResetPasswordService {
     private readonly validateEmailTokenService: ValidateEmailTokenService,
   ) {}
 
-  async execute(payload: ResetPasswordPayload) {
+  async execute(payload: ResetPasswordPayload): Promise<UserDto> {
     const { email, token, password } = payload;
 
     await this.validateEmailTokenService.execute(
@@ -48,14 +50,11 @@ export class ResetPasswordService {
 
     if (!userUpdated) {
       throw new ConflictException(
-        "RESET_PASSWORD_ERROR",
-        "Unable to reset password at this time",
+        'RESET_PASSWORD_ERROR',
+        'Unable to reset password at this time',
       );
     }
 
-    const { profileImage, coverImage, ...userInfo } = userUpdated;
-    const userDtoInstance = new UserDto();
-    userDtoInstance.builder(userInfo, profileImage, coverImage, userUpdated.id);
-    return userDtoInstance.toResponse();
+    return plainToClass(UserDto, user, { groups: [EXPOSE_GROUP_PRIVATE] });
   }
 }

@@ -1,14 +1,14 @@
-import { ApiProperty, PickType } from "@nestjs/swagger";
-import { RegisterPayload } from "../register/register.payload";
-import { Type } from "class-transformer";
-import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { ApiProperty, PickType } from '@nestjs/swagger';
+import { RegisterPayload } from '../register/register.payload';
+import { Type } from 'class-transformer';
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class ResetPasswordPayload extends PickType(RegisterPayload, [
-  "password",
+  'password',
 ]) {
   @ApiProperty({
-    description: "email",
-    default: "user@mock.com",
+    description: 'email',
+    default: 'user@mock.com',
   })
   @IsEmail()
   @IsString()
@@ -17,8 +17,8 @@ export class ResetPasswordPayload extends PickType(RegisterPayload, [
   email: string;
 
   @ApiProperty({
-    description: "token",
-    default: "ZGFkc2Rhcw==",
+    description: 'token',
+    default: 'ZGFkc2Rhcw==',
   })
   @IsString()
   @IsNotEmpty()

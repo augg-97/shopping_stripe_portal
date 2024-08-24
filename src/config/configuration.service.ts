@@ -1,84 +1,84 @@
-import { Injectable } from "@nestjs/common";
-import { IConfig } from "./config";
-import { ConfigService } from "@nestjs/config";
+import { Injectable } from '@nestjs/common';
+import { IConfig } from './config';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class ConfigurationService implements IConfig {
   constructor(private configService: ConfigService<IConfig, true>) {}
 
   get nodeEnv(): string {
-    return this.configService.get("nodeEnv");
+    return this.configService.get('nodeEnv');
   }
 
   get port(): number {
-    return this.configService.get("port");
+    return this.configService.get('port');
   }
 
   get debugQuery(): boolean {
-    return this.configService.get("debugQuery");
+    return this.configService.get('debugQuery');
   }
 
   get saltRounds(): number {
-    return this.configService.get("saltRounds");
+    return this.configService.get('saltRounds');
   }
 
   get redisHost(): string {
-    return this.configService.get("redisHost");
+    return this.configService.get('redisHost');
   }
 
   get redisPort(): number {
-    return this.configService.get("redisPort");
+    return this.configService.get('redisPort');
   }
 
   get redisPassword(): string {
-    return this.configService.get("redisPassword");
+    return this.configService.get('redisPassword');
   }
 
   get accessTokenKey(): string {
-    return this.configService.get("accessTokenKey");
+    return this.configService.get('accessTokenKey');
   }
 
   get accessTokenExpiredIn(): number {
-    return this.configService.get("accessTokenExpiredIn");
+    return this.configService.get('accessTokenExpiredIn');
   }
 
   get refreshTokenKey(): string {
-    return this.configService.get("refreshTokenKey");
+    return this.configService.get('refreshTokenKey');
   }
 
   get refreshTokenExpiredIn(): number {
-    return this.configService.get("refreshTokenExpiredIn");
+    return this.configService.get('refreshTokenExpiredIn');
   }
 
   get imageBaseUrl(): string {
-    return this.configService.get("imageBaseUrl");
+    return this.configService.get('imageBaseUrl');
   }
 
   get emailServiceHost(): string {
-    return this.configService.get("emailServiceHost");
+    return this.configService.get('emailServiceHost');
   }
 
   get emailServiceUserName(): string {
-    return this.configService.get("emailServiceUserName");
+    return this.configService.get('emailServiceUserName');
   }
 
   get emailServicePassword(): string {
-    return this.configService.get("emailServicePassword");
+    return this.configService.get('emailServicePassword');
   }
 
   get emailServicePort(): number {
-    return this.configService.get("emailServicePort");
+    return this.configService.get('emailServicePort');
   }
 
   get emailServiceSender(): string {
-    return this.configService.get("emailServiceSender");
+    return this.configService.get('emailServiceSender');
   }
 
   get resetPasswordUIUrl(): string {
-    return this.configService.get("resetPasswordUIUrl");
+    return this.configService.get('resetPasswordUIUrl');
   }
 
   get verifyEmailUIUrl(): string {
-    return this.configService.get("verifyEmailUIUrl");
+    return this.configService.get('verifyEmailUIUrl');
   }
 }

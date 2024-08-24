@@ -3,12 +3,12 @@ import {
   ExecutionContext,
   Inject,
   Injectable,
-} from "@nestjs/common";
-import { TokenService } from "../services/tokenService/token.service";
-import { Request } from "express";
-import { TokenNotProvidedException } from "../exceptions/unauthorized/tokenNotProvided.exception";
-import { extractToken } from "../helpers/extractToken";
-import { REFRESH_TOKEN_SERVICE } from "../helpers/constant";
+} from '@nestjs/common';
+import { TokenService } from '../services/tokenService/token.service';
+import { Request } from 'express';
+import { TokenNotProvidedException } from '../exceptions/unauthorized/tokenNotProvided.exception';
+import { extractToken } from '../helpers/extractToken';
+import { REFRESH_TOKEN_SERVICE } from '../helpers/constant';
 
 @Injectable()
 export class RefreshTokenGuard implements CanActivate {
@@ -28,7 +28,7 @@ export class RefreshTokenGuard implements CanActivate {
     }
 
     const clientId =
-      req.headers["client_id"] && req.headers["client_id"].toString();
+      req.headers['client_id'] && req.headers['client_id'].toString();
     const authUser = await this.refreshTokenService.tokenVerify(
       token,
       clientId,

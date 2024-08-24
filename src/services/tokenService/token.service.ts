@@ -1,9 +1,9 @@
-import { Inject, Injectable } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
-import { RedisService } from "../redisService/redis.service";
-import { AuthUser, TokenInfo } from "./authUser";
-import { JwtPayload } from "jsonwebtoken";
-import { TOKEN_INFO } from "../../helpers/constant";
+import { Inject, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { RedisService } from '../redisService/redis.service';
+import { AuthUser, TokenInfo } from './authUser';
+import { JwtPayload } from 'jsonwebtoken';
+import { TOKEN_INFO } from '../../helpers/constant';
 
 @Injectable()
 export class TokenService {

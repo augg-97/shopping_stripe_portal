@@ -1,15 +1,15 @@
-import { Injectable } from "@nestjs/common";
-import { join } from "path";
-import { ConfigurationService } from "../../config/configuration.service";
-import { mkdir, stat } from "fs";
-import { LoggerService } from "../loggerService/logger.service";
-import { uuidGenerator } from "../../pkgs/uuidGenerator";
-import { writeFile } from "fs/promises";
-import { extension } from "mime-types";
+import { Injectable } from '@nestjs/common';
+import { join } from 'path';
+import { ConfigurationService } from '../../config/configuration.service';
+import { mkdir, stat } from 'fs';
+import { LoggerService } from '../loggerService/logger.service';
+import { uuidGenerator } from '../../pkgs/uuidGenerator';
+import { writeFile } from 'fs/promises';
+import { extension } from 'mime-types';
 
 @Injectable()
 export class UploadService {
-  private imageDir = join(__dirname, "../../../public/assets/images");
+  private imageDir = join(__dirname, '../../../public/assets/images');
 
   constructor(
     private readonly configurationService: ConfigurationService,
@@ -20,7 +20,7 @@ export class UploadService {
       mkdir(this.imageDir, { recursive: true }, (err) => {
         if (err) {
           this.loggerService.error(
-            "Error occur when create serve static folder",
+            'Error occur when create serve static folder',
             err,
           );
         }
@@ -45,7 +45,7 @@ export class UploadService {
         images.map(async (item) => await this.storeImage(item)),
       );
     } catch (err) {
-      this.loggerService.error("🚀 ~ UploadService ~ storeImages ~ err:", err);
+      this.loggerService.error('🚀 ~ UploadService ~ storeImages ~ err:', err);
 
       return [];
     }

@@ -6,6 +6,7 @@
   },
   "plugins": ["@typescript-eslint/eslint-plugin"],
   "extends": [
+    "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended"
   ],
@@ -16,10 +17,16 @@
   },
   "ignorePatterns": ["**/*.js", "node_modules/**", "dist/**"],
   "rules": {
-    "prettier/prettier": "warn",
+    "prettier/prettier": [
+      "warn",
+      { "singleQuote": true },
+      { "usePrettierrc": false }
+    ],
     "@typescript-eslint/interface-name-prefix": "off",
-    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/explicit-function-return-type": "warn",
     "@typescript-eslint/explicit-module-boundary-types": "off",
-    "@typescript-eslint/no-unused-vars": "warn"
+    "@typescript-eslint/no-unused-vars": "warn",
+    "arrow-body-style": ["error", "as-needed"],
+    "no-console": ["warn"]
   }
 }

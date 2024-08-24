@@ -1,13 +1,13 @@
-import { BEARER_TOKEN_PREFIX } from "./constant";
+import { BEARER_TOKEN_PREFIX } from './constant';
 
-export const extractToken = (bearerToken: string) => {
+export const extractToken = (bearerToken: string): string => {
   const isBearerToken = bearerToken.startsWith(BEARER_TOKEN_PREFIX);
 
   if (!isBearerToken) {
-    return "";
+    return '';
   }
 
-  const token = bearerToken.replace(BEARER_TOKEN_PREFIX, "");
+  const token = bearerToken.replace(BEARER_TOKEN_PREFIX, '');
 
   return token;
 };
