@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { StoreRepository } from '../store.repository';
 import { AuthUser } from '../../../services/tokenService/authUser';
 import { CreateStorePayload } from './createStore.payload';
 import { Prisma } from '@prisma/client';
 import { ConflictException } from '../../../exceptions/conflict/conflict.exception';
+import { StoreRepository } from '../../../repositories/store.repository';
 
 @Injectable()
 export class CreateStoreService {

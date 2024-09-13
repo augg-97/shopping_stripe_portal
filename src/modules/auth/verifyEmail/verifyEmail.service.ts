@@ -3,11 +3,11 @@ import { VerifyEmailPayload } from './verifyEmail.payload';
 import { UserNotExistsException } from '../../../exceptions/badRequest/userNotExists.exception';
 import { REDIS_KEY } from '../../../services/redisService/redisKey';
 import { ValidateEmailTokenService } from '../resetPassword/validateEmailToken.service';
-import { UserRepository } from '../../user/user.repository';
 import { ConflictException } from '../../../exceptions/conflict/conflict.exception';
-import { UserDto } from '../../../dto/user.dto';
+import { UserDto } from '../../../dtos/user.dto';
 import { plainToClass } from 'class-transformer';
 import { EXPOSE_GROUP_PRIVATE } from '../../../helpers/constant';
+import { UserRepository } from '../../../repositories/user.repository';
 
 @Injectable()
 export class VerifyEmailService {

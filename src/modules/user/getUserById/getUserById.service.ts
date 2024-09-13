@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { UserNotFoundException } from '../../../exceptions/notFound/userNotFound.exception';
-import { UserRepository } from '../user.repository';
-import { UserDto } from '../../../dto/user.dto';
+import { UserDto } from '../../../dtos/user.dto';
 import { plainToClass } from 'class-transformer';
+import { UserRepository } from '../../../repositories/user.repository';
 
 @Injectable()
 export class GetUserByIdService {

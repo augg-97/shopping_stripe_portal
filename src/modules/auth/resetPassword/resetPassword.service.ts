@@ -4,12 +4,12 @@ import { UserNotExistsException } from '../../../exceptions/badRequest/userNotEx
 import { REDIS_KEY } from '../../../services/redisService/redisKey';
 import { PasswordService } from '../../../services/passwordService/password.service';
 import { ValidateEmailTokenService } from './validateEmailToken.service';
-import { UserRepository } from '../../user/user.repository';
 import { Prisma } from '@prisma/client';
 import { ConflictException } from '../../../exceptions/conflict/conflict.exception';
 import { plainToClass } from 'class-transformer';
-import { UserDto } from '../../../dto/user.dto';
+import { UserDto } from '../../../dtos/user.dto';
 import { EXPOSE_GROUP_PRIVATE } from '../../../helpers/constant';
+import { UserRepository } from '../../../repositories/user.repository';
 
 @Injectable()
 export class ResetPasswordService {

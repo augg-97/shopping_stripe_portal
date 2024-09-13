@@ -12,7 +12,7 @@ import { Observable, mergeMap } from 'rxjs';
 import { LoggerService } from '../services/loggerService/logger.service';
 import { PrismaService } from '../services/prismaService/prisma.service';
 import { TokenConflictException } from '../exceptions/conflict/tokenConflict.exception';
-import { UserDto } from '../dto/user.dto';
+import { UserDto } from '../dtos/user.dto';
 import {
   ACCESS_TOKEN_SERVICE,
   REFRESH_TOKEN_SERVICE,

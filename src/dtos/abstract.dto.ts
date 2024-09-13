@@ -13,7 +13,14 @@ export class AbstractDto {
   deletedAt: Date | null;
 }
 
-export class AbstractListDto {
+export interface IAbstractDto {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export class IAbstractListDto<T> {
   total: number;
   currentPage: number;
+  data: T[];
 }

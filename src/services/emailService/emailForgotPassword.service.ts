@@ -3,7 +3,7 @@ import {
   EMAIL_CLIENT,
   EMAIL_FORGOT_PASSWORD_SERVICE,
 } from '../../helpers/constant';
-import { ConfigurationService } from '../../config/configuration.service';
+import { AppConfigService } from '../../appConfigs/appConfig.service';
 import { Transporter } from 'nodemailer';
 import { EmailInfo, EmailService } from './email.service';
 import { join } from 'path';
@@ -12,7 +12,7 @@ import { LoggerService } from '../loggerService/logger.service';
 export const emailForgotPasswordService: Provider = {
   provide: EMAIL_FORGOT_PASSWORD_SERVICE,
   useFactory: (
-    configurationService: ConfigurationService,
+    appConfigService: AppConfigService,
     loggerService: LoggerService,
     emailClient: Transporter,
   ) => {
@@ -25,11 +25,11 @@ export const emailForgotPasswordService: Provider = {
     };
 
     return new EmailService(
-      configurationService,
+      appConfigService,
       loggerService,
       emailClient,
       emailInfo,
     );
   },
-  inject: [ConfigurationService, LoggerService, EMAIL_CLIENT],
+  inject: [AppConfigService, LoggerService, EMAIL_CLIENT],
 };

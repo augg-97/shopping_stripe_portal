@@ -1,6 +1,6 @@
-import { Store } from '@prisma/client';
-import { AbstractDto } from './abstract.dto';
-import { MediaDto } from './media.dto';
+import { Media, Store, User } from '@prisma/client';
+import { AbstractDto, IAbstractDto } from './abstract.dto';
+import { IMediaDto, MediaDto } from './media.dto';
 import { Exclude, Expose, plainToClass, Transform } from 'class-transformer';
 
 export class StoreDto extends AbstractDto implements Store {

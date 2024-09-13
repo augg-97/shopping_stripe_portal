@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { RedisService } from '../services/redisService/redis.service';
+import { UserDto } from '../dtos/user.dto';
+import { REDIS_KEY } from '../services/redisService/redisKey';
 import {
   UserIncludeType,
   UserRepository,
-} from '../modules/user/user.repository';
-import { UserDto } from '../dto/user.dto';
-import { REDIS_KEY } from '../services/redisService/redisKey';
+} from '../repositories/user.repository';
 
 @Injectable()
 export class GetDataCacheService {

@@ -1,12 +1,13 @@
-import { USER_TYPE, User } from '@prisma/client';
+import { Media, Store, USER_TYPE, User } from '@prisma/client';
 import { AbstractDto } from './abstract.dto';
 import { Exclude, Expose, plainToClass, Transform } from 'class-transformer';
 import { MediaDto } from './media.dto';
 import { StoreDto } from './store.dto';
 import { EXPOSE_GROUP_PRIVATE } from '../helpers/constant';
+import { UserIncludeType } from '../repositories/user.repository';
 
 export class UserDto extends AbstractDto implements User {
-  @Expose({ groups: ['private'] })
+  @Expose({ groups: [EXPOSE_GROUP_PRIVATE] })
   email: string;
 
   fullName: string;
@@ -25,7 +26,11 @@ export class UserDto extends AbstractDto implements User {
   coverImage: MediaDto | null;
 
   @Expose()
-  @Transform(({ obj }) => plainToClass(StoreDto, obj.stores[0]))
+  @Transform(({ obj }) => {
+    if (obj.stores && obj.stores.length > 0) {
+      return plainToClass(StoreDto, obj.stores[0]);
+    }
+  })
   store: StoreDto | null;
 
   @Exclude()
@@ -42,4 +47,32 @@ export class UserDto extends AbstractDto implements User {
 
   @Exclude()
   stores: StoreDto[];
+}
+
+export class IAbstractDto {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export class IMediaDto extends IAbstractDto {
+  fileName: string;
+  url: string;
+}
+
+export interface IStoreDto {
+  name: string;
+  profileImage?: IMediaDto | null;
+  coverImage?: IMediaDto | null;
+  owner?: IUserDto;
+}
+
+export interface IUserDto {
+  email?: string;
+  fullName: string;
+  type?: USER_TYPE;
+  isVerified: boolean;
+  profileImage?: IMediaDto | null;
+  coverImage?: IMediaDto | null;
+  store?: IStoreDto | null;
 }

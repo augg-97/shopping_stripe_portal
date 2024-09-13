@@ -5,7 +5,7 @@ import {
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
-import { UserDto } from '../dto/user.dto';
+import { UserDto } from '../dtos/user.dto';
 import { Observable, mergeMap } from 'rxjs';
 import { AuthUser } from '../services/tokenService/authUser';
 import { TokenService } from '../services/tokenService/token.service';

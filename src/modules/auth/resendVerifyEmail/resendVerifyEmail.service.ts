@@ -11,9 +11,9 @@ import {
   VERIFY_EMAIL_TOKEN_EXPIRED,
 } from '../../../helpers/constant';
 import { EmailService } from '../../../services/emailService/email.service';
-import { ConfigurationService } from '../../../config/configuration.service';
+import { AppConfigService } from '../../../appConfigs/appConfig.service';
 import { REDIS_KEY } from '../../../services/redisService/redisKey';
-import { UserRepository } from '../../user/user.repository';
+import { UserRepository } from '../../../repositories/user.repository';
 
 @Injectable()
 export class ResendVerifyEmailService {
@@ -22,7 +22,7 @@ export class ResendVerifyEmailService {
     private readonly emailUIUrlService: EmailUIUrlService,
     @Inject(EMAIL_VERIFY_SERVICE)
     private readonly emailVerifyService: EmailService,
-    private readonly configurationService: ConfigurationService,
+    private readonly appConfigService: AppConfigService,
   ) {}
 
   async execute(authUser: AuthUser): Promise<void> {
@@ -42,7 +42,7 @@ export class ResendVerifyEmailService {
     }
 
     const params: EmailUIUrlParams = {
-      emailUIUrl: this.configurationService.verifyEmailUIUrl,
+      emailUIUrl: this.appConfigService.verifyEmailUIUrl,
       key: REDIS_KEY.VERIFY_EMAIL,
       email,
       tokenExpired: VERIFY_EMAIL_TOKEN_EXPIRED,

@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { UploadService } from '../../services/uploadService/upload.service';
 import { AuthUser } from '../../services/tokenService/authUser';
-import { MediaBulkInput, MediaRepository } from './media.repository';
+import {
+  MediaBulkInput,
+  MediaRepository,
+} from '../../repositories/media.repository';
 
 @Injectable()
 export class MediaService {

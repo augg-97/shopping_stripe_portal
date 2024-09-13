@@ -1,5 +1,5 @@
 import { Media } from '@prisma/client';
-import { AbstractDto } from './abstract.dto';
+import { AbstractDto, IAbstractDto } from './abstract.dto';
 import { Exclude } from 'class-transformer';
 
 export class MediaDto extends AbstractDto implements Media {
@@ -11,4 +11,9 @@ export class MediaDto extends AbstractDto implements Media {
 
   @Exclude()
   uploaderId: number;
+}
+
+export interface IMediaDto extends IAbstractDto {
+  fileName: string;
+  url: string;
 }

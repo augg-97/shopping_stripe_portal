@@ -6,11 +6,11 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "lint": "eslint . --fix",
     "dev": "nest start --watch",
     "dev:debug": "nest start --debug --watch",
-    "build": "nest build",
+    "build": "npm run lint && nest build",
     "start": "node dist/main",
-    "lint": "eslint . --fix",
     "test:integration": "jest --config ./jest.integration.config.json --no-cache"
   },
   "dependencies": {

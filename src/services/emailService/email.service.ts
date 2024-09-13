@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Transporter } from 'nodemailer';
-import { ConfigurationService } from '../../config/configuration.service';
+import { AppConfigService } from '../../appConfigs/appConfig.service';
 import { readFile } from 'fs/promises';
 import { LoggerService } from '../loggerService/logger.service';
 import Mail from 'nodemailer/lib/mailer';
@@ -24,7 +24,7 @@ export type EmailParam = ForgotPasswordParam | VerifyEmailParam;
 @Injectable()
 export class EmailService {
   constructor(
-    private readonly configurationService: ConfigurationService,
+    private readonly appConfigService: AppConfigService,
     private readonly loggerService: LoggerService,
     @Inject(EMAIL_CLIENT) private readonly emailClient: Transporter,
     @Inject(EMAIL_INFO) private readonly emailInfo: EmailInfo,
@@ -36,7 +36,7 @@ export class EmailService {
     const html = compile(template);
 
     const emailOptions: Mail.Options = {
-      from: this.configurationService.emailServiceSender,
+      from: this.appConfigService.emailServiceSender,
       to: email,
       subject: this.emailInfo.subject,
       html: html(param),

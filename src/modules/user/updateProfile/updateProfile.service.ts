@@ -3,10 +3,10 @@ import { UpdateProfilePayload } from './updateProfile.payload';
 import { AuthUser } from '../../../services/tokenService/authUser';
 import { UserNotFoundException } from '../../../exceptions/notFound/userNotFound.exception';
 import { Prisma } from '@prisma/client';
-import { UserRepository } from '../user.repository';
 import { plainToClass } from 'class-transformer';
-import { UserDto } from '../../../dto/user.dto';
+import { UserDto } from '../../../dtos/user.dto';
 import { EXPOSE_GROUP_PRIVATE } from '../../../helpers/constant';
+import { UserRepository } from '../../../repositories/user.repository';
 
 @Injectable()
 export class UpdateProfileService {

@@ -15,7 +15,7 @@ import { CreateStorePayload } from './createStore/createStore.payload';
 import { CreateStoreGuard } from '../../guards/createStore.guard';
 import { CacheKey } from '../../decorators/cacheKey.decorator';
 import { CachingInterceptor } from '../../interceptors/caching.interceptor';
-import { StoreDto } from '../../dto/store.dto';
+import { StoreDto } from '../../dtos/store.dto';
 
 @ApiBearerAuth()
 @ApiTags('stores')

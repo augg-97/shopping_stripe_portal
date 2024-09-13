@@ -9,13 +9,13 @@ import {
 } from '../../../helpers/constant';
 import { EmailService } from '../../../services/emailService/email.service';
 import { EmailUIUrlParams, EmailUIUrlService } from './emailUIUrl.service';
-import { ConfigurationService } from '../../../config/configuration.service';
+import { AppConfigService } from '../../../appConfigs/appConfig.service';
 import { REDIS_KEY } from '../../../services/redisService/redisKey';
-import { UserRepository } from '../../user/user.repository';
 import { Prisma } from '@prisma/client';
 import { ConflictException } from '../../../exceptions/conflict/conflict.exception';
 import { plainToClass } from 'class-transformer';
-import { UserDto } from '../../../dto/user.dto';
+import { UserDto } from '../../../dtos/user.dto';
+import { UserRepository } from '../../../repositories/user.repository';
 
 @Injectable()
 export class RegisterService {
@@ -25,7 +25,7 @@ export class RegisterService {
     @Inject(EMAIL_VERIFY_SERVICE)
     private readonly emailVerifyService: EmailService,
     private readonly emailUIUrlService: EmailUIUrlService,
-    private readonly configurationService: ConfigurationService,
+    private readonly appConfigService: AppConfigService,
   ) {}
 
   async execute(payload: RegisterPayload): Promise<UserDto> {
@@ -58,7 +58,7 @@ export class RegisterService {
     }
 
     const params: EmailUIUrlParams = {
-      emailUIUrl: this.configurationService.verifyEmailUIUrl,
+      emailUIUrl: this.appConfigService.verifyEmailUIUrl,
       key: REDIS_KEY.VERIFY_EMAIL,
       email,
       tokenExpired: VERIFY_EMAIL_TOKEN_EXPIRED,

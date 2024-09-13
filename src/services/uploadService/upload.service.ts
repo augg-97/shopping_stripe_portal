@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { join } from 'path';
-import { ConfigurationService } from '../../config/configuration.service';
+import { AppConfigService } from '../../appConfigs/appConfig.service';
 import { mkdir, stat } from 'fs';
 import { LoggerService } from '../loggerService/logger.service';
 import { uuidGenerator } from '../../pkgs/uuidGenerator';
@@ -12,7 +12,7 @@ export class UploadService {
   private imageDir = join(__dirname, '../../../public/assets/images');
 
   constructor(
-    private readonly configurationService: ConfigurationService,
+    private readonly appConfigService: AppConfigService,
     private readonly loggerService: LoggerService,
   ) {
     const isExistsDir = this.isExistsDir(this.imageDir);
@@ -71,6 +71,6 @@ export class UploadService {
   }
 
   imageUrlGenerator(fileName: string) {
-    return `${this.configurationService.imageBaseUrl}${fileName}`;
+    return `${this.appConfigService.imageBaseUrl}${fileName}`;
   }
 }

@@ -1,15 +1,15 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Prisma, PrismaClient } from '@prisma/client';
-import { ConfigurationService } from '../../config/configuration.service';
+import { AppConfigService } from '../../appConfigs/appConfig.service';
 
 @Injectable()
 export class PrismaService
   extends PrismaClient<Prisma.PrismaClientOptions, 'query' | 'error'>
   implements OnModuleInit
 {
-  constructor(private readonly configurationService: ConfigurationService) {
+  constructor(private readonly appConfigService: AppConfigService) {
     super({
-      log: configurationService.debugQuery
+      log: appConfigService.debugQuery
         ? [
             {
               emit: 'stdout',
@@ -33,7 +33,7 @@ export class PrismaService
   }
 
   async onModuleInit(): Promise<void> {
-    if (this.configurationService.debugQuery) {
+    if (this.appConfigService.debugQuery) {
       this.$on('query', (e: Prisma.QueryEvent) => {
         console.log('Query: ' + e.query);
         console.log('Params: ' + e.params);

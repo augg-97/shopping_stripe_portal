@@ -2,9 +2,13 @@ import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ApiTags } from '@nestjs/swagger';
 import { Public } from './decorators/allowAnonymous.decorator';
-import { UserIncludeType } from './modules/user/user.repository';
-import { UserDto } from './dto/user.dto';
 import { plainToClass } from 'class-transformer';
+import { ProductDto } from './dtos/product.dto';
+import { ConflictException } from './exceptions/conflict/conflict.exception';
+import { Decimal } from '@prisma/client/runtime/library';
+import { ProductInclude } from './repositories/product.repository';
+import { UserIncludeType } from './repositories/user.repository';
+import { IMediaDto } from './dtos/user.dto';
 
 @ApiTags('root')
 @Controller()
@@ -13,53 +17,13 @@ export class AppController {
 
   @Public()
   @Get('ping')
-  ping() {
+  ping(): { message: string } {
     return this.appService.ping();
   }
 
   @Public()
-  @Get('test/users')
-  getUser(): UserDto {
-    const user: UserIncludeType = {
-      id: 1,
-      fullName: 'test 1',
-      email: 'lhhoang98197@gmail.com',
-      type: 'USER',
-      isVerify: true,
-      salt: 'salt',
-      passwordHashed: 'hash',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      deletedAt: null,
-      profileImageId: 1,
-      coverImageId: 2,
-      profileImage: {
-        id: 1,
-        fileName: 'file_1',
-        url: 'file_1.png',
-        uploaderId: 1,
-        productId: null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      coverImage: {
-        id: 2,
-        fileName: 'file_2',
-        url: 'file_2.png',
-        uploaderId: 1,
-        productId: null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      stores: [],
-    };
-
-    return plainToClass(UserDto, user);
-  }
-
-  @Public()
-  @Get('test/users2')
-  getUser2(): UserDto {
+  @Get('mock')
+  mock() {
     const user: UserIncludeType = {
       id: 2,
       fullName: 'test 2',
@@ -82,15 +46,16 @@ export class AppController {
         createdAt: new Date(),
         updatedAt: new Date(),
       },
-      coverImage: {
-        id: 4,
-        fileName: 'file_4',
-        url: 'file_4.png',
-        uploaderId: 2,
-        productId: null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
+      coverImage: null,
+      // coverImage: {
+      //   id: 4,
+      //   fileName: 'file_4',
+      //   url: 'file_4.png',
+      //   uploaderId: 2,
+      //   productId: null,
+      //   createdAt: new Date(),
+      //   updatedAt: new Date(),
+      // },
       stores: [
         {
           id: 1,
@@ -115,6 +80,105 @@ export class AppController {
       ],
     };
 
-    return plainToClass(UserDto, user, { groups: ['private'] });
+    const product: ProductInclude = {
+      id: 123,
+      name: 'product_1',
+      description: 'This is product_1',
+      info: null,
+      stock: 99,
+      price: new Decimal(0.99),
+      storeId: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      createdUser: 1,
+      media: [],
+      // media: [
+      //   {
+      //     id: 1,
+      //     fileName: 'file_1',
+      //     url: 'file_1.png',
+      //     uploaderId: 2,
+      //     productId: null,
+      //     createdAt: new Date(),
+      //     updatedAt: new Date(),
+      //   },
+      //   {
+      //     id: 2,
+      //     fileName: 'file_2',
+      //     url: 'file_2.png',
+      //     uploaderId: 2,
+      //     productId: null,
+      //     createdAt: new Date(),
+      //     updatedAt: new Date(),
+      //   },
+      //   {
+      //     id: 3,
+      //     fileName: 'file_3',
+      //     url: 'file_3.png',
+      //     uploaderId: 2,
+      //     productId: null,
+      //     createdAt: new Date(),
+      //     updatedAt: new Date(),
+      //   },
+      // ],
+      createdBy: {
+        id: 1,
+        fullName: 'test 1',
+        email: 'lhhoang98197@gmail.com',
+        type: 'USER',
+        isVerify: true,
+        salt: 'salt',
+        passwordHashed: 'hash',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+        profileImageId: 1,
+        coverImageId: 2,
+        profileImage: {
+          id: 1,
+          fileName: 'file_1',
+          url: 'file_1.png',
+          uploaderId: 1,
+          productId: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        coverImage: {
+          id: 2,
+          fileName: 'file_2',
+          url: 'file_2.png',
+          uploaderId: 1,
+          productId: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      },
+      store: {
+        id: 1,
+        name: 'test store',
+        ownerId: 2,
+        deletedAt: null,
+        profileImageId: 5,
+        coverImageId: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        profileImage: {
+          id: 5,
+          fileName: 'file_5',
+          url: 'file_5.png',
+          uploaderId: 2,
+          productId: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        coverImage: null,
+      },
+    };
+
+    const { profileImage } = user;
+    if (!profileImage) {
+      return [];
+    }
+    return [];
   }
 }
