@@ -38,6 +38,7 @@ export class ProductRepository {
       });
     } catch (error) {
       this.loggerService.error('🚀 ~ ProductRepository ~ create ~ err:', error);
+
       return null;
     }
   }

@@ -29,6 +29,7 @@ export class TokenService {
     }
 
     await this.redisService.set(redisKey, token, this.tokenInfo.expiration);
+
     return token;
   }
 

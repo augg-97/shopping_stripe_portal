@@ -2,18 +2,20 @@ import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ApiTags } from '@nestjs/swagger';
 import { Public } from './decorators/allowAnonymous.decorator';
-import { plainToClass } from 'class-transformer';
-import { ProductDto } from './dtos/product.dto';
-import { ConflictException } from './exceptions/conflict/conflict.exception';
 import { Decimal } from '@prisma/client/runtime/library';
 import { ProductInclude } from './repositories/product.repository';
 import { UserIncludeType } from './repositories/user.repository';
-import { IMediaDto } from './dtos/user.dto';
+import { IUserDto, UserDto } from './dtos/user.dto';
+import { LoggerService } from './services/loggerService/logger.service';
+import { MediaDto, MediaDtoBuilder } from './dtos/media.dto';
 
 @ApiTags('root')
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService,
+    private readonly logger: LoggerService,
+  ) {}
 
   @Public()
   @Get('ping')
@@ -175,10 +177,8 @@ export class AppController {
       },
     };
 
-    const { profileImage } = user;
-    if (!profileImage) {
-      return [];
-    }
-    return [];
+    const { profileImage, coverImage, stores, ...entity } = user;
+
+    return {};
   }
 }

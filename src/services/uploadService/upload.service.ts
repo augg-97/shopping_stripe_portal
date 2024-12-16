@@ -58,6 +58,7 @@ export class UploadService {
     const fileName = this.fileNameGenerator(image);
     const filePath = `${this.imageDir}/${fileName}`;
     await writeFile(filePath, image.buffer);
+
     return {
       fileName,
       url: this.imageUrlGenerator(fileName),
@@ -67,6 +68,7 @@ export class UploadService {
   fileNameGenerator(image: Express.Multer.File) {
     const uniqName = uuidGenerator();
     const fileExtension = extension(image.mimetype);
+
     return `${uniqName}.${fileExtension}`;
   }
 

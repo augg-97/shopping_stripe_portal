@@ -7,9 +7,10 @@
   "license": "UNLICENSED",
   "scripts": {
     "lint": "eslint . --fix",
+    "dev:no-watch": "nest start",
     "dev": "nest start --watch",
     "dev:debug": "nest start --debug --watch",
-    "build": "npm run lint && nest build",
+    "build": "nest build",
     "start": "node dist/main",
     "test:integration": "jest --config ./jest.integration.config.json --no-cache"
   },

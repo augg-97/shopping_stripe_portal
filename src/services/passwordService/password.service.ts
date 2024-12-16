@@ -27,6 +27,7 @@ export class PasswordService {
     passwordHashed: string,
   ): Promise<boolean> {
     const plainPassword = `${password}${email.toLowerCase()}`;
+
     return await compare(plainPassword, passwordHashed);
   }
 }

@@ -4,7 +4,7 @@ import { UserNotExistsException } from '../../../exceptions/badRequest/userNotEx
 import { PasswordService } from '../../../services/passwordService/password.service';
 import { BadRequestException } from '../../../exceptions/badRequest/badRequest.exception';
 import { CredentialDeniedException } from '../../../exceptions/unauthorized/credentialDenied.exception';
-import { UserDto } from '../../../dtos/user.dto';
+import { IUserDto } from '../../../dtos/user.dto';
 import { plainToClass } from 'class-transformer';
 import { EXPOSE_GROUP_PRIVATE } from '../../../helpers/constant';
 import { UserRepository } from '../../../repositories/user.repository';
@@ -16,7 +16,7 @@ export class LoginService {
     private readonly passwordService: PasswordService,
   ) {}
 
-  async execute(payload: LoginPayload): Promise<UserDto> {
+  async execute(payload: LoginPayload): Promise<IUserDto> {
     const { email, password } = payload;
     const user = await this.userRepository.findUserByEmail(email);
 
@@ -41,6 +41,7 @@ export class LoginService {
       throw new CredentialDeniedException();
     }
 
-    return plainToClass(UserDto, user, { groups: [EXPOSE_GROUP_PRIVATE] });
+    return <IUserDto>{};
+    // return plainToClass(UserDto, user, { groups: [EXPOSE_GROUP_PRIVATE] });
   }
 }

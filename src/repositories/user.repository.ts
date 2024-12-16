@@ -45,6 +45,7 @@ export class UserRepository {
         '🚀 ~ UserRepository ~ findUserByEmail ~ err:',
         err,
       );
+
       return null;
     }
   }
@@ -82,6 +83,7 @@ export class UserRepository {
       });
     } catch (err) {
       this.loggerService.error('🚀 ~ UserRepository ~ createUser ~ err:', err);
+
       return null;
     }
   }
@@ -97,6 +99,7 @@ export class UserRepository {
       });
     } catch (err) {
       console.log('🚀 ~ UserRepository ~ updateUserById ~ err:', err);
+
       return null;
     }
   }

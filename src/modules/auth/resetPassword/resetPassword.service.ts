@@ -7,7 +7,7 @@ import { ValidateEmailTokenService } from './validateEmailToken.service';
 import { Prisma } from '@prisma/client';
 import { ConflictException } from '../../../exceptions/conflict/conflict.exception';
 import { plainToClass } from 'class-transformer';
-import { UserDto } from '../../../dtos/user.dto';
+import { IUserDto } from '../../../dtos/user.dto';
 import { EXPOSE_GROUP_PRIVATE } from '../../../helpers/constant';
 import { UserRepository } from '../../../repositories/user.repository';
 
@@ -19,7 +19,7 @@ export class ResetPasswordService {
     private readonly validateEmailTokenService: ValidateEmailTokenService,
   ) {}
 
-  async execute(payload: ResetPasswordPayload): Promise<UserDto> {
+  async execute(payload: ResetPasswordPayload): Promise<IUserDto> {
     const { email, token, password } = payload;
 
     await this.validateEmailTokenService.execute(
@@ -55,6 +55,6 @@ export class ResetPasswordService {
       );
     }
 
-    return plainToClass(UserDto, user, { groups: [EXPOSE_GROUP_PRIVATE] });
+    return <IUserDto>{};
   }
 }

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateProductPayload } from './createProduct.payload';
 import { AuthUser } from '../../../services/tokenService/authUser';
 import { ConflictException } from '../../../exceptions/conflict/conflict.exception';
-import { ProductDto } from '../../../dtos/product.dto';
+import { IProductDto } from '../../../dtos/product.dto';
 import { plainToClass } from 'class-transformer';
 import { ProductRepository } from '../../../repositories/product.repository';
 
@@ -13,7 +13,7 @@ export class CreateProductService {
   async execute(
     authUser: AuthUser,
     payload: CreateProductPayload,
-  ): Promise<ProductDto> {
+  ): Promise<IProductDto> {
     const product = await this.productRepository.create({
       name: payload.name,
       description: payload.description,
@@ -38,6 +38,6 @@ export class CreateProductService {
       );
     }
 
-    return plainToClass(ProductDto, product);
+    return <IProductDto>{};
   }
 }

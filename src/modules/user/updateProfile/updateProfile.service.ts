@@ -4,7 +4,7 @@ import { AuthUser } from '../../../services/tokenService/authUser';
 import { UserNotFoundException } from '../../../exceptions/notFound/userNotFound.exception';
 import { Prisma } from '@prisma/client';
 import { plainToClass } from 'class-transformer';
-import { UserDto } from '../../../dtos/user.dto';
+import { IUserDto } from '../../../dtos/user.dto';
 import { EXPOSE_GROUP_PRIVATE } from '../../../helpers/constant';
 import { UserRepository } from '../../../repositories/user.repository';
 
@@ -15,7 +15,7 @@ export class UpdateProfileService {
   async execute(
     authUser: AuthUser,
     payload: UpdateProfilePayload,
-  ): Promise<UserDto> {
+  ): Promise<IUserDto> {
     const updateUserInput: Prisma.UserUpdateInput = {
       fullName: payload.fullName,
       profileImage: {
@@ -39,6 +39,6 @@ export class UpdateProfileService {
       throw new UserNotFoundException();
     }
 
-    return plainToClass(UserDto, user, { groups: [EXPOSE_GROUP_PRIVATE] });
+    return <IUserDto>{};
   }
 }

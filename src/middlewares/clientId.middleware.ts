@@ -8,9 +8,11 @@ export const clientIdMiddleware =
       const newClientId = uuidGenerator();
       req.headers['client_id'] = newClientId;
       res.setHeader('client_id', newClientId);
+
       return next();
     }
 
     res.setHeader('client_id', clientId);
+
     return next();
   };

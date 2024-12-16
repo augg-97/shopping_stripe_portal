@@ -14,7 +14,7 @@ import { REDIS_KEY } from '../../../services/redisService/redisKey';
 import { Prisma } from '@prisma/client';
 import { ConflictException } from '../../../exceptions/conflict/conflict.exception';
 import { plainToClass } from 'class-transformer';
-import { UserDto } from '../../../dtos/user.dto';
+import { IUserDto } from '../../../dtos/user.dto';
 import { UserRepository } from '../../../repositories/user.repository';
 
 @Injectable()
@@ -28,7 +28,7 @@ export class RegisterService {
     private readonly appConfigService: AppConfigService,
   ) {}
 
-  async execute(payload: RegisterPayload): Promise<UserDto> {
+  async execute(payload: RegisterPayload): Promise<IUserDto> {
     const { email, password, fullName } = payload;
 
     const user = await this.userRepository.findUserByEmail(email);
@@ -66,6 +66,6 @@ export class RegisterService {
     const url = await this.emailUIUrlService.execute(params);
     await this.emailVerifyService.sendEmail(email, { verifyEmailUrl: url });
 
-    return plainToClass(UserDto, newUser, { groups: [EXPOSE_GROUP_PRIVATE] });
+    return <IUserDto>{};
   }
 }

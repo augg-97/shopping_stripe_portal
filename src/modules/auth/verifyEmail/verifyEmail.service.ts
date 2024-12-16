@@ -4,7 +4,7 @@ import { UserNotExistsException } from '../../../exceptions/badRequest/userNotEx
 import { REDIS_KEY } from '../../../services/redisService/redisKey';
 import { ValidateEmailTokenService } from '../resetPassword/validateEmailToken.service';
 import { ConflictException } from '../../../exceptions/conflict/conflict.exception';
-import { UserDto } from '../../../dtos/user.dto';
+import { IUserDto } from '../../../dtos/user.dto';
 import { plainToClass } from 'class-transformer';
 import { EXPOSE_GROUP_PRIVATE } from '../../../helpers/constant';
 import { UserRepository } from '../../../repositories/user.repository';
@@ -16,7 +16,7 @@ export class VerifyEmailService {
     private readonly validateEmailTokenService: ValidateEmailTokenService,
   ) {}
 
-  async execute(payload: VerifyEmailPayload): Promise<UserDto> {
+  async execute(payload: VerifyEmailPayload): Promise<IUserDto> {
     const { email, token } = payload;
 
     await this.validateEmailTokenService.execute(
@@ -42,8 +42,6 @@ export class VerifyEmailService {
       );
     }
 
-    return plainToClass(UserDto, userUpdated, {
-      groups: [EXPOSE_GROUP_PRIVATE],
-    });
+    return <IUserDto>{};
   }
 }

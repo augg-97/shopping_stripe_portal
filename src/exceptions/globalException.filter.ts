@@ -29,6 +29,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       const getResponse = exception.getResponse();
 
       const errorData = this.errorDataBuilder(status, getResponse);
+
       return response.status(status).json({
         correlationId,
         statusCode: status,

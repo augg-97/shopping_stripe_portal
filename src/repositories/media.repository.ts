@@ -44,6 +44,7 @@ export class MediaRepository {
 
     try {
       const media = await this.prismaService.$queryRaw<Media[]>(query);
+
       return media;
     } catch (err) {
       this.loggerService.error(

@@ -20,6 +20,7 @@ import { AppConfigService } from '../../appConfigs/appConfig.service';
           url,
         });
         await redisClient.connect();
+
         return redisClient;
       },
       inject: [AppConfigService],
