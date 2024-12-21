@@ -4,10 +4,10 @@ import { UserNotExistsException } from '../../../exceptions/badRequest/userNotEx
 import { PasswordService } from '../../../services/passwordService/password.service';
 import { BadRequestException } from '../../../exceptions/badRequest/badRequest.exception';
 import { CredentialDeniedException } from '../../../exceptions/unauthorized/credentialDenied.exception';
-import { IUserDto } from '../../../dtos/user.dto';
-import { plainToClass } from 'class-transformer';
-import { EXPOSE_GROUP_PRIVATE } from '../../../helpers/constant';
 import { UserRepository } from '../../../repositories/user.repository';
+import { UserDtoBuilder } from '../../../dtos/users/user.builder';
+import { UserWithStoreDto } from '../../../dtos/users/userWithStore.dto';
+import { IUserDto } from '../../../dtos/users/user.interface';
 
 @Injectable()
 export class LoginService {
@@ -41,7 +41,10 @@ export class LoginService {
       throw new CredentialDeniedException();
     }
 
-    return <IUserDto>{};
-    // return plainToClass(UserDto, user, { groups: [EXPOSE_GROUP_PRIVATE] });
+    const builder = new UserDtoBuilder();
+    const dto = new UserWithStoreDto(builder, true);
+    dto.build(user);
+
+    return builder.toDto();
   }
 }

@@ -22,7 +22,7 @@ import { UpdateProfilePayload } from './updateProfile/updateProfile.payload';
 import { UpdateProfileService } from './updateProfile/updateProfile.service';
 import { CachingInterceptor } from '../../interceptors/caching.interceptor';
 import { CacheTTL } from '../../decorators/cacheTTL.decorator';
-import { IUserDto } from '../../dtos/user.dto';
+import { IUserDto } from '../../dtos/users/user.interface';
 
 @ApiTags('users')
 @Controller('users')

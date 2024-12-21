@@ -5,7 +5,6 @@ import {
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
-import { IUserDto } from '../dtos/user.dto';
 import { Observable, mergeMap } from 'rxjs';
 import { AuthUser } from '../services/tokenService/authUser';
 import { TokenService } from '../services/tokenService/token.service';
@@ -15,6 +14,7 @@ import { Request } from 'express';
 import { TokenConflictException } from '../exceptions/conflict/tokenConflict.exception';
 import { ACCESS_TOKEN_SERVICE } from '../helpers/constant';
 import { extractToken } from '../helpers/extractToken';
+import { IUserDto } from '../dtos/users/user.interface';
 
 @Injectable()
 export class RefreshTokenInterceptor implements NestInterceptor {

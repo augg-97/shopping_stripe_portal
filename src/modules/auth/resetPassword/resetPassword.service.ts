@@ -7,9 +7,11 @@ import { ValidateEmailTokenService } from './validateEmailToken.service';
 import { Prisma } from '@prisma/client';
 import { ConflictException } from '../../../exceptions/conflict/conflict.exception';
 import { plainToClass } from 'class-transformer';
-import { IUserDto } from '../../../dtos/user.dto';
 import { EXPOSE_GROUP_PRIVATE } from '../../../helpers/constant';
 import { UserRepository } from '../../../repositories/user.repository';
+import { IUserDto } from '../../../dtos/users/user.interface';
+import { UserDtoBuilder } from '../../../dtos/users/user.builder';
+import { UserWithStoreDto } from '../../../dtos/users/userWithStore.dto';
 
 @Injectable()
 export class ResetPasswordService {
@@ -55,6 +57,10 @@ export class ResetPasswordService {
       );
     }
 
-    return <IUserDto>{};
+    const builder = new UserDtoBuilder();
+    const dto = new UserWithStoreDto(builder, true);
+    dto.build(userUpdated);
+
+    return builder.toDto();
   }
 }

@@ -29,7 +29,7 @@ import { VerifyEmailService } from './verifyEmail/verifyEmail.service';
 import { Public } from '../../decorators/allowAnonymous.decorator';
 import { ResendVerifyEmailService } from './resendVerifyEmail/resendVerifyEmail.service';
 import { LogoutService } from './logout/logout.service';
-import { IUserDto } from '../../dtos/user.dto';
+import { IUserDto } from '../../dtos/users/user.interface';
 
 @ApiTags('auth')
 @Controller('auth')

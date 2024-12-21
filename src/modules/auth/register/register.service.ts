@@ -13,9 +13,10 @@ import { AppConfigService } from '../../../appConfigs/appConfig.service';
 import { REDIS_KEY } from '../../../services/redisService/redisKey';
 import { Prisma } from '@prisma/client';
 import { ConflictException } from '../../../exceptions/conflict/conflict.exception';
-import { plainToClass } from 'class-transformer';
-import { IUserDto } from '../../../dtos/user.dto';
 import { UserRepository } from '../../../repositories/user.repository';
+import { UserDtoBuilder } from '../../../dtos/users/user.builder';
+import { UserWithStoreDto } from '../../../dtos/users/userWithStore.dto';
+import { IUserDto } from '../../../dtos/users/user.interface';
 
 @Injectable()
 export class RegisterService {
@@ -66,6 +67,10 @@ export class RegisterService {
     const url = await this.emailUIUrlService.execute(params);
     await this.emailVerifyService.sendEmail(email, { verifyEmailUrl: url });
 
-    return <IUserDto>{};
+    const builder = new UserDtoBuilder();
+    const dto = new UserWithStoreDto(builder, true);
+    dto.build(newUser);
+
+    return builder.toDto();
   }
 }

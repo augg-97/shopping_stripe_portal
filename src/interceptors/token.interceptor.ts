@@ -12,11 +12,11 @@ import { Observable, mergeMap } from 'rxjs';
 import { LoggerService } from '../services/loggerService/logger.service';
 import { PrismaService } from '../services/prismaService/prisma.service';
 import { TokenConflictException } from '../exceptions/conflict/tokenConflict.exception';
-import { IUserDto } from '../dtos/user.dto';
 import {
   ACCESS_TOKEN_SERVICE,
   REFRESH_TOKEN_SERVICE,
 } from '../helpers/constant';
+import { IUserDto } from '../dtos/users/user.interface';
 
 @Injectable()
 export class TokenInterceptor implements NestInterceptor {

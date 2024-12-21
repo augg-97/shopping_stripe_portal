@@ -4,6 +4,8 @@ import { CreateStorePayload } from './createStore.payload';
 import { Prisma } from '@prisma/client';
 import { ConflictException } from '../../../exceptions/conflict/conflict.exception';
 import { StoreRepository } from '../../../repositories/store.repository';
+import { StoreDtoBuilder } from '../../../dtos/stores/store.builder';
+import { StoreWithUserDto } from '../../../dtos/stores/storeWithUser.dto';
 
 @Injectable()
 export class CreateStoreService {
@@ -32,6 +34,10 @@ export class CreateStoreService {
       );
     }
 
-    return store;
+    const builder = new StoreDtoBuilder();
+    const dto = new StoreWithUserDto(builder);
+    dto.build(store);
+
+    return builder.toDto();
   }
 }

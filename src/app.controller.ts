@@ -5,9 +5,9 @@ import { Public } from './decorators/allowAnonymous.decorator';
 import { Decimal } from '@prisma/client/runtime/library';
 import { ProductInclude } from './repositories/product.repository';
 import { UserIncludeType } from './repositories/user.repository';
-import { IUserDto, UserDto } from './dtos/user.dto';
 import { LoggerService } from './services/loggerService/logger.service';
-import { MediaDto, MediaDtoBuilder } from './dtos/media.dto';
+import { UserDtoBuilder } from './dtos/users/user.builder';
+import { UserWithStoreDto } from './dtos/users/userWithStore.dto';
 
 @ApiTags('root')
 @Controller()
@@ -179,6 +179,10 @@ export class AppController {
 
     const { profileImage, coverImage, stores, ...entity } = user;
 
-    return {};
+    const builder = new UserDtoBuilder();
+    const dto = new UserWithStoreDto(builder);
+    dto.build(user);
+
+    return builder.toDto();
   }
 }

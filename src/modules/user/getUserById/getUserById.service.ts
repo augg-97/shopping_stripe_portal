@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { UserNotFoundException } from '../../../exceptions/notFound/userNotFound.exception';
-import { IUserDto } from '../../../dtos/user.dto';
-import { plainToClass } from 'class-transformer';
 import { UserRepository } from '../../../repositories/user.repository';
+import { UserDtoBuilder } from '../../../dtos/users/user.builder';
+import { UserWithStoreDto } from '../../../dtos/users/userWithStore.dto';
+import { IUserDto } from '../../../dtos/users/user.interface';
 
 @Injectable()
 export class GetUserByIdService {
@@ -15,6 +16,10 @@ export class GetUserByIdService {
       throw new UserNotFoundException();
     }
 
-    return <IUserDto>{};
+    const builder = new UserDtoBuilder();
+    const dto = new UserWithStoreDto(builder);
+    dto.build(user);
+
+    return builder.toDto();
   }
 }

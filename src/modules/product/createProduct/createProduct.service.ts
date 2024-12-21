@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { CreateProductPayload } from './createProduct.payload';
 import { AuthUser } from '../../../services/tokenService/authUser';
 import { ConflictException } from '../../../exceptions/conflict/conflict.exception';
-import { IProductDto } from '../../../dtos/product.dto';
 import { plainToClass } from 'class-transformer';
 import { ProductRepository } from '../../../repositories/product.repository';
+import { IProductDto } from '../../../dtos/products/product.interface';
 
 @Injectable()
 export class CreateProductService {
