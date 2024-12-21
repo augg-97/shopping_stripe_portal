@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../services/prismaService/prisma.service';
 import { Prisma } from '@prisma/client';
-import { LoggerService } from '../../services/loggerService/logger.service';
+import { PrismaService } from '../services/prismaService/prisma.service';
+import { LoggerService } from '../services/loggerService/logger.service';
 
 export const userInclude = Prisma.validator<Prisma.UserInclude>()({
   profileImage: true,
@@ -45,6 +45,7 @@ export class UserRepository {
         '🚀 ~ UserRepository ~ findUserByEmail ~ err:',
         err,
       );
+
       return null;
     }
   }
@@ -82,6 +83,7 @@ export class UserRepository {
       });
     } catch (err) {
       this.loggerService.error('🚀 ~ UserRepository ~ createUser ~ err:', err);
+
       return null;
     }
   }
@@ -97,6 +99,7 @@ export class UserRepository {
       });
     } catch (err) {
       console.log('🚀 ~ UserRepository ~ updateUserById ~ err:', err);
+
       return null;
     }
   }

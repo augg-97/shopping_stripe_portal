@@ -9,13 +9,14 @@ import {
 } from '../../../helpers/constant';
 import { EmailService } from '../../../services/emailService/email.service';
 import { EmailUIUrlParams, EmailUIUrlService } from './emailUIUrl.service';
-import { ConfigurationService } from '../../../config/configuration.service';
+import { AppConfigService } from '../../../appConfigs/appConfig.service';
 import { REDIS_KEY } from '../../../services/redisService/redisKey';
-import { UserRepository } from '../../user/user.repository';
 import { Prisma } from '@prisma/client';
 import { ConflictException } from '../../../exceptions/conflict/conflict.exception';
-import { plainToClass } from 'class-transformer';
-import { UserDto } from '../../../dto/user.dto';
+import { UserRepository } from '../../../repositories/user.repository';
+import { UserDtoBuilder } from '../../../dtos/users/user.builder';
+import { UserWithStoreDto } from '../../../dtos/users/userWithStore.dto';
+import { IUserDto } from '../../../dtos/users/user.interface';
 
 @Injectable()
 export class RegisterService {
@@ -25,10 +26,10 @@ export class RegisterService {
     @Inject(EMAIL_VERIFY_SERVICE)
     private readonly emailVerifyService: EmailService,
     private readonly emailUIUrlService: EmailUIUrlService,
-    private readonly configurationService: ConfigurationService,
+    private readonly appConfigService: AppConfigService,
   ) {}
 
-  async execute(payload: RegisterPayload): Promise<UserDto> {
+  async execute(payload: RegisterPayload): Promise<IUserDto> {
     const { email, password, fullName } = payload;
 
     const user = await this.userRepository.findUserByEmail(email);
@@ -58,7 +59,7 @@ export class RegisterService {
     }
 
     const params: EmailUIUrlParams = {
-      emailUIUrl: this.configurationService.verifyEmailUIUrl,
+      emailUIUrl: this.appConfigService.verifyEmailUIUrl,
       key: REDIS_KEY.VERIFY_EMAIL,
       email,
       tokenExpired: VERIFY_EMAIL_TOKEN_EXPIRED,
@@ -66,6 +67,10 @@ export class RegisterService {
     const url = await this.emailUIUrlService.execute(params);
     await this.emailVerifyService.sendEmail(email, { verifyEmailUrl: url });
 
-    return plainToClass(UserDto, newUser, { groups: [EXPOSE_GROUP_PRIVATE] });
+    const builder = new UserDtoBuilder();
+    const dto = new UserWithStoreDto(builder, true);
+    dto.build(newUser);
+
+    return builder.toDto();
   }
 }

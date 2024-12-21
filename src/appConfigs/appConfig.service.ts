@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { IConfig } from './config';
+import { IAppConfig } from './appConfig';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class ConfigurationService implements IConfig {
-  constructor(private configService: ConfigService<IConfig, true>) {}
+export class AppConfigService implements IAppConfig {
+  constructor(private configService: ConfigService<IAppConfig, true>) {}
 
   get nodeEnv(): string {
     return this.configService.get('nodeEnv');

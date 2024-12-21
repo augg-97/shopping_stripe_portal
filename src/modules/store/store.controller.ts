@@ -15,7 +15,7 @@ import { CreateStorePayload } from './createStore/createStore.payload';
 import { CreateStoreGuard } from '../../guards/createStore.guard';
 import { CacheKey } from '../../decorators/cacheKey.decorator';
 import { CachingInterceptor } from '../../interceptors/caching.interceptor';
-import { StoreDto } from '../../dto/store.dto';
+import { IStoreDto } from '../../dtos/stores/store.interface';
 
 @ApiBearerAuth()
 @ApiTags('stores')
@@ -24,7 +24,7 @@ export class StoreController {
   constructor(private createStoreService: CreateStoreService) {}
 
   @CacheKey('STORE')
-  @UseInterceptors(CachingInterceptor<StoreDto>)
+  @UseInterceptors(CachingInterceptor<IStoreDto>)
   @UseGuards(CreateStoreGuard)
   @HttpCode(HttpStatus.CREATED)
   @Post()

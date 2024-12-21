@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { RedisService } from '../services/redisService/redis.service';
+import { REDIS_KEY } from '../services/redisService/redisKey';
 import {
   UserIncludeType,
   UserRepository,
-} from '../modules/user/user.repository';
-import { UserDto } from '../dto/user.dto';
-import { REDIS_KEY } from '../services/redisService/redisKey';
+} from '../repositories/user.repository';
+import { IUserDto } from '../dtos/users/user.interface';
 
 @Injectable()
 export class GetDataCacheService {
@@ -14,7 +14,9 @@ export class GetDataCacheService {
     private readonly userRepository: UserRepository,
   ) {}
 
-  async getUserData(userId: number): Promise<UserDto | UserIncludeType | null> {
+  async getUserData(
+    userId: number,
+  ): Promise<IUserDto | UserIncludeType | null> {
     const redisKey = `${REDIS_KEY.CACHE}_USER_${userId}`;
     const cacheData = await this.redisService.get(redisKey);
 
@@ -25,7 +27,7 @@ export class GetDataCacheService {
     return await this.userRepository.findUserById(userId);
   }
 
-  isHasStore(user: UserDto | UserIncludeType): boolean {
+  isHasStore(user: IUserDto | UserIncludeType): boolean {
     if ('store' in user && user.store) {
       return true;
     }

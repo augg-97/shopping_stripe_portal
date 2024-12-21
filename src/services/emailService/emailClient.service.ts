@@ -1,22 +1,22 @@
 import { Provider } from '@nestjs/common';
-import { ConfigurationService } from '../../config/configuration.service';
+import { AppConfigService } from '../../appConfigs/appConfig.service';
 import { Transporter, createTransport } from 'nodemailer';
 import { EMAIL_CLIENT } from '../../helpers/constant';
 
 export const emailClientService: Provider = {
   provide: EMAIL_CLIENT,
-  useFactory: (configurationService: ConfigurationService): Transporter => {
+  useFactory: (appConfigService: AppConfigService): Transporter => {
     const client = createTransport({
-      host: configurationService.emailServiceHost,
+      host: appConfigService.emailServiceHost,
       secure: false,
-      port: configurationService.emailServicePort,
+      port: appConfigService.emailServicePort,
       auth: {
-        user: configurationService.emailServiceUserName,
-        pass: configurationService.emailServicePassword,
+        user: appConfigService.emailServiceUserName,
+        pass: appConfigService.emailServicePassword,
       },
     });
 
     return client;
   },
-  inject: [ConfigurationService],
+  inject: [AppConfigService],
 };

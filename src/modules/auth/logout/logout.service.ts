@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { UserRepository } from '../../user/user.repository';
 import { AuthUser } from '../../../services/tokenService/authUser';
 import { UserNotExistsException } from '../../../exceptions/badRequest/userNotExists.exception';
 import { RedisService } from '../../../services/redisService/redis.service';
 import { REDIS_KEY } from '../../../services/redisService/redisKey';
+import { UserRepository } from '../../../repositories/user.repository';
 
 @Injectable()
 export class LogoutService {

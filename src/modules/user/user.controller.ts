@@ -22,7 +22,7 @@ import { UpdateProfilePayload } from './updateProfile/updateProfile.payload';
 import { UpdateProfileService } from './updateProfile/updateProfile.service';
 import { CachingInterceptor } from '../../interceptors/caching.interceptor';
 import { CacheTTL } from '../../decorators/cacheTTL.decorator';
-import { UserDto } from '../../dto/user.dto';
+import { IUserDto } from '../../dtos/users/user.interface';
 
 @ApiTags('users')
 @Controller('users')
@@ -39,7 +39,7 @@ export class UserController {
   @UseInterceptors(CacheInterceptor)
   @HttpCode(HttpStatus.OK)
   @Get('me')
-  async getMe(@Req() req: Request): Promise<UserDto> {
+  async getMe(@Req() req: Request): Promise<IUserDto> {
     return await this.getMeService.execute(req.user);
   }
 
@@ -52,10 +52,11 @@ export class UserController {
   async getUserById(
     @Req() req: Request,
     @Param('id', ParseIntPipe) id: number,
-  ): Promise<UserDto> {
+  ): Promise<IUserDto> {
     if (req.user && Number(req.user.id) === id) {
       return await this.getMeService.execute(req.user);
     }
+
     return await this.getUserByIdService.execute(id);
   }
 
@@ -67,7 +68,7 @@ export class UserController {
   async updateProfile(
     @Req() req: Request,
     @Body() payload: UpdateProfilePayload,
-  ): Promise<UserDto> {
+  ): Promise<IUserDto> {
     return await this.updateProfileService.execute(req.user, payload);
   }
 }

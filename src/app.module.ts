@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigurationModule } from './config/configuration.module';
+import { AppConfigModule } from './appConfigs/appConfig.module';
 import { LoggerModule } from './services/loggerService/logger.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
@@ -17,10 +17,11 @@ import { PasswordModule } from './services/passwordService/password.module';
 import { PrismaModule } from './services/prismaService/prisma.module';
 import { UploadModule } from './services/uploadService/upload.module';
 import { EmailModule } from './services/emailService/email.module';
+import { RepositoriesModule } from './repositories/repositories.module';
 
 @Module({
   imports: [
-    ConfigurationModule,
+    AppConfigModule,
     PrismaModule,
     LoggerModule,
     RedisModule,
@@ -28,6 +29,7 @@ import { EmailModule } from './services/emailService/email.module';
     UploadModule,
     EmailModule,
     PasswordModule,
+    RepositoriesModule,
     AuthModule,
     UserModule,
     MediaModule,

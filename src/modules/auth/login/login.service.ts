@@ -4,10 +4,10 @@ import { UserNotExistsException } from '../../../exceptions/badRequest/userNotEx
 import { PasswordService } from '../../../services/passwordService/password.service';
 import { BadRequestException } from '../../../exceptions/badRequest/badRequest.exception';
 import { CredentialDeniedException } from '../../../exceptions/unauthorized/credentialDenied.exception';
-import { UserRepository } from '../../user/user.repository';
-import { UserDto } from '../../../dto/user.dto';
-import { plainToClass } from 'class-transformer';
-import { EXPOSE_GROUP_PRIVATE } from '../../../helpers/constant';
+import { UserRepository } from '../../../repositories/user.repository';
+import { UserDtoBuilder } from '../../../dtos/users/user.builder';
+import { UserWithStoreDto } from '../../../dtos/users/userWithStore.dto';
+import { IUserDto } from '../../../dtos/users/user.interface';
 
 @Injectable()
 export class LoginService {
@@ -16,7 +16,7 @@ export class LoginService {
     private readonly passwordService: PasswordService,
   ) {}
 
-  async execute(payload: LoginPayload): Promise<UserDto> {
+  async execute(payload: LoginPayload): Promise<IUserDto> {
     const { email, password } = payload;
     const user = await this.userRepository.findUserByEmail(email);
 
@@ -41,6 +41,10 @@ export class LoginService {
       throw new CredentialDeniedException();
     }
 
-    return plainToClass(UserDto, user, { groups: [EXPOSE_GROUP_PRIVATE] });
+    const builder = new UserDtoBuilder();
+    const dto = new UserWithStoreDto(builder, true);
+    dto.build(user);
+
+    return builder.toDto();
   }
 }

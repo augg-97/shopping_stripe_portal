@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { join } from 'path';
-import { ConfigurationService } from '../../config/configuration.service';
+import { AppConfigService } from '../../appConfigs/appConfig.service';
 import { mkdir, stat } from 'fs';
 import { LoggerService } from '../loggerService/logger.service';
 import { uuidGenerator } from '../../pkgs/uuidGenerator';
@@ -12,7 +12,7 @@ export class UploadService {
   private imageDir = join(__dirname, '../../../public/assets/images');
 
   constructor(
-    private readonly configurationService: ConfigurationService,
+    private readonly appConfigService: AppConfigService,
     private readonly loggerService: LoggerService,
   ) {
     const isExistsDir = this.isExistsDir(this.imageDir);
@@ -58,6 +58,7 @@ export class UploadService {
     const fileName = this.fileNameGenerator(image);
     const filePath = `${this.imageDir}/${fileName}`;
     await writeFile(filePath, image.buffer);
+
     return {
       fileName,
       url: this.imageUrlGenerator(fileName),
@@ -67,10 +68,11 @@ export class UploadService {
   fileNameGenerator(image: Express.Multer.File) {
     const uniqName = uuidGenerator();
     const fileExtension = extension(image.mimetype);
+
     return `${uniqName}.${fileExtension}`;
   }
 
   imageUrlGenerator(fileName: string) {
-    return `${this.configurationService.imageBaseUrl}${fileName}`;
+    return `${this.appConfigService.imageBaseUrl}${fileName}`;
   }
 }

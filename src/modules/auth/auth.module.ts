@@ -10,13 +10,11 @@ import { EmailUIUrlService } from './register/emailUIUrl.service';
 import { ValidateEmailTokenService } from './resetPassword/validateEmailToken.service';
 import { ResendVerifyEmailService } from './resendVerifyEmail/resendVerifyEmail.service';
 import { LogoutService } from './logout/logout.service';
-import { UserRepository } from '../user/user.repository';
 
 @Module({
   imports: [],
   controllers: [AuthController],
   providers: [
-    UserRepository,
     RegisterService,
     LoginService,
     RefreshTokenService,

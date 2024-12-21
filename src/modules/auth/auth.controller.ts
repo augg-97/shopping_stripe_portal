@@ -29,7 +29,7 @@ import { VerifyEmailService } from './verifyEmail/verifyEmail.service';
 import { Public } from '../../decorators/allowAnonymous.decorator';
 import { ResendVerifyEmailService } from './resendVerifyEmail/resendVerifyEmail.service';
 import { LogoutService } from './logout/logout.service';
-import { UserDto } from '../../dto/user.dto';
+import { IUserDto } from '../../dtos/users/user.interface';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -49,7 +49,7 @@ export class AuthController {
   @UseInterceptors(TokenInterceptor)
   @HttpCode(HttpStatus.OK)
   @Post('register')
-  async register(@Body() payload: RegisterPayload): Promise<UserDto> {
+  async register(@Body() payload: RegisterPayload): Promise<IUserDto> {
     return await this.registerService.execute(payload);
   }
 

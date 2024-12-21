@@ -5,7 +5,6 @@ import {
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
-import { UserDto } from '../dto/user.dto';
 import { Observable, mergeMap } from 'rxjs';
 import { AuthUser } from '../services/tokenService/authUser';
 import { TokenService } from '../services/tokenService/token.service';
@@ -15,6 +14,7 @@ import { Request } from 'express';
 import { TokenConflictException } from '../exceptions/conflict/tokenConflict.exception';
 import { ACCESS_TOKEN_SERVICE } from '../helpers/constant';
 import { extractToken } from '../helpers/extractToken';
+import { IUserDto } from '../dtos/users/user.interface';
 
 @Injectable()
 export class RefreshTokenInterceptor implements NestInterceptor {
@@ -27,48 +27,49 @@ export class RefreshTokenInterceptor implements NestInterceptor {
 
   async intercept(
     context: ExecutionContext,
-    next: CallHandler<UserDto>,
-  ): Promise<Observable<UserDto>> {
+    next: CallHandler<IUserDto>,
+  ): Promise<Observable<IUserDto>> {
     const req = context.switchToHttp().getRequest<Request>();
     const res = context.switchToHttp().getResponse();
     const clientId = req.headers['client_id'];
 
-    return next.handle().pipe(
-      mergeMap(async (data) => {
-        try {
-          const payload: AuthUser = {
-            id: data.id.toString(),
-            email: data.email || '',
-            type: data.type,
-            isVerify: data.isVerify,
-            storeId: (data.store && data.store.id) || undefined,
-          };
+    return next.handle();
+    // return next.handle().pipe(
+    //   mergeMap(async (data) => {
+    //     try {
+    //       const payload: AuthUser = {
+    //         id: data.id.toString(),
+    //         email: data.email || '',
+    //         type: data.type,
+    //         isVerify: data.isVerify,
+    //         storeId: (data.store && data.store.id) || undefined,
+    //       };
 
-          const accessToken = await this.accessTokenService.tokenGenerator(
-            payload,
-            clientId?.toString(),
-          );
-          const bearerToken =
-            req.headers.refresh_token && req.headers.refresh_token.toString();
-          const refreshToken = bearerToken && extractToken(bearerToken);
+    //       const accessToken = await this.accessTokenService.tokenGenerator(
+    //         payload,
+    //         clientId?.toString(),
+    //       );
+    //       const bearerToken =
+    //         req.headers.refresh_token && req.headers.refresh_token.toString();
+    //       const refreshToken = bearerToken && extractToken(bearerToken);
 
-          res.setHeader('Authorization', accessToken);
-          res.setHeader('refresh_token', refreshToken);
+    //       res.setHeader('Authorization', accessToken);
+    //       res.setHeader('refresh_token', refreshToken);
 
-          return data;
-        } catch (error) {
-          this.loggerService.error(
-            '🚀 ~ AuthInterception ~ map ~ error:',
-            error,
-          );
-          await this.prismaService.user.delete({
-            where: {
-              id: data.id,
-            },
-          });
-          throw new TokenConflictException();
-        }
-      }),
-    );
+    //       return data;
+    //     } catch (error) {
+    //       this.loggerService.error(
+    //         '🚀 ~ AuthInterception ~ map ~ error:',
+    //         error,
+    //       );
+    //       await this.prismaService.user.delete({
+    //         where: {
+    //           id: data.id,
+    //         },
+    //       });
+    //       throw new TokenConflictException();
+    //     }
+    //   }),
+    // );
   }
 }

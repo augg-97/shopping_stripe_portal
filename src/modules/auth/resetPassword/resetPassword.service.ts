@@ -4,12 +4,14 @@ import { UserNotExistsException } from '../../../exceptions/badRequest/userNotEx
 import { REDIS_KEY } from '../../../services/redisService/redisKey';
 import { PasswordService } from '../../../services/passwordService/password.service';
 import { ValidateEmailTokenService } from './validateEmailToken.service';
-import { UserRepository } from '../../user/user.repository';
 import { Prisma } from '@prisma/client';
 import { ConflictException } from '../../../exceptions/conflict/conflict.exception';
 import { plainToClass } from 'class-transformer';
-import { UserDto } from '../../../dto/user.dto';
 import { EXPOSE_GROUP_PRIVATE } from '../../../helpers/constant';
+import { UserRepository } from '../../../repositories/user.repository';
+import { IUserDto } from '../../../dtos/users/user.interface';
+import { UserDtoBuilder } from '../../../dtos/users/user.builder';
+import { UserWithStoreDto } from '../../../dtos/users/userWithStore.dto';
 
 @Injectable()
 export class ResetPasswordService {
@@ -19,7 +21,7 @@ export class ResetPasswordService {
     private readonly validateEmailTokenService: ValidateEmailTokenService,
   ) {}
 
-  async execute(payload: ResetPasswordPayload): Promise<UserDto> {
+  async execute(payload: ResetPasswordPayload): Promise<IUserDto> {
     const { email, token, password } = payload;
 
     await this.validateEmailTokenService.execute(
@@ -55,6 +57,10 @@ export class ResetPasswordService {
       );
     }
 
-    return plainToClass(UserDto, user, { groups: [EXPOSE_GROUP_PRIVATE] });
+    const builder = new UserDtoBuilder();
+    const dto = new UserWithStoreDto(builder, true);
+    dto.build(userUpdated);
+
+    return builder.toDto();
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../services/prismaService/prisma.service';
 import { Media, Prisma } from '@prisma/client';
-import { LoggerService } from '../../services/loggerService/logger.service';
+import { PrismaService } from '../services/prismaService/prisma.service';
+import { LoggerService } from '../services/loggerService/logger.service';
 
 export type MediaBulkInput = {
   fileName: string;
@@ -44,6 +44,7 @@ export class MediaRepository {
 
     try {
       const media = await this.prismaService.$queryRaw<Media[]>(query);
+
       return media;
     } catch (err) {
       this.loggerService.error(

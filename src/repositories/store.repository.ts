@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../services/prismaService/prisma.service';
-import { LoggerService } from '../../services/loggerService/logger.service';
 import { Prisma } from '@prisma/client';
+import { PrismaService } from '../services/prismaService/prisma.service';
+import { LoggerService } from '../services/loggerService/logger.service';
 
 export const storeInclude = Prisma.validator<Prisma.StoreInclude>()({
   owner: {

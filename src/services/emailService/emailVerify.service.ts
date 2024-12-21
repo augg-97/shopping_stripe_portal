@@ -1,6 +1,6 @@
 import { Provider } from '@nestjs/common';
 import { EMAIL_CLIENT, EMAIL_VERIFY_SERVICE } from '../../helpers/constant';
-import { ConfigurationService } from '../../config/configuration.service';
+import { AppConfigService } from '../../appConfigs/appConfig.service';
 import { Transporter } from 'nodemailer';
 import { EmailInfo, EmailService } from './email.service';
 import { join } from 'path';
@@ -9,7 +9,7 @@ import { LoggerService } from '../loggerService/logger.service';
 export const emailVerifyService: Provider = {
   provide: EMAIL_VERIFY_SERVICE,
   useFactory: (
-    configurationService: ConfigurationService,
+    appConfigService: AppConfigService,
     loggerService: LoggerService,
     emailClient: Transporter,
   ) => {
@@ -22,11 +22,11 @@ export const emailVerifyService: Provider = {
     };
 
     return new EmailService(
-      configurationService,
+      appConfigService,
       loggerService,
       emailClient,
       emailInfo,
     );
   },
-  inject: [ConfigurationService, LoggerService, EMAIL_CLIENT],
+  inject: [AppConfigService, LoggerService, EMAIL_CLIENT],
 };

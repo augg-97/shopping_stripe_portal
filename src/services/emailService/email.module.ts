@@ -1,17 +1,16 @@
 import { Global, Module } from '@nestjs/common';
-import { ConfigurationModule } from '../../config/configuration.module';
 import { LoggerModule } from '../loggerService/logger.module';
 import { emailClientService } from './emailClient.service';
-import { emailForgotPasswordService } from './emailForgorPassword.service';
 import {
   EMAIL_FORGOT_PASSWORD_SERVICE,
   EMAIL_VERIFY_SERVICE,
 } from '../../helpers/constant';
 import { emailVerifyService } from './emailVerify.service';
+import { emailForgotPasswordService } from './emailForgotPassword.service';
 
 @Global()
 @Module({
-  imports: [ConfigurationModule, LoggerModule],
+  imports: [LoggerModule],
   controllers: [],
   providers: [
     emailClientService,

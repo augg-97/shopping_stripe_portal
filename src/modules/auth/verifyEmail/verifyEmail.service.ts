@@ -3,11 +3,13 @@ import { VerifyEmailPayload } from './verifyEmail.payload';
 import { UserNotExistsException } from '../../../exceptions/badRequest/userNotExists.exception';
 import { REDIS_KEY } from '../../../services/redisService/redisKey';
 import { ValidateEmailTokenService } from '../resetPassword/validateEmailToken.service';
-import { UserRepository } from '../../user/user.repository';
 import { ConflictException } from '../../../exceptions/conflict/conflict.exception';
-import { UserDto } from '../../../dto/user.dto';
 import { plainToClass } from 'class-transformer';
 import { EXPOSE_GROUP_PRIVATE } from '../../../helpers/constant';
+import { UserRepository } from '../../../repositories/user.repository';
+import { UserDtoBuilder } from '../../../dtos/users/user.builder';
+import { UserWithStoreDto } from '../../../dtos/users/userWithStore.dto';
+import { IUserDto } from '../../../dtos/users/user.interface';
 
 @Injectable()
 export class VerifyEmailService {
@@ -16,7 +18,7 @@ export class VerifyEmailService {
     private readonly validateEmailTokenService: ValidateEmailTokenService,
   ) {}
 
-  async execute(payload: VerifyEmailPayload): Promise<UserDto> {
+  async execute(payload: VerifyEmailPayload): Promise<IUserDto> {
     const { email, token } = payload;
 
     await this.validateEmailTokenService.execute(
@@ -42,8 +44,10 @@ export class VerifyEmailService {
       );
     }
 
-    return plainToClass(UserDto, userUpdated, {
-      groups: [EXPOSE_GROUP_PRIVATE],
-    });
+    const builder = new UserDtoBuilder();
+    const dto = new UserWithStoreDto(builder, true);
+    dto.build(userUpdated);
+
+    return builder.toDto();
   }
 }

@@ -1,5 +1,5 @@
 import { JwtService } from '@nestjs/jwt';
-import { ConfigurationService } from '../../config/configuration.service';
+import { AppConfigService } from '../../appConfigs/appConfig.service';
 import { TokenService } from './token.service';
 import { REDIS_KEY } from '../redisService/redisKey';
 import { TokenExpiredException } from '../../exceptions/unauthorized/tokenExpired.exception';
@@ -10,14 +10,14 @@ import { ACCESS_TOKEN_SERVICE } from '../../helpers/constant';
 export const accessTokenService = {
   provide: ACCESS_TOKEN_SERVICE,
   useFactory(
-    configurationService: ConfigurationService,
+    appConfigService: AppConfigService,
     redisService: RedisService,
     jwtService: JwtService,
   ): TokenService {
     const tokenInfo: TokenInfo = {
       redisKey: REDIS_KEY.ACCESS_TOKEN,
-      secretKey: configurationService.accessTokenKey,
-      expiration: configurationService.accessTokenExpiredIn,
+      secretKey: appConfigService.accessTokenKey,
+      expiration: appConfigService.accessTokenExpiredIn,
       error: new TokenExpiredException(
         'ACCESS_TOKEN_EXPIRED',
         'Access token is expired',
@@ -26,5 +26,5 @@ export const accessTokenService = {
 
     return new TokenService(tokenInfo, redisService, jwtService);
   },
-  inject: [ConfigurationService, RedisService, JwtService],
+  inject: [AppConfigService, RedisService, JwtService],
 };

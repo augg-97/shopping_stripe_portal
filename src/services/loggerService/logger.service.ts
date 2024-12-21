@@ -1,54 +1,39 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ConsoleLogger, Injectable } from '@nestjs/common';
 import { Logger, createLogger, format, transports } from 'winston';
-import { ConfigurationService } from '../../config/configuration.service';
+import { AppConfigService } from '../../appConfigs/appConfig.service';
+import util from 'util';
 
 @Injectable()
 export class LoggerService extends ConsoleLogger {
   private logger: Logger;
 
-  constructor(private configurationService: ConfigurationService) {
+  constructor(private appConfigService: AppConfigService) {
     super();
-    const { combine, timestamp, printf, colorize, metadata } = format;
+    const { combine, timestamp, printf, colorize } = format;
     this.logger = createLogger({
+      level: 'debug',
       format: combine(
-        format.label({
-          label: 'SPS_API_LOGGER',
-        }),
+        format.label({ label: 'SPS_API_LOGGER' }),
         timestamp(),
-        metadata(),
-        printf((data) => {
-          const {
-            level,
-            message,
-            [Symbol.for('splat')]: sSplat,
-            metadata: { correlationId, timestamp, label },
-          } = data;
+        printf((info) => {
+          const { correlationId, level, message, label, timestamp, ...meta } =
+            info;
 
-          const meta = sSplat[0]
-            .map((item: any) =>
-              JSON.stringify(item, Object.getOwnPropertyNames(item), 2),
-            )
-            .join('\n');
-          return `[${label}] [${timestamp}] [${level.toUpperCase()}]${
-            correlationId ? ` [${correlationId}] ` : ''
-          }${message} ${meta}`;
+          const splatMeta = meta[Symbol.for('splat')];
+          const metadata = Array.isArray(splatMeta)
+            ? splatMeta[0]
+            : Object.values(meta);
+
+          return `[${label}] [${timestamp}] [${level.toUpperCase()}]${correlationId ? ` [${correlationId}] ` : ''}${util.format(message, ...metadata)}`;
         }),
       ),
       transports:
-        this.configurationService.nodeEnv === 'development'
-          ? [
-              new transports.Console({
-                format: colorize({ all: true }),
-              }),
-              new transports.File({
-                filename: 'public/logs/rtc_logs.log',
-              }),
-            ]
+        this.appConfigService.nodeEnv === 'development'
+          ? [new transports.Console({ format: colorize({ all: true }) })]
           : [
-              new transports.Console({
-                format: colorize({ all: true }),
-              }),
+              new transports.Console({ format: colorize({ all: true }) }),
+              new transports.File({ filename: 'public/logs/rtc_logs.log' }),
             ],
     });
   }
@@ -64,19 +49,19 @@ export class LoggerService extends ConsoleLogger {
     return this.logger.defaultMeta.correlationId;
   }
 
-  log(message: string, ...meta: any[]) {
+  log(message: string, ...meta: any[]): void {
     this.logger.info(message, meta);
   }
 
-  warn(message: string, ...meta: any[]) {
+  warn(message: string, ...meta: any[]): void {
     this.logger.warn(message, meta);
   }
 
-  error(message: string, ...meta: any[]) {
+  error(message: string, ...meta: any[]): void {
     this.logger.error(message, meta);
   }
 
-  debug(message: string, ...meta: any[]) {
+  debug(message: string, ...meta: any[]): void {
     this.logger.debug(message, meta);
   }
 }

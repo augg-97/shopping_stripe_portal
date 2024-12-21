@@ -9,11 +9,11 @@ import { Observable, tap } from 'rxjs';
 import { Reflector } from '@nestjs/core';
 import { REDIS_KEY } from '../services/redisService/redisKey';
 import { CACHE_KEY } from '../decorators/cacheKey.decorator';
-import { UserDto } from '../dto/user.dto';
-import { StoreDto } from '../dto/store.dto';
+import { IUserDto } from '../dtos/users/user.interface';
+import { IStoreDto } from '../dtos/stores/store.interface';
 
 @Injectable()
-export class CachingInterceptor<T extends UserDto | StoreDto>
+export class CachingInterceptor<T extends IUserDto | IStoreDto>
   implements NestInterceptor
 {
   constructor(

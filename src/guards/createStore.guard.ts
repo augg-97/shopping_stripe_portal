@@ -13,10 +13,9 @@ export class CreateStoreGuard implements CanActivate {
     const userData = await this.getDataCacheService.getUserData(
       Number(user.id),
     );
-    const isAllow =
-      userData &&
-      userData.isVerify &&
-      !this.getDataCacheService.isHasStore(userData);
+
+    // TODO implement check type form cache
+    const isAllow = userData && !this.getDataCacheService.isHasStore(userData);
 
     if (!isAllow) {
       throw new ForbiddenException();

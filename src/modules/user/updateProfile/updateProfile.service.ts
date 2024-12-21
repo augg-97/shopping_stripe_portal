@@ -3,10 +3,12 @@ import { UpdateProfilePayload } from './updateProfile.payload';
 import { AuthUser } from '../../../services/tokenService/authUser';
 import { UserNotFoundException } from '../../../exceptions/notFound/userNotFound.exception';
 import { Prisma } from '@prisma/client';
-import { UserRepository } from '../user.repository';
 import { plainToClass } from 'class-transformer';
-import { UserDto } from '../../../dto/user.dto';
 import { EXPOSE_GROUP_PRIVATE } from '../../../helpers/constant';
+import { UserRepository } from '../../../repositories/user.repository';
+import { UserDtoBuilder } from '../../../dtos/users/user.builder';
+import { UserWithStoreDto } from '../../../dtos/users/userWithStore.dto';
+import { IUserDto } from '../../../dtos/users/user.interface';
 
 @Injectable()
 export class UpdateProfileService {
@@ -15,7 +17,7 @@ export class UpdateProfileService {
   async execute(
     authUser: AuthUser,
     payload: UpdateProfilePayload,
-  ): Promise<UserDto> {
+  ): Promise<IUserDto> {
     const updateUserInput: Prisma.UserUpdateInput = {
       fullName: payload.fullName,
       profileImage: {
@@ -39,6 +41,10 @@ export class UpdateProfileService {
       throw new UserNotFoundException();
     }
 
-    return plainToClass(UserDto, user, { groups: [EXPOSE_GROUP_PRIVATE] });
+    const builder = new UserDtoBuilder();
+    const dto = new UserWithStoreDto(builder, true);
+    dto.build(user);
+
+    return builder.toDto();
   }
 }
