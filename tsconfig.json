@@ -1,22 +1,36 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "NodeNext",
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "target": "ESNext",
-    "sourceMap": true,
-    "outDir": "./dist",
-    "baseUrl": "/",
-    "incremental": true,
+    "baseUrl": "src",
+    "paths": {
+      "@configs/*": ["appConfigs/*"],
+      "@decorators": ["decorators/*"],
+      "@dtos/*": ["dtos/*"],
+      "@exceptions/*": ["exceptions/*"],
+      "@guards/*": ["guards/*"],
+      "@helpers/*": ["helpers/*"],
+      "@interceptors/*": ["interceptors/*"],
+      "@middlewares/*": ["middlewares/*"],
+      "@modules/*": ["modules/*"],
+      "@pkgs/*": ["pkgs/*"],
+      "@services/*": ["services/*"]
+    },
     "skipLibCheck": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
     "strict": true,
-    "strictPropertyInitialization": false,
-    "esModuleInterop": true,
-    "typeRoots": ["./node_modules/@types", "src/typings"]
-  }
+    "alwaysStrict": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "esModuleInterop": true
+  },
+  "exclude": ["node_modules", "dist"],
+  "include": ["**/*.ts"]
 }

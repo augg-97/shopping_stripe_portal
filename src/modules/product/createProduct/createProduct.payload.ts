@@ -17,7 +17,7 @@ export class CreateProductPayload {
   @IsString()
   @IsNotEmpty()
   @Type(() => String)
-  name: string;
+  name!: string;
 
   @ApiProperty({
     description: 'description',
@@ -26,7 +26,7 @@ export class CreateProductPayload {
   @IsString()
   @IsNotEmpty()
   @Type(() => String)
-  description: string;
+  description!: string;
 
   @ApiProperty({
     description: 'info',
@@ -41,11 +41,11 @@ export class CreateProductPayload {
   @IsNumber({ maxDecimalPlaces: 2 })
   @IsDefined()
   @Type(() => Number)
-  price: number;
+  price!: number;
 
   @IsInt()
   @IsNumber()
   @IsDefined()
   @Type(() => Number)
-  stock: number;
+  stock!: number;
 }

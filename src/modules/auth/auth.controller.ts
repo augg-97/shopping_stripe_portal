@@ -30,6 +30,8 @@ import { Public } from '../../decorators/allowAnonymous.decorator';
 import { ResendVerifyEmailService } from './resendVerifyEmail/resendVerifyEmail.service';
 import { LogoutService } from './logout/logout.service';
 import { IUserDto } from '../../dtos/users/user.interface';
+import { CachingInterceptor } from '../../interceptors/caching.interceptor';
+import { CacheKey } from '../../decorators/cacheKey.decorator';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -55,6 +57,8 @@ export class AuthController {
 
   @Public()
   @UseInterceptors(TokenInterceptor)
+  @CacheKey('USER')
+  @UseInterceptors(CachingInterceptor)
   @HttpCode(HttpStatus.OK)
   @Post('login')
   async login(@Body() payload: LoginPayload) {

@@ -9,10 +9,3 @@ export type AuthUser = {
   isVerify: boolean;
   storeId?: number;
 };
-
-export type TokenInfo = {
-  redisKey: REDIS_KEY;
-  secretKey: string;
-  expiration: number;
-  error: TokenExpiredException;
-};

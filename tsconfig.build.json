@@ -1,14 +1,18 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["src/**/*"],
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "sourceMap": true,
+    "incremental": true,
+    "tsBuildInfoFile": "./dist/tsconfig.build.tsbuildinfo"
+  },
   "exclude": [
     "node_modules",
-    "dist",
-    "test",
+    "test/**/*",
     "**/*spec.ts",
-    "**/*.json",
-    "**/*.yml",
-    "**/*.yaml",
-    "public"
-  ]
+    "eslint.config.ts",
+    "dist"
+  ],
+  "include": ["src/**/*.ts", "typings/**/*.d.ts"]
 }

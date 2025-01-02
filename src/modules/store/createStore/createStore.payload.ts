@@ -10,5 +10,5 @@ export class CreateStorePayload {
   @IsString()
   @IsNotEmpty()
   @Type(() => String)
-  name: string;
+  name!: string;
 }

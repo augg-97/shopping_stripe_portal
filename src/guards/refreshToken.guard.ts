@@ -1,20 +1,19 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  Inject,
-  Injectable,
-} from '@nestjs/common';
-import { TokenService } from '../services/tokenService/token.service';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { TokenNotProvidedException } from '../exceptions/unauthorized/tokenNotProvided.exception';
 import { extractToken } from '../helpers/extractToken';
-import { REFRESH_TOKEN_SERVICE } from '../helpers/constant';
+import { RefreshTokenService } from '../services/tokenService/refreshToken.service';
+import { TokenInvalidException } from '../exceptions/unauthorized/tokenInvalid.exception';
+import { REDIS_KEY } from '../services/redisService/redisKey';
+import { RedisService } from '../services/redisService/redis.service';
+import { TokenExpiredException } from '../exceptions/unauthorized/tokenExpired.exception';
+import { AuthUser } from '../services/tokenService/authUser';
 
 @Injectable()
 export class RefreshTokenGuard implements CanActivate {
   constructor(
-    @Inject(REFRESH_TOKEN_SERVICE)
-    private readonly refreshTokenService: TokenService,
+    private readonly refreshTokenService: RefreshTokenService,
+    private readonly redisService: RedisService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -29,12 +28,32 @@ export class RefreshTokenGuard implements CanActivate {
 
     const clientId =
       req.headers['client_id'] && req.headers['client_id'].toString();
-    const authUser = await this.refreshTokenService.tokenVerify(
-      token,
-      clientId,
-    );
+    const authUser = await this.verifyToken(token, clientId);
+
     req.user = authUser;
 
     return true;
+  }
+
+  async verifyToken(token: string, clientId?: string): Promise<AuthUser> {
+    const authUser = await this.refreshTokenService.tokenVerify(token);
+
+    if (!authUser) {
+      throw new TokenInvalidException();
+    }
+
+    const redisKey = clientId
+      ? `${REDIS_KEY.REFRESH_TOKEN}_${authUser.id}_${clientId}`
+      : `${REDIS_KEY.REFRESH_TOKEN}_${authUser.id}`;
+    const getToken = await this.redisService.get(redisKey);
+
+    if (!getToken) {
+      throw new TokenExpiredException(
+        'REFRESH_TOKEN_EXPIRED',
+        'Refresh token is expired',
+      );
+    }
+
+    return authUser;
   }
 }

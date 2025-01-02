@@ -27,7 +27,7 @@ export class UserPublicDto implements IUserDtoConcrete {
 }
 
 export class UserDto implements IUserDtoConcrete {
-  private userDtoConcrete: IUserDtoConcrete;
+  private userDtoConcrete!: IUserDtoConcrete;
   readonly builder: UserDtoBuilder;
 
   constructor(_builder: UserDtoBuilder, isPrivateUser = false) {

@@ -11,7 +11,7 @@ export class RegisterPayload {
   @IsString()
   @IsNotEmpty()
   @Type(() => String)
-  email: string;
+  email!: string;
 
   @ApiProperty({
     description: 'password',
@@ -27,7 +27,7 @@ export class RegisterPayload {
   @IsString()
   @IsNotEmpty()
   @Type(() => String)
-  password: string;
+  password!: string;
 
   @ApiProperty({
     description: 'fullName',
@@ -36,5 +36,5 @@ export class RegisterPayload {
   @IsString()
   @IsNotEmpty()
   @Type(() => String)
-  fullName: string;
+  fullName!: string;
 }

@@ -1,13 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { RegisterPayload } from './register.payload';
 import { PasswordService } from '../../../services/passwordService/password.service';
 import { ExistsUserException } from '../../../exceptions/badRequest/existsUser.exception';
-import {
-  EMAIL_VERIFY_SERVICE,
-  EXPOSE_GROUP_PRIVATE,
-  VERIFY_EMAIL_TOKEN_EXPIRED,
-} from '../../../helpers/constant';
-import { EmailService } from '../../../services/emailService/email.service';
+import { VERIFY_EMAIL_TOKEN_EXPIRED } from '../../../helpers/constant';
 import { EmailUIUrlParams, EmailUIUrlService } from './emailUIUrl.service';
 import { AppConfigService } from '../../../appConfigs/appConfig.service';
 import { REDIS_KEY } from '../../../services/redisService/redisKey';
@@ -17,14 +12,14 @@ import { UserRepository } from '../../../repositories/user.repository';
 import { UserDtoBuilder } from '../../../dtos/users/user.builder';
 import { UserWithStoreDto } from '../../../dtos/users/userWithStore.dto';
 import { IUserDto } from '../../../dtos/users/user.interface';
+import { EmailVerifyService } from '../../../services/emailService/emailVerify.service';
 
 @Injectable()
 export class RegisterService {
   constructor(
     private readonly userRepository: UserRepository,
     private passwordService: PasswordService,
-    @Inject(EMAIL_VERIFY_SERVICE)
-    private readonly emailVerifyService: EmailService,
+    private readonly emailVerifyService: EmailVerifyService,
     private readonly emailUIUrlService: EmailUIUrlService,
     private readonly appConfigService: AppConfigService,
   ) {}

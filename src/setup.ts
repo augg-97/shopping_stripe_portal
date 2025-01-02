@@ -1,10 +1,8 @@
 import {
-  ClassSerializerInterceptor,
   INestApplication,
   ValidationPipe,
   VersioningType,
 } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { useContainer } from 'class-validator';
 import { AppModule } from './app.module';
@@ -14,6 +12,7 @@ import { getValidatorError } from './helpers/getValidatorErrorMessage';
 import { clientIdMiddleware } from './middlewares/clientId.middleware';
 import { correlationMiddleware } from './middlewares/correlation.middleware';
 import { LoggerService } from './services/loggerService/logger.service';
+import { AppConfigService } from './appConfigs/appConfig.service';
 
 export const setupApp = async (app: INestApplication): Promise<void> => {
   const loggerService = await app.resolve(LoggerService);
@@ -54,15 +53,17 @@ export const setupApp = async (app: INestApplication): Promise<void> => {
 
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
   app.useGlobalFilters(new GlobalExceptionFilter(loggerService));
-  // app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
+  const appConfigService = app.get(AppConfigService);
   // Swagger
-  const swaggerConfig = new DocumentBuilder()
-    .setTitle('Shopping stripe apis')
-    .setDescription('Shopping stripe API document')
-    .setVersion('v1.0')
-    .addBearerAuth()
-    .build();
-  const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('api/docs', app, document);
+  if (appConfigService.nodeEnv === 'development') {
+    const swaggerConfig = new DocumentBuilder()
+      .setTitle('Shopping stripe apis')
+      .setDescription('Shopping stripe API document')
+      .setVersion('v1.0')
+      .addBearerAuth()
+      .build();
+    const document = SwaggerModule.createDocument(app, swaggerConfig);
+    SwaggerModule.setup('api/docs', app, document);
+  }
 };

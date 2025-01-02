@@ -5,7 +5,7 @@ import {
   NestInterceptor,
 } from '@nestjs/common';
 import { RedisService } from '../services/redisService/redis.service';
-import { Observable, map, tap } from 'rxjs';
+import { Observable, map, of, tap } from 'rxjs';
 import { Reflector } from '@nestjs/core';
 import { REDIS_KEY } from '../services/redisService/redisKey';
 import { CACHE_KEY } from '../decorators/cacheKey.decorator';
@@ -48,7 +48,7 @@ export class CacheInterceptor<T> implements NestInterceptor {
     const cacheData = await this.redisService.get(redisKey);
 
     if (cacheData) {
-      return next.handle().pipe(map(() => JSON.parse(cacheData)));
+      return of(JSON.parse(cacheData));
     }
 
     return next.handle().pipe(

@@ -1,7 +1,7 @@
 export const wait = (ms: number) =>
-  new Promise((resolve) => {
+  new Promise<void>((resolve) => {
     if (!ms) {
-      resolve;
+      resolve();
     }
-    setTimeout(() => resolve, ms);
+    setTimeout(() => resolve(), ms);
   });

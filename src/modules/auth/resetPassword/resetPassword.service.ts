@@ -6,8 +6,6 @@ import { PasswordService } from '../../../services/passwordService/password.serv
 import { ValidateEmailTokenService } from './validateEmailToken.service';
 import { Prisma } from '@prisma/client';
 import { ConflictException } from '../../../exceptions/conflict/conflict.exception';
-import { plainToClass } from 'class-transformer';
-import { EXPOSE_GROUP_PRIVATE } from '../../../helpers/constant';
 import { UserRepository } from '../../../repositories/user.repository';
 import { IUserDto } from '../../../dtos/users/user.interface';
 import { UserDtoBuilder } from '../../../dtos/users/user.builder';

@@ -1,59 +1,37 @@
-import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { RedisService } from '../redisService/redis.service';
-import { AuthUser, TokenInfo } from './authUser';
-import { JwtPayload } from 'jsonwebtoken';
-import { TOKEN_INFO } from '../../helpers/constant';
+import { AuthUser } from './authUser';
+import { REDIS_KEY } from '../redisService/redisKey';
+import { LoggerService } from '../loggerService/logger.service';
 
-@Injectable()
 export class TokenService {
+  protected redisKey!: REDIS_KEY;
+  protected secretKey!: string;
+  protected expiration!: number;
+
   constructor(
-    @Inject(TOKEN_INFO) private tokenInfo: TokenInfo,
-    private redisService: RedisService,
-    private jwtService: JwtService,
+    protected jwtService: JwtService,
+    protected readonly loggerService: LoggerService,
   ) {}
 
-  async tokenGenerator(payload: AuthUser, clientId?: string) {
-    const token = await this.jwtService.signAsync(payload, {
-      secret: this.tokenInfo.secretKey,
-      expiresIn: this.tokenInfo.expiration,
+  async tokenGenerator(payload: AuthUser): Promise<string> {
+    return await this.jwtService.signAsync(payload, {
+      secret: this.secretKey,
+      expiresIn: this.expiration,
     });
-
-    const redisKey = clientId
-      ? `${this.tokenInfo.redisKey}_${payload.id}_${clientId}`
-      : `${this.tokenInfo.redisKey}_${payload.id}`;
-
-    const hasToken = await this.redisService.get(redisKey);
-    if (hasToken) {
-      await this.redisService.delete(redisKey);
-    }
-
-    await this.redisService.set(redisKey, token, this.tokenInfo.expiration);
-
-    return token;
   }
 
-  async tokenVerify(token: string, clientId?: string) {
+  async tokenVerify(token: string): Promise<AuthUser | null> {
     try {
-      const payload = await this.jwtService.verifyAsync<AuthUser & JwtPayload>(
-        token,
-        {
-          secret: this.tokenInfo.secretKey,
-        },
+      return await this.jwtService.verifyAsync<AuthUser>(token, {
+        secret: this.secretKey,
+      });
+    } catch (error) {
+      this.loggerService.error(
+        '🚀 ~ TokenService ~ tokenVerify ~ error',
+        error,
       );
 
-      const redisKey = clientId
-        ? `${this.tokenInfo.redisKey}_${payload.id}_${clientId}`
-        : `${this.tokenInfo.redisKey}_${payload.id}`;
-      const getToken = await this.redisService.get(redisKey);
-
-      if (!getToken) {
-        throw this.tokenInfo.error;
-      }
-
-      return payload;
-    } catch (error) {
-      throw this.tokenInfo.error;
+      return null;
     }
   }
 }

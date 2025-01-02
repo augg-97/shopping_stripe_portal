@@ -1,14 +1,13 @@
 import { Global, Module } from '@nestjs/common';
-import { accessTokenService } from './accessToken.service';
-import { refreshTokenService } from './refreshToken.service';
-import { RedisModule } from '../redisService/redis.module';
+import { AccessTokenService } from './accessToken.service';
+import { RefreshTokenService } from './refreshToken.service';
 import { JwtModule } from '@nestjs/jwt';
 
 @Global()
 @Module({
-  imports: [RedisModule, JwtModule],
+  imports: [JwtModule],
   controllers: [],
-  providers: [accessTokenService, refreshTokenService],
-  exports: [accessTokenService, refreshTokenService],
+  providers: [AccessTokenService, RefreshTokenService],
+  exports: [AccessTokenService, RefreshTokenService],
 })
 export class TokenModule {}

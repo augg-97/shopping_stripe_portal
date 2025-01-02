@@ -1,14 +1,21 @@
 import { ValidationError } from '@nestjs/common';
 
 export const getValidatorError = (errors: ValidationError[]): string => {
-  if (errors.length === 0) {
-    return '';
-  }
+  const flattenedErrors = flattenError(errors);
 
-  const error = errors[0];
-  if (error.children && error.children.length > 0) {
-    return getValidatorError(error.children);
-  }
-
-  return error.constraints ? Object.values(error.constraints)[0] : '';
+  return flattenedErrors[0]?.constraints
+    ? Object.values(flattenedErrors[0].constraints)[0]
+    : 'Validation error';
 };
+
+export const flattenError = (errors: ValidationError[]): ValidationError[] =>
+  errors.reduce<ValidationError[]>((acc, error) => {
+    const { children, ...restError } = error;
+    acc.push(restError);
+
+    if (children && children.length > 0) {
+      acc.push(...flattenError(children));
+    }
+
+    return acc;
+  }, []);

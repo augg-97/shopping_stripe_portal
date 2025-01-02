@@ -1,32 +1,28 @@
-import { Provider } from '@nestjs/common';
-import { EMAIL_CLIENT, EMAIL_VERIFY_SERVICE } from '../../helpers/constant';
+import { Injectable } from '@nestjs/common';
+import {
+  DELAY_RETRY_EMAIL,
+  RETRIES_EMAIL_NUMBER,
+} from '../../helpers/constant';
 import { AppConfigService } from '../../appConfigs/appConfig.service';
-import { Transporter } from 'nodemailer';
-import { EmailInfo, EmailService } from './email.service';
+import { EmailService } from './email.service';
 import { join } from 'path';
 import { LoggerService } from '../loggerService/logger.service';
 
-export const emailVerifyService: Provider = {
-  provide: EMAIL_VERIFY_SERVICE,
-  useFactory: (
-    appConfigService: AppConfigService,
-    loggerService: LoggerService,
-    emailClient: Transporter,
-  ) => {
-    const emailInfo: EmailInfo = {
+@Injectable()
+export class EmailVerifyService extends EmailService {
+  constructor(
+    protected readonly config: AppConfigService,
+    protected readonly logger: LoggerService,
+  ) {
+    super(config, logger);
+    this.DELAY_RETRY_EMAIL = DELAY_RETRY_EMAIL;
+    this.RETRIES_EMAIL_NUMBER = RETRIES_EMAIL_NUMBER;
+    this.emailInfo = {
       template: join(
         __dirname,
         '../../../public/emailTemplate/verifyEmail.html',
       ),
       subject: 'SPS VERIFY YOUR EMAIL',
     };
-
-    return new EmailService(
-      appConfigService,
-      loggerService,
-      emailClient,
-      emailInfo,
-    );
-  },
-  inject: [AppConfigService, LoggerService, EMAIL_CLIENT],
-};
+  }
+}

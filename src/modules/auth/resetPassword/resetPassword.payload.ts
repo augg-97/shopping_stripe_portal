@@ -14,7 +14,7 @@ export class ResetPasswordPayload extends PickType(RegisterPayload, [
   @IsString()
   @IsNotEmpty()
   @Type(() => String)
-  email: string;
+  email!: string;
 
   @ApiProperty({
     description: 'token',
@@ -23,5 +23,5 @@ export class ResetPasswordPayload extends PickType(RegisterPayload, [
   @IsString()
   @IsNotEmpty()
   @Type(() => String)
-  token: string;
+  token!: string;
 }

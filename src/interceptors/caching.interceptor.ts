@@ -43,10 +43,6 @@ export class CachingInterceptor<T extends IUserDto | IStoreDto>
           'cacheTTL',
           context.getHandler(),
         );
-        const cacheData = await this.redisService.get(redisKey);
-        if (cacheData) {
-          await this.redisService.delete(cacheData);
-        }
         await this.redisService.set(redisKey, JSON.stringify(data), cacheTTl);
       }),
     );

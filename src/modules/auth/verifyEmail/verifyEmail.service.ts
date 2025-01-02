@@ -4,8 +4,6 @@ import { UserNotExistsException } from '../../../exceptions/badRequest/userNotEx
 import { REDIS_KEY } from '../../../services/redisService/redisKey';
 import { ValidateEmailTokenService } from '../resetPassword/validateEmailToken.service';
 import { ConflictException } from '../../../exceptions/conflict/conflict.exception';
-import { plainToClass } from 'class-transformer';
-import { EXPOSE_GROUP_PRIVATE } from '../../../helpers/constant';
 import { UserRepository } from '../../../repositories/user.repository';
 import { UserDtoBuilder } from '../../../dtos/users/user.builder';
 import { UserWithStoreDto } from '../../../dtos/users/userWithStore.dto';

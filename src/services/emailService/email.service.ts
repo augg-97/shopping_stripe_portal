@@ -1,17 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Transporter } from 'nodemailer';
+import { createTransport, Transporter } from 'nodemailer';
 import { AppConfigService } from '../../appConfigs/appConfig.service';
 import { readFile } from 'fs/promises';
 import { LoggerService } from '../loggerService/logger.service';
 import Mail from 'nodemailer/lib/mailer';
 import { compile } from 'handlebars';
 import { retry } from '../../helpers/retry';
-import {
-  DELAY_RETRY_EMAIL,
-  EMAIL_CLIENT,
-  EMAIL_INFO,
-  RETRIES_EMAIL_NUMBER,
-} from '../../helpers/constant';
 
 export type EmailInfo = {
   template: string;
@@ -21,17 +14,29 @@ export type ForgotPasswordParam = Record<'resetPasswordUrl', string>;
 export type VerifyEmailParam = Record<'verifyEmailUrl', string>;
 export type EmailParam = ForgotPasswordParam | VerifyEmailParam;
 
-@Injectable()
 export class EmailService {
-  constructor(
-    private readonly appConfigService: AppConfigService,
-    private readonly loggerService: LoggerService,
-    @Inject(EMAIL_CLIENT) private readonly emailClient: Transporter,
-    @Inject(EMAIL_INFO) private readonly emailInfo: EmailInfo,
-  ) {}
+  protected client: Transporter;
+  protected RETRIES_EMAIL_NUMBER!: number;
+  protected DELAY_RETRY_EMAIL!: number;
+  protected emailInfo!: EmailInfo;
 
-  async sendEmail(email: string, param: EmailParam) {
-    const template = await this.readEmailTemplate(this.emailInfo.template);
+  constructor(
+    protected readonly appConfigService: AppConfigService,
+    protected readonly loggerService: LoggerService,
+  ) {
+    this.client = createTransport({
+      host: appConfigService.emailServiceHost,
+      secure: false,
+      port: appConfigService.emailServicePort,
+      auth: {
+        user: appConfigService.emailServiceUserName,
+        pass: appConfigService.emailServicePassword,
+      },
+    });
+  }
+
+  async sendEmail(email: string, param: EmailParam): Promise<void> {
+    const template = await this.readEmailTemplate();
 
     const html = compile(template);
 
@@ -42,7 +47,7 @@ export class EmailService {
       html: html(param),
     };
     try {
-      const info = await this.emailClient.sendMail(emailOptions);
+      const info = await this.client.sendMail(emailOptions);
       this.loggerService.log(
         '🚀 ~ EmailService ~ sendResetPasswordEmail ~ info:',
         info,
@@ -53,15 +58,15 @@ export class EmailService {
         error,
       );
       await retry(
-        await this.emailClient.sendMail(emailOptions),
-        RETRIES_EMAIL_NUMBER,
-        DELAY_RETRY_EMAIL,
+        await this.client.sendMail(emailOptions),
+        this.RETRIES_EMAIL_NUMBER,
+        this.DELAY_RETRY_EMAIL,
         this.loggerService,
       );
     }
   }
 
-  private async readEmailTemplate(template: string): Promise<string> {
-    return await readFile(template, { encoding: 'utf-8' });
+  private async readEmailTemplate(): Promise<string> {
+    return await readFile(this.emailInfo.template, { encoding: 'utf-8' });
   }
 }
