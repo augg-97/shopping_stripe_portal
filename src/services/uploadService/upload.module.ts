@@ -1,10 +1,9 @@
 import { Global, Module } from '@nestjs/common';
-import { LoggerModule } from '../loggerService/logger.module';
 import { UploadService } from './upload.service';
 
 @Global()
 @Module({
-  imports: [LoggerModule],
+  imports: [],
   controllers: [],
   providers: [UploadService],
   exports: [UploadService],

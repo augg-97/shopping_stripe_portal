@@ -1,10 +1,8 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { BaseHttpException } from '@exceptions/baseHttp.exception';
+import { HttpStatus } from '@nestjs/common';
 
-export class TokenInvalidException extends HttpException {
+export class TokenInvalidException extends BaseHttpException {
   constructor() {
-    super(
-      { errorCode: 'INVALID_TOKEN', message: 'Token is invalid' },
-      HttpStatus.UNAUTHORIZED,
-    );
+    super('INVALID_TOKEN', 'Token is invalid', HttpStatus.UNAUTHORIZED);
   }
 }

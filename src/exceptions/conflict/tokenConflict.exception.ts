@@ -1,12 +1,11 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { BaseHttpException } from '@exceptions/baseHttp.exception';
+import { HttpStatus } from '@nestjs/common';
 
-export class TokenConflictException extends HttpException {
+export class TokenConflictException extends BaseHttpException {
   constructor() {
     super(
-      {
-        errorCode: 'GENERATE_TOKEN_FAIL',
-        message: 'Error while generate token',
-      },
+      'GENERATE_TOKEN_FAIL',
+      'Error while generate token',
       HttpStatus.CONFLICT,
     );
   }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../services/prismaService/prisma.service';
-import { LoggerService } from '../services/loggerService/logger.service';
+import { AppLoggerService } from '../services/appLoggerService/appLogger.service';
 
 const productInclude = Prisma.validator<Prisma.ProductInclude>()({
   store: {
@@ -27,7 +27,7 @@ export type ProductInclude = Prisma.ProductGetPayload<{
 export class ProductRepository {
   constructor(
     private readonly prismaService: PrismaService,
-    private readonly loggerService: LoggerService,
+    private readonly logger: AppLoggerService,
   ) {}
 
   async create(data: Prisma.ProductCreateInput) {
@@ -37,7 +37,7 @@ export class ProductRepository {
         include: productInclude,
       });
     } catch (error) {
-      this.loggerService.error('🚀 ~ ProductRepository ~ create ~ err:', error);
+      this.logger.error('🚀 ~ ProductRepository ~ create ~ err:', error);
 
       return null;
     }

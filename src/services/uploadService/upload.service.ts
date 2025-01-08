@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { join } from 'path';
 import { AppConfigService } from '../../appConfigs/appConfig.service';
 import { mkdir, stat } from 'fs';
-import { LoggerService } from '../loggerService/logger.service';
+import { AppLoggerService } from '../appLoggerService/appLogger.service';
 import { uuidGenerator } from '../../pkgs/uuidGenerator';
 import { writeFile } from 'fs/promises';
 import { extension } from 'mime-types';
@@ -12,17 +12,14 @@ export class UploadService {
   private imageDir = join(__dirname, '../../../public/assets/images');
 
   constructor(
-    private readonly appConfigService: AppConfigService,
-    private readonly loggerService: LoggerService,
+    private readonly config: AppConfigService,
+    private readonly logger: AppLoggerService,
   ) {
     const isExistsDir = this.isExistsDir(this.imageDir);
     if (!isExistsDir) {
       mkdir(this.imageDir, { recursive: true }, (err) => {
         if (err) {
-          this.loggerService.error(
-            'Error occur when create serve static folder',
-            err,
-          );
+          this.logger.error('Error occur when create serve static folder', err);
         }
       });
     }
@@ -45,7 +42,7 @@ export class UploadService {
         images.map(async (item) => await this.storeImage(item)),
       );
     } catch (err) {
-      this.loggerService.error('🚀 ~ UploadService ~ storeImages ~ err:', err);
+      this.logger.error('🚀 ~ UploadService ~ storeImages ~ err:', err);
 
       return [];
     }
@@ -73,6 +70,6 @@ export class UploadService {
   }
 
   imageUrlGenerator(fileName: string) {
-    return `${this.appConfigService.imageBaseUrl}${fileName}`;
+    return `${this.config.imageBaseUrl}${fileName}`;
   }
 }

@@ -5,17 +5,20 @@ import { Public } from './decorators/allowAnonymous.decorator';
 import { Decimal } from '@prisma/client/runtime/library';
 import { ProductInclude } from './repositories/product.repository';
 import { UserIncludeType } from './repositories/user.repository';
-import { LoggerService } from './services/loggerService/logger.service';
+import { AppLoggerService } from './services/appLoggerService/appLogger.service';
 import { UserDtoBuilder } from './dtos/users/user.builder';
 import { UserWithStoreDto } from './dtos/users/userWithStore.dto';
+import { BadRequestException } from '@exceptions/badRequest/badRequest.exception';
 
 @ApiTags('root')
 @Controller()
 export class AppController {
   constructor(
     private readonly appService: AppService,
-    private readonly logger: LoggerService,
-  ) {}
+    private readonly logger: AppLoggerService,
+  ) {
+    this.logger.serviceName = AppController.name;
+  }
 
   @Public()
   @Get('ping')
@@ -178,6 +181,10 @@ export class AppController {
     };
 
     const { profileImage, coverImage, stores, ...entity } = user;
+
+    if (user) {
+      throw new BadRequestException('test ne', 'User already exists');
+    }
 
     const builder = new UserDtoBuilder();
     const dto = new UserWithStoreDto(builder);

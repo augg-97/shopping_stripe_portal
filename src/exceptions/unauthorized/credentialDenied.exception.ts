@@ -1,10 +1,8 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { BaseHttpException } from '@exceptions/baseHttp.exception';
+import { HttpStatus } from '@nestjs/common';
 
-export class CredentialDeniedException extends HttpException {
+export class CredentialDeniedException extends BaseHttpException {
   constructor() {
-    super(
-      { errorCode: 'CREDENTIAL_DENIED', message: 'Credential denied' },
-      HttpStatus.UNAUTHORIZED,
-    );
+    super('CREDENTIAL_DENIED', 'Credential denied', HttpStatus.UNAUTHORIZED);
   }
 }

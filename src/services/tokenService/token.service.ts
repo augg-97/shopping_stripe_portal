@@ -1,7 +1,7 @@
 import { JwtService } from '@nestjs/jwt';
 import { AuthUser } from './authUser';
 import { REDIS_KEY } from '../redisService/redisKey';
-import { LoggerService } from '../loggerService/logger.service';
+import { AppLoggerService } from '../appLoggerService/appLogger.service';
 
 export class TokenService {
   protected redisKey!: REDIS_KEY;
@@ -10,7 +10,7 @@ export class TokenService {
 
   constructor(
     protected jwtService: JwtService,
-    protected readonly loggerService: LoggerService,
+    protected readonly logger: AppLoggerService,
   ) {}
 
   async tokenGenerator(payload: AuthUser): Promise<string> {
@@ -26,10 +26,7 @@ export class TokenService {
         secret: this.secretKey,
       });
     } catch (error) {
-      this.loggerService.error(
-        '🚀 ~ TokenService ~ tokenVerify ~ error',
-        error,
-      );
+      this.logger.error('🚀 ~ TokenService ~ tokenVerify ~ error', error);
 
       return null;
     }

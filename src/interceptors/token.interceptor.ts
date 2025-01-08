@@ -7,7 +7,7 @@ import {
 import { AuthUser } from '../services/tokenService/authUser';
 import { Request } from 'express';
 import { Observable, mergeMap } from 'rxjs';
-import { LoggerService } from '../services/loggerService/logger.service';
+import { AppLoggerService } from '../services/appLoggerService/appLogger.service';
 import { IUserDto } from '../dtos/users/user.interface';
 import { USER_TYPE } from '@prisma/client';
 import { AccessTokenService } from '../services/tokenService/accessToken.service';
@@ -21,7 +21,7 @@ export class TokenInterceptor implements NestInterceptor {
   constructor(
     private readonly accessTokenService: AccessTokenService,
     private readonly refreshTokenService: RefreshTokenService,
-    private readonly loggerService: LoggerService,
+    private readonly logger: AppLoggerService,
     private readonly redisService: RedisService,
     private readonly configService: AppConfigService,
   ) {}
@@ -33,7 +33,7 @@ export class TokenInterceptor implements NestInterceptor {
     const req = context.switchToHttp().getRequest<Request>();
     const res = context.switchToHttp().getResponse();
     const clientId =
-      req.headers['client_id'] && req.headers['client_id'].toString();
+      req.headers['client-id'] && req.headers['client-id'].toString();
 
     return next.handle().pipe(
       mergeMap(async (data) => {
@@ -66,14 +66,11 @@ export class TokenInterceptor implements NestInterceptor {
           );
 
           res.setHeader('Authorization', accessToken);
-          res.setHeader('refresh_token', refreshToken);
+          res.setHeader('refresh-token', refreshToken);
 
           return data;
         } catch (error) {
-          this.loggerService.error(
-            '🚀 ~ AuthInterception ~ map ~ error:',
-            error,
-          );
+          this.logger.error('🚀 ~ AuthInterception ~ map ~ error:', error);
 
           return data;
         }

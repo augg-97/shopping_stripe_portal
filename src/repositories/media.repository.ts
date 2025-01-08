@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Media, Prisma } from '@prisma/client';
 import { PrismaService } from '../services/prismaService/prisma.service';
-import { LoggerService } from '../services/loggerService/logger.service';
+import { AppLoggerService } from '../services/appLoggerService/appLogger.service';
 
 export type MediaBulkInput = {
   fileName: string;
@@ -13,7 +13,7 @@ export type MediaBulkInput = {
 export class MediaRepository {
   constructor(
     private readonly prismaService: PrismaService,
-    private readonly loggerService: LoggerService,
+    private readonly logger: AppLoggerService,
   ) {}
 
   async createMedia(data: Prisma.MediaCreateInput) {
@@ -22,10 +22,7 @@ export class MediaRepository {
         data,
       });
     } catch (err) {
-      this.loggerService.error(
-        '🚀 ~ MediaRepository ~ createMedia ~ err:',
-        err,
-      );
+      this.logger.error('🚀 ~ MediaRepository ~ createMedia ~ err:', err);
 
       return null;
     }
@@ -47,10 +44,7 @@ export class MediaRepository {
 
       return media;
     } catch (err) {
-      this.loggerService.error(
-        '🚀 ~ MediaRepository ~ createBulkMedia ~ err:',
-        err,
-      );
+      this.logger.error('🚀 ~ MediaRepository ~ createBulkMedia ~ err:', err);
 
       return [];
     }

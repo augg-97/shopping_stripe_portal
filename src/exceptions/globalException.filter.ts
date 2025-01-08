@@ -2,40 +2,37 @@ import {
   ArgumentsHost,
   Catch,
   ExceptionFilter,
-  HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { isString } from 'class-validator';
 import { Request, Response } from 'express';
-import { LoggerService } from '../services/loggerService/logger.service';
+import { AppLoggerService } from '../services/appLoggerService/appLogger.service';
+import { BaseHttpException } from './baseHttp.exception';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
-  constructor(private loggerService: LoggerService) {}
+  constructor(private readonly logger: AppLoggerService) {
+    this.logger.serviceName = GlobalExceptionFilter.name;
+  }
 
   catch(exception: Error, host: ArgumentsHost) {
     const context = host.switchToHttp();
     const response = context.getResponse<Response>();
     const request = context.getRequest<Request>();
-    const correlationId = request.headers['correlationId'];
+    const correlationId = request.headers['correlation-id'];
 
-    this.loggerService.error(
-      `Error occur in request ${request.url}`,
-      exception,
-    );
+    this.logger.error(`Error occur in request ${request.url}`, exception);
 
-    if (exception instanceof HttpException) {
+    if (exception instanceof BaseHttpException) {
       const status = exception.getStatus();
-      const getResponse = exception.getResponse();
-
-      const errorData = this.errorDataBuilder(status, getResponse);
+      const { errorCode, message } = exception.getResponse();
 
       return response.status(status).json({
         correlationId,
         statusCode: status,
         timestamp: new Date().toISOString(),
         path: request.url,
-        ...errorData,
+        errorCode,
+        message,
       });
     }
 
@@ -47,37 +44,5 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       errorCode: 'INTERNAL_SERVER_ERROR',
       message: 'Something went wrong!',
     });
-  }
-
-  errorDataBuilder(
-    status: number,
-    exceptionData: string | object,
-  ): { errorCode: string; message: string } {
-    if (isString(exceptionData)) {
-      return { errorCode: HttpStatus[status], message: exceptionData };
-    }
-
-    if (
-      'message' in exceptionData === false ||
-      !isString(exceptionData.message)
-    ) {
-      return {
-        errorCode: HttpStatus[status],
-        message: 'Something went wrong!',
-      };
-    }
-
-    if (
-      'error' in exceptionData ||
-      'errorCode' in exceptionData === false ||
-      !isString(exceptionData.errorCode)
-    ) {
-      return { errorCode: HttpStatus[status], message: exceptionData.message };
-    }
-
-    return {
-      errorCode: exceptionData.errorCode,
-      message: exceptionData.message,
-    };
   }
 }

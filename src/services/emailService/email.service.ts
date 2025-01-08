@@ -1,7 +1,7 @@
 import { createTransport, Transporter } from 'nodemailer';
 import { AppConfigService } from '../../appConfigs/appConfig.service';
 import { readFile } from 'fs/promises';
-import { LoggerService } from '../loggerService/logger.service';
+import { AppLoggerService } from '../appLoggerService/appLogger.service';
 import Mail from 'nodemailer/lib/mailer';
 import { compile } from 'handlebars';
 import { retry } from '../../helpers/retry';
@@ -22,7 +22,7 @@ export class EmailService {
 
   constructor(
     protected readonly appConfigService: AppConfigService,
-    protected readonly loggerService: LoggerService,
+    protected readonly logger: AppLoggerService,
   ) {
     this.client = createTransport({
       host: appConfigService.emailServiceHost,
@@ -48,12 +48,12 @@ export class EmailService {
     };
     try {
       const info = await this.client.sendMail(emailOptions);
-      this.loggerService.log(
+      this.logger.log(
         '🚀 ~ EmailService ~ sendResetPasswordEmail ~ info:',
         info,
       );
     } catch (error) {
-      this.loggerService.error(
+      this.logger.error(
         '🚀 ~ EmailService ~ sendResetPasswordEmail ~ error:',
         error,
       );
@@ -61,7 +61,7 @@ export class EmailService {
         await this.client.sendMail(emailOptions),
         this.RETRIES_EMAIL_NUMBER,
         this.DELAY_RETRY_EMAIL,
-        this.loggerService,
+        this.logger,
       );
     }
   }

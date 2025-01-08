@@ -25,7 +25,7 @@ export class AuthGuard implements CanActivate {
 
     if (token) {
       const clientId =
-        req.headers['client_id'] && req.headers['client_id'].toString();
+        req.headers['client-id'] && req.headers['client-id'].toString();
 
       const authUser = await this.verifyToken(token, clientId);
 

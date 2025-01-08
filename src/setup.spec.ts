@@ -8,9 +8,6 @@ import {
   ValidationPipe,
   VersioningType,
 } from '@nestjs/common';
-import { correlationMiddleware } from './middlewares/correlation.middleware';
-import { clientIdMiddleware } from './middlewares/clientId.middleware';
-import { LoggerService } from './services/loggerService/logger.service';
 import { getValidatorError } from './helpers/getValidatorErrorMessage';
 import { ValidatorException } from './exceptions/badRequest/validator.exception';
 import { useContainer } from 'class-validator';

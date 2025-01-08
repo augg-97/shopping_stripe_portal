@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Observable, mergeMap } from 'rxjs';
 import { AuthUser } from '../services/tokenService/authUser';
-import { LoggerService } from '../services/loggerService/logger.service';
+import { AppLoggerService } from '../services/appLoggerService/appLogger.service';
 import { Request } from 'express';
 import { extractToken } from '../helpers/extractToken';
 import { IUserDto } from '../dtos/users/user.interface';
@@ -20,7 +20,7 @@ import { REDIS_KEY } from '../services/redisService/redisKey';
 export class RefreshTokenInterceptor implements NestInterceptor {
   constructor(
     private readonly accessTokenService: AccessTokenService,
-    private readonly loggerService: LoggerService,
+    private readonly logger: AppLoggerService,
     private readonly redisService: RedisService,
     private readonly configService: AppConfigService,
   ) {}
@@ -32,7 +32,7 @@ export class RefreshTokenInterceptor implements NestInterceptor {
     const req = context.switchToHttp().getRequest<Request>();
     const res = context.switchToHttp().getResponse();
     const clientId =
-      req.headers['client_id'] && req.headers['client_id'].toString();
+      req.headers['client-id'] && req.headers['client-id'].toString();
 
     return next.handle().pipe(
       mergeMap(async (data) => {
@@ -60,14 +60,11 @@ export class RefreshTokenInterceptor implements NestInterceptor {
           const refreshToken = bearerToken && extractToken(bearerToken);
 
           res.setHeader('Authorization', accessToken);
-          res.setHeader('refresh_token', refreshToken);
+          res.setHeader('refresh-token', refreshToken);
 
           return data;
         } catch (error) {
-          this.loggerService.error(
-            '🚀 ~ AuthInterception ~ map ~ error:',
-            error,
-          );
+          this.logger.error('🚀 ~ AuthInterception ~ map ~ error:', error);
 
           return data;
         }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { LoggerService } from '@services/loggerService/logger.service';
+import { AppLoggerService } from '@services/appLoggerService/appLogger.service';
 import { PrismaService } from '@services/prismaService/prisma.service';
 
 export const userInclude = Prisma.validator<Prisma.UserInclude>()({
@@ -22,7 +22,7 @@ export type UserIncludeType = Prisma.UserGetPayload<{
 export class UserRepository {
   constructor(
     private readonly prismaService: PrismaService,
-    private readonly loggerService: LoggerService,
+    private readonly logger: AppLoggerService,
   ) {}
 
   async findUserByEmail(email: string) {
@@ -41,10 +41,7 @@ export class UserRepository {
         include: userInclude,
       });
     } catch (err) {
-      this.loggerService.error(
-        '🚀 ~ UserRepository ~ findUserByEmail ~ err:',
-        err,
-      );
+      this.logger.error('🚀 ~ UserRepository ~ findUserByEmail ~ err:', err);
 
       return null;
     }
@@ -66,10 +63,7 @@ export class UserRepository {
         include: userInclude,
       });
     } catch (err) {
-      this.loggerService.error(
-        '🚀 ~ UserRepository ~ findUserByEmail ~ err:',
-        err,
-      );
+      this.logger.error('🚀 ~ UserRepository ~ findUserByEmail ~ err:', err);
 
       return null;
     }
@@ -82,7 +76,7 @@ export class UserRepository {
         include: userInclude,
       });
     } catch (err) {
-      this.loggerService.error('🚀 ~ UserRepository ~ createUser ~ err:', err);
+      this.logger.error('🚀 ~ UserRepository ~ createUser ~ err:', err);
 
       return null;
     }

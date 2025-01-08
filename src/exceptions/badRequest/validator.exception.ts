@@ -1,7 +1,8 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { BaseHttpException } from '@exceptions/baseHttp.exception';
+import { HttpStatus } from '@nestjs/common';
 
-export class ValidatorException extends HttpException {
-  constructor(public message: string) {
-    super({ errorCode: 'BAD_REQUEST', message }, HttpStatus.BAD_REQUEST);
+export class ValidatorException extends BaseHttpException {
+  constructor(message: string) {
+    super('BAD_REQUEST', message, HttpStatus.BAD_REQUEST);
   }
 }

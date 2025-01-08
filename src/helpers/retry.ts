@@ -1,11 +1,11 @@
-import { LoggerService } from '../services/loggerService/logger.service';
+import { AppLoggerService } from '../services/appLoggerService/appLogger.service';
 import { wait } from './wait';
 
 export const retry = async <T>(
   fn: () => Promise<T>,
   retries: number,
   delay: number,
-  logger: LoggerService,
+  logger: AppLoggerService,
 ) => {
   try {
     for (let i = 1; i <= retries; i++) {

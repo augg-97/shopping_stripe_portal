@@ -6,13 +6,13 @@ import {
 import { AppConfigService } from '../../appConfigs/appConfig.service';
 import { EmailService } from './email.service';
 import { join } from 'path';
-import { LoggerService } from '../loggerService/logger.service';
+import { AppLoggerService } from '../appLoggerService/appLogger.service';
 
 @Injectable()
 export class EmailForgotPasswordService extends EmailService {
   constructor(
     protected readonly config: AppConfigService,
-    protected readonly logger: LoggerService,
+    protected readonly logger: AppLoggerService,
   ) {
     super(config, logger);
     this.DELAY_RETRY_EMAIL = DELAY_RETRY_EMAIL;

@@ -1,10 +1,8 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { BaseHttpException } from '@exceptions/baseHttp.exception';
+import { HttpStatus } from '@nestjs/common';
 
-export class TokenNotProvidedException extends HttpException {
+export class TokenNotProvidedException extends BaseHttpException {
   constructor() {
-    super(
-      { errorCode: 'TOKEN_NOT_PROVIDED', message: 'Token not provided' },
-      HttpStatus.UNAUTHORIZED,
-    );
+    super('TOKEN_NOT_PROVIDED', 'Token not provided', HttpStatus.UNAUTHORIZED);
   }
 }
