@@ -1,6 +1,6 @@
+import { Injectable, ValidationError, ValidationPipe } from '@nestjs/common';
+
 import { ValidatorException } from '@exceptions/badRequest/validator.exception';
-import { getValidatorError } from '@helpers/getValidatorErrorMessage';
-import { Injectable, ValidationPipe } from '@nestjs/common';
 
 @Injectable()
 export class CustomValidationPipe extends ValidationPipe {
@@ -11,9 +11,30 @@ export class CustomValidationPipe extends ValidationPipe {
       forbidNonWhitelisted: true,
       stopAtFirstError: true,
       exceptionFactory(errors): void {
-        const message = getValidatorError(errors);
+        const message = CustomValidationPipe.getValidatorError(errors);
         throw new ValidatorException(message);
       },
     });
+  }
+
+  private static getValidatorError(errors: ValidationError[]): string {
+    const flattenedErrors = this.flattenError(errors);
+
+    return flattenedErrors[0]?.constraints
+      ? Object.values(flattenedErrors[0].constraints)[0]
+      : 'Validation error';
+  }
+
+  private static flattenError(errors: ValidationError[]): ValidationError[] {
+    return errors.reduce<ValidationError[]>((acc, error) => {
+      const { children, ...restError } = error;
+      acc.push(restError);
+
+      if (children && children.length > 0) {
+        acc.push(...this.flattenError(children));
+      }
+
+      return acc;
+    }, []);
   }
 }

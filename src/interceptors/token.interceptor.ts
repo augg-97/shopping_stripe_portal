@@ -4,12 +4,13 @@ import {
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
-import { AuthUser } from '../services/tokenService/authUser';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { Observable, mergeMap } from 'rxjs';
+import { USER_TYPE } from '@prisma/client';
+
+import { AuthUser } from '../services/tokenService/authUser';
 import { AppLoggerService } from '../services/appLoggerService/appLogger.service';
 import { IUserDto } from '../dtos/users/user.interface';
-import { USER_TYPE } from '@prisma/client';
 import { AccessTokenService } from '../services/tokenService/accessToken.service';
 import { RefreshTokenService } from '../services/tokenService/refreshToken.service';
 import { RedisService } from '../services/redisService/redis.service';
@@ -31,9 +32,8 @@ export class TokenInterceptor implements NestInterceptor {
     next: CallHandler<IUserDto>,
   ): Promise<Observable<IUserDto>> {
     const req = context.switchToHttp().getRequest<Request>();
-    const res = context.switchToHttp().getResponse();
-    const clientId =
-      req.headers['client-id'] && req.headers['client-id'].toString();
+    const res = context.switchToHttp().getResponse<Response>();
+    const clientId = req.headers['client-id']?.toString();
 
     return next.handle().pipe(
       mergeMap(async (data) => {
@@ -63,6 +63,7 @@ export class TokenInterceptor implements NestInterceptor {
             payload,
             REDIS_KEY.REFRESH_TOKEN,
             this.configService.refreshTokenExpiredIn,
+            clientId,
           );
 
           res.setHeader('Authorization', accessToken);
@@ -81,13 +82,13 @@ export class TokenInterceptor implements NestInterceptor {
   private async storeTokenToRedis(
     token: string,
     payload: AuthUser,
-    redisKey: string,
+    redisKey: REDIS_KEY,
     expiration: number,
     clientId?: string,
   ): Promise<void> {
     const key = clientId
-      ? `${redisKey}_${payload.id}_${clientId}`
-      : `${redisKey}_${payload.id}`;
+      ? this.redisService.buildCacheKey(redisKey, payload.id, clientId)
+      : this.redisService.buildCacheKey(redisKey, payload.id);
 
     await this.redisService.set(key, token, expiration);
   }

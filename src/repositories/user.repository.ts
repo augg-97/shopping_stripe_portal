@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+
 import { AppLoggerService } from '@services/appLoggerService/appLogger.service';
 import { PrismaService } from '@services/prismaService/prisma.service';
 

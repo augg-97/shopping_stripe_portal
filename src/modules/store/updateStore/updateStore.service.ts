@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { AuthUser } from '../../../services/tokenService/authUser';
+
+import { AuthUser } from '@services/tokenService/authUser';
+import { StoreRepository } from '@repositories/store.repository';
+
 import { UpdateStorePayload } from './updateStore.payload';
-import { StoreRepository } from '../../../repositories/store.repository';
 
 @Injectable()
 export class UpdateStoreService {

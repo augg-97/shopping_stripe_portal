@@ -1,4 +1,6 @@
 import { SetMetadata } from '@nestjs/common';
 
+import { DECORATOR } from './decorator.enum';
+
 export const IdentifyCacheKey = (entity = 'USER') =>
-  SetMetadata('identifyCacheKey', entity);
+  SetMetadata(DECORATOR.IDENTIFY_CACHE_KEY, entity);

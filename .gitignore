@@ -37,3 +37,5 @@ lerna-debug.log*
 public/*
 !public/emailTemplate
 !public/nginx
+
+package-lock.json

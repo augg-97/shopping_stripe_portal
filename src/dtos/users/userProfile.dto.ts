@@ -1,11 +1,13 @@
 import { Media } from '@prisma/client';
+
 import { OmitTyped } from '../../utilities/customType.utilities';
-import { UserDtoBuilder } from './user.builder';
-import { UserDto } from './user.dto';
-import { IUserDtoConcrete, UserEntity } from './user.interface';
 import { IMediaDto } from '../media/media.interface';
 import { MediaDtoBuilder } from '../media/media.builder';
 import { MediaDto } from '../media/media.dto';
+
+import { UserDtoBuilder } from './user.builder';
+import { UserDto } from './user.dto';
+import { IUserDtoConcrete, UserEntity } from './user.interface';
 
 export class UserProfileDto extends UserDto implements IUserDtoConcrete {
   constructor(_builder: UserDtoBuilder, isPrivateUser = false) {

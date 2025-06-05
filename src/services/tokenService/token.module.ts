@@ -1,7 +1,8 @@
 import { Global, Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
+
 import { AccessTokenService } from './accessToken.service';
 import { RefreshTokenService } from './refreshToken.service';
-import { JwtModule } from '@nestjs/jwt';
 
 @Global()
 @Module({

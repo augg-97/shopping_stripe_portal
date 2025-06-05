@@ -3,5 +3,7 @@ export const wait = (ms: number) =>
     if (!ms) {
       resolve();
     }
-    setTimeout(() => resolve(), ms);
+    setTimeout(() => {
+      resolve();
+    }, ms);
   });

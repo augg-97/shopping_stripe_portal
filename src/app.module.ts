@@ -4,6 +4,14 @@ import {
   NestModule,
   OnModuleInit,
 } from '@nestjs/common';
+import { APP_FILTER, APP_GUARD, APP_PIPE, ModuleRef } from '@nestjs/core';
+import { CustomValidationPipe } from 'pipes/customValidation.pipe';
+import { useContainer } from 'class-validator';
+
+import { ClientIdMiddleware } from '@middlewares/clientId.middleware';
+import { CorrelationMiddleware } from '@middlewares/correlation.middleware';
+import { GlobalExceptionFilter } from '@exceptions/globalException.filter';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AppConfigModule } from './appConfigs/appConfig.module';
@@ -12,8 +20,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
 import { MediaModule } from './modules/media/media.module';
 import { RedisModule } from './services/redisService/redis.module';
-import { APP_FILTER, APP_GUARD, APP_PIPE, ModuleRef } from '@nestjs/core';
-import { AuthGuard } from './guards/auth.guard';
+import { TokenGuard } from './guards/token.guard';
 import { TokenModule } from './services/tokenService/token.module';
 import { TypeGuard } from './guards/type.guard';
 import { StoreModule } from './modules/store/store.module';
@@ -23,12 +30,6 @@ import { PrismaModule } from './services/prismaService/prisma.module';
 import { UploadModule } from './services/uploadService/upload.module';
 import { EmailModule } from './services/emailService/email.module';
 import { RepositoriesModule } from './repositories/repositories.module';
-import { ClientIdMiddleware } from '@middlewares/clientId.middleware';
-import { CorrelationMiddleware } from '@middlewares/correlation.middleware';
-import { GlobalExceptionFilter } from '@exceptions/globalException.filter';
-import { CustomValidationPipe } from 'pipes/customValidation.pipe';
-import { useContainer } from 'class-validator';
-import { AppLoggerService } from '@services/appLoggerService/appLogger.service';
 
 @Module({
   imports: [
@@ -49,7 +50,7 @@ import { AppLoggerService } from '@services/appLoggerService/appLogger.service';
   ],
   controllers: [AppController],
   providers: [
-    { provide: APP_GUARD, useClass: AuthGuard },
+    { provide: APP_GUARD, useClass: TokenGuard },
     { provide: APP_GUARD, useClass: TypeGuard },
     { provide: APP_FILTER, useClass: GlobalExceptionFilter },
     { provide: APP_PIPE, useClass: CustomValidationPipe },

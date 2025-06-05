@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
-import { uuidGenerator } from '../pkgs/uuidGenerator';
 import { Injectable, NestMiddleware } from '@nestjs/common';
+
+import { uuidGenerator } from '../pkgs/uuidGenerator';
 
 @Injectable()
 export class ClientIdMiddleware implements NestMiddleware {
@@ -11,11 +12,12 @@ export class ClientIdMiddleware implements NestMiddleware {
       req.headers['client-id'] = newClientId;
       res.setHeader('client-id', newClientId);
 
-      return next();
+      next();
+      return;
     }
 
     res.setHeader('client-id', clientId);
 
-    return next();
+    next();
   }
 }

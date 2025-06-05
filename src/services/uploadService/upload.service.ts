@@ -1,11 +1,13 @@
-import { Injectable } from '@nestjs/common';
 import { join } from 'path';
-import { AppConfigService } from '../../appConfigs/appConfig.service';
 import { mkdir, stat } from 'fs';
-import { AppLoggerService } from '../appLoggerService/appLogger.service';
-import { uuidGenerator } from '../../pkgs/uuidGenerator';
 import { writeFile } from 'fs/promises';
+
+import { Injectable } from '@nestjs/common';
 import { extension } from 'mime-types';
+
+import { AppConfigService } from '@appConfigs/appConfig.service';
+import { uuidGenerator } from '@pkgs/uuidGenerator';
+import { AppLoggerService } from '@services/appLoggerService/appLogger.service';
 
 @Injectable()
 export class UploadService {
@@ -36,11 +38,18 @@ export class UploadService {
     return result;
   }
 
-  async storeImages(images: Express.Multer.File[]) {
+  async storeImages(images: Express.Multer.File[]): Promise<
+    {
+      fileName: string;
+      url: string;
+    }[]
+  > {
     try {
-      return await Promise.all(
-        images.map(async (item) => await this.storeImage(item)),
+      const result = await Promise.all(
+        images.map((item) => this.storeImage(item)),
       );
+
+      return result.filter((item) => !!item);
     } catch (err) {
       this.logger.error('🚀 ~ UploadService ~ storeImages ~ err:', err);
 
@@ -51,8 +60,13 @@ export class UploadService {
   async storeImage(image: Express.Multer.File): Promise<{
     fileName: string;
     url: string;
-  }> {
+  } | null> {
     const fileName = this.fileNameGenerator(image);
+
+    if (!fileName) {
+      return null;
+    }
+
     const filePath = `${this.imageDir}/${fileName}`;
     await writeFile(filePath, image.buffer);
 
@@ -62,14 +76,18 @@ export class UploadService {
     };
   }
 
-  fileNameGenerator(image: Express.Multer.File) {
+  fileNameGenerator(image: Express.Multer.File): string {
     const uniqName = uuidGenerator();
     const fileExtension = extension(image.mimetype);
+
+    if (!fileExtension) {
+      return '';
+    }
 
     return `${uniqName}.${fileExtension}`;
   }
 
-  imageUrlGenerator(fileName: string) {
+  imageUrlGenerator(fileName: string): string {
     return `${this.config.imageBaseUrl}${fileName}`;
   }
 }

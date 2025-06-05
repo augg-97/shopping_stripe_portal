@@ -1,5 +1,5 @@
 // import { INestApplication } from "@nestjs/common";
-// import { PrismaService } from "../../../services/prismaService/prisma.service";
+// import { PrismaService } from "@services/prismaService/prisma.service";
 // import { Test, TestingModule } from "@nestjs/testing";
 // import { setupTestApp } from "../../../setup.spec";
 // import request from "supertest";

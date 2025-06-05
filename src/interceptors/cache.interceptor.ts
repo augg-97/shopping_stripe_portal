@@ -4,13 +4,15 @@ import {
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
-import { RedisService } from '../services/redisService/redis.service';
-import { Observable, map, of, tap } from 'rxjs';
+import { Observable, of, tap } from 'rxjs';
 import { Reflector } from '@nestjs/core';
-import { REDIS_KEY } from '../services/redisService/redisKey';
-import { CACHE_KEY } from '../decorators/cacheKey.decorator';
 import { Request } from 'express';
-import { AuthUser } from '../services/tokenService/authUser';
+
+import { CACHE_KEY } from '@decorators/cacheKey.decorator';
+import { DECORATOR } from '@decorators/decorator.enum';
+
+import { REDIS_KEY } from '../services/redisService/redisKey';
+import { RedisService } from '../services/redisService/redis.service';
 
 @Injectable()
 export class CacheInterceptor<T> implements NestInterceptor {
@@ -23,30 +25,22 @@ export class CacheInterceptor<T> implements NestInterceptor {
     context: ExecutionContext,
     next: CallHandler<T>,
   ): Promise<Observable<T>> {
-    const cacheKey = this.reflector.get<CACHE_KEY | undefined>(
-      'cacheKey',
+    const { params } = context.switchToHttp().getRequest<Request>();
+    const cacheKeyByDecoration = this.reflector.get<CACHE_KEY | undefined>(
+      DECORATOR.CACHE_KEY,
       context.getHandler(),
     );
 
-    if (!cacheKey) {
+    if (!cacheKeyByDecoration || !params.id) {
       return next.handle();
     }
 
-    const req = context.switchToHttp().getRequest<Request>();
-
-    const identifyCacheKey = this.reflector.get<string | undefined>(
-      'identifyCacheKey',
-      context.getHandler(),
+    const cacheKey = this.redisService.buildCacheKey(
+      REDIS_KEY.CACHE,
+      cacheKeyByDecoration,
     );
-
-    const redisKey = this.buildCacheKey(
-      cacheKey,
-      identifyCacheKey,
-      req.user,
-      req.params.id,
-    );
-    const cacheData = await this.redisService.get(redisKey);
-
+    const fieldKey = params.id;
+    const cacheData = await this.redisService.hGet(cacheKey, fieldKey);
     if (cacheData) {
       return of(JSON.parse(cacheData));
     }
@@ -55,29 +49,15 @@ export class CacheInterceptor<T> implements NestInterceptor {
       tap(async (data) => {
         const cacheTTL = this.reflector.get<number | undefined>(
           'cacheTTL',
-          context.getHandler,
+          context.getHandler(),
         );
-        await this.redisService.set(redisKey, JSON.stringify(data), cacheTTL);
+        await this.redisService.hSet(
+          cacheKey,
+          fieldKey,
+          JSON.stringify(data),
+          cacheTTL,
+        );
       }),
     );
-  }
-
-  buildCacheKey(
-    cacheKey: CACHE_KEY,
-    identifyCacheKey?: string,
-    user?: AuthUser,
-    paramId?: string,
-  ) {
-    const isCacheKeyFromUserId =
-      identifyCacheKey && identifyCacheKey === 'USER' && user;
-    if (isCacheKeyFromUserId) {
-      return `${REDIS_KEY.CACHE}_${cacheKey}_${user.id}`;
-    }
-
-    if (!paramId) {
-      return `${REDIS_KEY.CACHE}_${cacheKey}`;
-    }
-
-    return `${REDIS_KEY.CACHE}_${cacheKey}_${paramId}`;
   }
 }

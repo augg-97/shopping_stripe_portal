@@ -1,5 +1,3 @@
-export const TOKEN_INFO = 'TOKEN_INFO';
-
 export const RETRIES_EMAIL_NUMBER = 3;
 export const DELAY_RETRY_EMAIL = 60 * 2; // 2 minutes
 

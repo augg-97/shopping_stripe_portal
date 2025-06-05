@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { UpdateProfilePayload } from './updateProfile.payload';
-import { AuthUser } from '../../../services/tokenService/authUser';
-import { UserNotFoundException } from '../../../exceptions/notFound/userNotFound.exception';
 import { Prisma } from '@prisma/client';
-import { plainToClass } from 'class-transformer';
-import { EXPOSE_GROUP_PRIVATE } from '../../../helpers/constant';
-import { UserRepository } from '../../../repositories/user.repository';
-import { UserDtoBuilder } from '../../../dtos/users/user.builder';
-import { UserWithStoreDto } from '../../../dtos/users/userWithStore.dto';
-import { IUserDto } from '../../../dtos/users/user.interface';
+
+import { AuthUser } from '@services/tokenService/authUser';
+import { UserNotFoundException } from '@exceptions/notFound/userNotFound.exception';
+import { UserRepository } from '@repositories/user.repository';
+import { UserEntity } from '@dtos/users/user.interface';
+
+import { UpdateProfilePayload } from './updateProfile.payload';
 
 @Injectable()
 export class UpdateProfileService {
@@ -17,7 +15,7 @@ export class UpdateProfileService {
   async execute(
     authUser: AuthUser,
     payload: UpdateProfilePayload,
-  ): Promise<IUserDto> {
+  ): Promise<UserEntity> {
     const updateUserInput: Prisma.UserUpdateInput = {
       fullName: payload.fullName,
       profileImage: {
@@ -41,10 +39,6 @@ export class UpdateProfileService {
       throw new UserNotFoundException();
     }
 
-    const builder = new UserDtoBuilder();
-    const dto = new UserWithStoreDto(builder, true);
-    dto.build(user);
-
-    return builder.toDto();
+    return user;
   }
 }

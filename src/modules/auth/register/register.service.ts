@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { RegisterPayload } from './register.payload';
-import { PasswordService } from '../../../services/passwordService/password.service';
-import { ExistsUserException } from '../../../exceptions/badRequest/existsUser.exception';
-import { VERIFY_EMAIL_TOKEN_EXPIRED } from '../../../helpers/constant';
-import { EmailUIUrlParams, EmailUIUrlService } from './emailUIUrl.service';
-import { AppConfigService } from '../../../appConfigs/appConfig.service';
-import { REDIS_KEY } from '../../../services/redisService/redisKey';
 import { Prisma } from '@prisma/client';
-import { ConflictException } from '../../../exceptions/conflict/conflict.exception';
-import { UserRepository } from '../../../repositories/user.repository';
-import { UserDtoBuilder } from '../../../dtos/users/user.builder';
-import { UserWithStoreDto } from '../../../dtos/users/userWithStore.dto';
-import { IUserDto } from '../../../dtos/users/user.interface';
-import { EmailVerifyService } from '../../../services/emailService/emailVerify.service';
+
+import { REDIS_KEY } from '@services/redisService/redisKey';
+import { ExistsUserException } from '@exceptions/badRequest/existsUser.exception';
+import { PasswordService } from '@services/passwordService/password.service';
+import { ConflictException } from '@exceptions/conflict/conflict.exception';
+import { UserRepository } from '@repositories/user.repository';
+import { UserEntity } from '@dtos/users/user.interface';
+import { EmailVerifyService } from '@services/emailService/emailVerify.service';
+import { AppConfigService } from '@appConfigs/appConfig.service';
+import { VERIFY_EMAIL_TOKEN_EXPIRED } from '@helpers/constant';
+
+import { EmailUIUrlParams, EmailUIUrlService } from './emailUIUrl.service';
+import { RegisterPayload } from './register.payload';
 
 @Injectable()
 export class RegisterService {
@@ -24,7 +24,7 @@ export class RegisterService {
     private readonly appConfigService: AppConfigService,
   ) {}
 
-  async execute(payload: RegisterPayload): Promise<IUserDto> {
+  async execute(payload: RegisterPayload): Promise<UserEntity> {
     const { email, password, fullName } = payload;
 
     const user = await this.userRepository.findUserByEmail(email);
@@ -62,10 +62,6 @@ export class RegisterService {
     const url = await this.emailUIUrlService.execute(params);
     await this.emailVerifyService.sendEmail(email, { verifyEmailUrl: url });
 
-    const builder = new UserDtoBuilder();
-    const dto = new UserWithStoreDto(builder, true);
-    dto.build(newUser);
-
-    return builder.toDto();
+    return newUser;
   }
 }

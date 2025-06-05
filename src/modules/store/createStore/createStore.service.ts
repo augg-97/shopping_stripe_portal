@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { AuthUser } from '../../../services/tokenService/authUser';
-import { CreateStorePayload } from './createStore.payload';
 import { Prisma } from '@prisma/client';
-import { ConflictException } from '../../../exceptions/conflict/conflict.exception';
-import { StoreRepository } from '../../../repositories/store.repository';
-import { StoreDtoBuilder } from '../../../dtos/stores/store.builder';
-import { StoreWithUserDto } from '../../../dtos/stores/storeWithUser.dto';
+
+import { AuthUser } from '@services/tokenService/authUser';
+import { ConflictException } from '@exceptions/conflict/conflict.exception';
+import { StoreRepository } from '@repositories/store.repository';
+import { StoreDtoBuilder } from '@dtos/stores/store.builder';
+import { StoreWithUserDto } from '@dtos/stores/storeWithUser.dto';
+
+import { CreateStorePayload } from './createStore.payload';
 
 @Injectable()
 export class CreateStoreService {

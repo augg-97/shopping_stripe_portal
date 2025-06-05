@@ -1,14 +1,25 @@
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import {
+  Controller,
+  Get,
+  ParseArrayPipe,
+  Query,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Public } from './decorators/allowAnonymous.decorator';
 import { Decimal } from '@prisma/client/runtime/library';
+import { User } from '@prisma/client';
+
+import { CacheInterceptor } from '@interceptors/cache.interceptor';
+import { CacheTTL } from '@decorators/cacheTTL.decorator';
+import { Public } from '@decorators/allowAnonymous.decorator';
+import { CacheKey } from '@decorators/cacheKey.decorator';
+import { CACHE_EXPIRED } from '@helpers/constant';
+import { TransformUserDtoInterceptor } from '@interceptors/transformUserDto.interceptor';
+
 import { ProductInclude } from './repositories/product.repository';
 import { UserIncludeType } from './repositories/user.repository';
 import { AppLoggerService } from './services/appLoggerService/appLogger.service';
-import { UserDtoBuilder } from './dtos/users/user.builder';
-import { UserWithStoreDto } from './dtos/users/userWithStore.dto';
-import { BadRequestException } from '@exceptions/badRequest/badRequest.exception';
+import { AppService } from './app.service';
 
 @ApiTags('root')
 @Controller()
@@ -27,8 +38,14 @@ export class AppController {
   }
 
   @Public()
-  @Get('mock')
-  mock() {
+  @CacheKey('USER')
+  @CacheTTL(CACHE_EXPIRED)
+  @UseInterceptors(TransformUserDtoInterceptor, CacheInterceptor)
+  @Get('mock/:id')
+  mock(
+    @Query('name', new ParseArrayPipe({ separator: ',', optional: true }))
+    name?: string[],
+  ) {
     const user: UserIncludeType = {
       id: 2,
       fullName: 'test 2',
@@ -182,14 +199,8 @@ export class AppController {
 
     const { profileImage, coverImage, stores, ...entity } = user;
 
-    if (user) {
-      throw new BadRequestException('test ne', 'User already exists');
-    }
+    this.logger.log('🚀 ~ AppController ~ mock ~ entity:', entity);
 
-    const builder = new UserDtoBuilder();
-    const dto = new UserWithStoreDto(builder);
-    dto.build(user);
-
-    return builder.toDto();
+    return user;
   }
 }

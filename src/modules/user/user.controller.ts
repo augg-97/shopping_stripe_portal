@@ -12,17 +12,22 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
-import { GetMeService } from './getMe/getMe.service';
-import { Public } from '../../decorators/allowAnonymous.decorator';
-import { GetUserByIdService } from './getUserById/getUserById.service';
-import { CacheKey } from '../../decorators/cacheKey.decorator';
-import { IdentifyCacheKey } from '../../decorators/identifyCacheKey.decorator';
-import { CacheInterceptor } from '../../interceptors/cache.interceptor';
-import { UpdateProfilePayload } from './updateProfile/updateProfile.payload';
+
+import { Public } from '@decorators/allowAnonymous.decorator';
+import { CacheKey } from '@decorators/cacheKey.decorator';
+import { CacheTTL } from '@decorators/cacheTTL.decorator';
+import { AuthUserRequest } from '@decorators/authUserRequest.decorator';
+import { AuthUser } from '@services/tokenService/authUser';
+import { TransformUserDtoInterceptor } from '@interceptors/transformUserDto.interceptor';
+import { UserEntity } from '@dtos/users/user.interface';
+import { CachingInterceptor } from '@interceptors/caching.interceptor';
+import { CacheInterceptor } from '@interceptors/cache.interceptor';
+import { BadRequestException } from '@exceptions/badRequest/badRequest.exception';
+
 import { UpdateProfileService } from './updateProfile/updateProfile.service';
-import { CachingInterceptor } from '../../interceptors/caching.interceptor';
-import { CacheTTL } from '../../decorators/cacheTTL.decorator';
-import { IUserDto } from '../../dtos/users/user.interface';
+import { UpdateProfilePayload } from './updateProfile/updateProfile.payload';
+import { GetUserByIdService } from './getUserById/getUserById.service';
+import { GetMeService } from './getMe/getMe.service';
 
 @ApiTags('users')
 @Controller('users')
@@ -33,16 +38,19 @@ export class UserController {
     private readonly updateProfileService: UpdateProfileService,
   ) {}
 
+  @UseInterceptors(TransformUserDtoInterceptor)
   @CacheTTL()
   @CacheKey('USER')
-  @IdentifyCacheKey('USER')
   @UseInterceptors(CacheInterceptor)
   @HttpCode(HttpStatus.OK)
   @Get('me')
-  async getMe(@Req() req: Request): Promise<IUserDto> {
-    return await this.getMeService.execute(req.user);
+  async getMe(
+    @AuthUserRequest('user') authUser: AuthUser,
+  ): Promise<UserEntity> {
+    return await this.getMeService.execute(authUser);
   }
 
+  @UseInterceptors(TransformUserDtoInterceptor)
   @CacheTTL()
   @CacheKey('USER')
   @UseInterceptors(CacheInterceptor)
@@ -52,7 +60,7 @@ export class UserController {
   async getUserById(
     @Req() req: Request,
     @Param('id', ParseIntPipe) id: number,
-  ): Promise<IUserDto> {
+  ): Promise<UserEntity> {
     if (req.user && Number(req.user.id) === id) {
       return await this.getMeService.execute(req.user);
     }
@@ -60,15 +68,16 @@ export class UserController {
     return await this.getUserByIdService.execute(id);
   }
 
+  @UseInterceptors(TransformUserDtoInterceptor)
   @CacheTTL()
   @CacheKey('USER')
   @UseInterceptors(CachingInterceptor)
   @HttpCode(HttpStatus.OK)
   @Put('')
   async updateProfile(
-    @Req() req: Request,
+    @AuthUserRequest('user') authUser: AuthUser,
     @Body() payload: UpdateProfilePayload,
-  ): Promise<IUserDto> {
-    return await this.updateProfileService.execute(req.user, payload);
+  ): Promise<UserEntity> {
+    return await this.updateProfileService.execute(authUser, payload);
   }
 }

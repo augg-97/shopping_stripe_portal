@@ -1,13 +1,15 @@
 import { User } from '@prisma/client';
-import { IUserDto } from './user.interface';
+
 import { IMediaDto } from '../media/media.interface';
 import { IStoreDto } from '../stores/store.interface';
+
+import { IUserDto } from './user.interface';
 
 export class UserDtoBuilder {
   protected userDto: IUserDto;
 
   constructor() {
-    this.userDto = <IUserDto>{};
+    this.userDto = {} as IUserDto;
   }
 
   setPublicDto(user: User): this {

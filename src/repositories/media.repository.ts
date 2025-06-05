@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { Media, Prisma } from '@prisma/client';
+
 import { PrismaService } from '../services/prismaService/prisma.service';
 import { AppLoggerService } from '../services/appLoggerService/appLogger.service';
 
-export type MediaBulkInput = {
+export interface MediaBulkInput {
   fileName: string;
   url: string;
   uploaderId: number;
-};
+}
 
 @Injectable()
 export class MediaRepository {

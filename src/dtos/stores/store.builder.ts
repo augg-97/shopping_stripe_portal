@@ -1,13 +1,15 @@
 import { Store } from '@prisma/client';
-import { IStoreDto } from './store.interface';
+
 import { IMediaDto } from '../media/media.interface';
 import { IUserDto } from '../users/user.interface';
+
+import { IStoreDto } from './store.interface';
 
 export class StoreDtoBuilder {
   protected storeDto: IStoreDto;
 
   constructor() {
-    this.storeDto = <IStoreDto>{};
+    this.storeDto = {} as IStoreDto;
   }
 
   setDto(store: Store): this {

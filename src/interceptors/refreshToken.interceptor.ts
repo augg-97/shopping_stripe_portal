@@ -5,12 +5,13 @@ import {
   NestInterceptor,
 } from '@nestjs/common';
 import { Observable, mergeMap } from 'rxjs';
+import { Request } from 'express';
+import { USER_TYPE } from '@prisma/client';
+
 import { AuthUser } from '../services/tokenService/authUser';
 import { AppLoggerService } from '../services/appLoggerService/appLogger.service';
-import { Request } from 'express';
 import { extractToken } from '../helpers/extractToken';
 import { IUserDto } from '../dtos/users/user.interface';
-import { USER_TYPE } from '@prisma/client';
 import { AccessTokenService } from '../services/tokenService/accessToken.service';
 import { RedisService } from '../services/redisService/redis.service';
 import { AppConfigService } from '../appConfigs/appConfig.service';
@@ -31,8 +32,7 @@ export class RefreshTokenInterceptor implements NestInterceptor {
   ): Promise<Observable<IUserDto>> {
     const req = context.switchToHttp().getRequest<Request>();
     const res = context.switchToHttp().getResponse();
-    const clientId =
-      req.headers['client-id'] && req.headers['client-id'].toString();
+    const clientId = req.headers['client-id']?.toString();
 
     return next.handle().pipe(
       mergeMap(async (data) => {
@@ -42,7 +42,7 @@ export class RefreshTokenInterceptor implements NestInterceptor {
             email: data.email || '',
             type: data.type || USER_TYPE.USER,
             isVerify: data.isVerified,
-            storeId: (data.store && data.store.id) || undefined,
+            storeId: data.store?.id || undefined,
           };
 
           const accessToken =
@@ -55,8 +55,7 @@ export class RefreshTokenInterceptor implements NestInterceptor {
             clientId,
           );
 
-          const bearerToken =
-            req.headers.refresh_token && req.headers.refresh_token.toString();
+          const bearerToken = req.headers.refresh_token?.toString();
           const refreshToken = bearerToken && extractToken(bearerToken);
 
           res.setHeader('Authorization', accessToken);
@@ -75,13 +74,13 @@ export class RefreshTokenInterceptor implements NestInterceptor {
   private async storeTokenToRedis(
     token: string,
     payload: AuthUser,
-    redisKey: string,
+    redisKey: REDIS_KEY,
     expiration: number,
     clientId?: string,
   ): Promise<void> {
     const key = clientId
-      ? `${redisKey}_${payload.id}_${clientId}`
-      : `${redisKey}_${payload.id}`;
+      ? this.redisService.buildCacheKey(redisKey, payload.id, clientId)
+      : this.redisService.buildCacheKey(redisKey, payload.id);
 
     await this.redisService.set(key, token, expiration);
   }

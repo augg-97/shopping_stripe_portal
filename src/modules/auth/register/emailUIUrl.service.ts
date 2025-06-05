@@ -1,14 +1,16 @@
-import { Injectable } from '@nestjs/common';
-import { RedisService } from '../../../services/redisService/redis.service';
 import { randomBytes } from 'crypto';
-import { REDIS_KEY } from '../../../services/redisService/redisKey';
 
-export type EmailUIUrlParams = {
+import { Injectable } from '@nestjs/common';
+
+import { RedisService } from '@services/redisService/redis.service';
+import { REDIS_KEY } from '@services/redisService/redisKey';
+
+export interface EmailUIUrlParams {
   emailUIUrl: string;
   key: REDIS_KEY;
   email: string;
   tokenExpired: number;
-};
+}
 
 @Injectable()
 export class EmailUIUrlService {
@@ -17,7 +19,7 @@ export class EmailUIUrlService {
   async execute(params: EmailUIUrlParams) {
     const { emailUIUrl, key, email, tokenExpired } = params;
 
-    const redisKey = `${key}_${email}`;
+    const redisKey = this.redisService.buildCacheKey(key, email);
     const token = randomBytes(24).toString('base64url');
     await this.storeToken(redisKey, token, tokenExpired);
 

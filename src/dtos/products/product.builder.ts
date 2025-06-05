@@ -1,11 +1,12 @@
 import { Product } from '@prisma/client';
+
 import { IProductDto } from './product.interface';
 
 export class ProductDtoBuilder {
   protected productDto: IProductDto;
 
   constructor() {
-    this.productDto = <IProductDto>{};
+    this.productDto = {} as IProductDto;
   }
 
   setDto(product: Product): this {

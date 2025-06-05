@@ -1,26 +1,28 @@
 import { execSync } from 'child_process';
 import { join } from 'path';
-import { randomString } from './helpers/randomString';
-import { PrismaClient } from '@prisma/client';
+import console from 'console';
+
+import { useContainer } from 'class-validator';
 import {
   ClassSerializerInterceptor,
   INestApplication,
   ValidationPipe,
   VersioningType,
 } from '@nestjs/common';
-import { getValidatorError } from './helpers/getValidatorErrorMessage';
+import { PrismaClient } from '@prisma/client';
+import { Reflector } from '@nestjs/core';
+
+import { randomString } from './helpers/randomString';
 import { ValidatorException } from './exceptions/badRequest/validator.exception';
-import { useContainer } from 'class-validator';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './exceptions/globalException.filter';
-import { Reflector } from '@nestjs/core';
 
 export class SetupTest {
   private dbConfig = {
-    host: process.env.POSTGRES_HOST,
-    port: process.env.POSTGRES_PORT,
-    user: process.env.POSTGRES_USER,
-    password: process.env.POSTGRES_PASSWORD,
+    host: process.env.POSTGRES_HOST ?? 'localhost',
+    port: Number(process.env.POSTGRES_PORT) || 5432,
+    user: process.env.POSTGRES_USER ?? 'sps_db',
+    password: process.env.POSTGRES_PASSWORD ?? 'bQ5UroNM9PqslBs',
   };
   private dbName: string;
   private url: string;
@@ -38,7 +40,7 @@ export class SetupTest {
   }
 
   private generateDatabaseUrl(): string {
-    return `postgresql://${this.dbConfig.user}:${this.dbConfig.password}@${this.dbConfig.host}:${this.dbConfig.port}/${this.dbName}?schema=public`;
+    return `postgresql://${this.dbConfig.user}:${this.dbConfig.password}@${this.dbConfig.host}:${this.dbConfig.port.toString()}/${this.dbName}?schema=public`;
   }
 
   setup(): void {

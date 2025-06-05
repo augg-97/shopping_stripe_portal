@@ -1,3 +1,6 @@
 import { SetMetadata } from '@nestjs/common';
 
-export const Public = (isPublic = true) => SetMetadata('isPublic', isPublic);
+import { DECORATOR } from './decorator.enum';
+
+export const Public = (isPublic = true) =>
+  SetMetadata(DECORATOR.IS_PUBLIC, isPublic);

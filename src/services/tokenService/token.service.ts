@@ -1,7 +1,9 @@
 import { JwtService } from '@nestjs/jwt';
-import { AuthUser } from './authUser';
+
 import { REDIS_KEY } from '../redisService/redisKey';
 import { AppLoggerService } from '../appLoggerService/appLogger.service';
+
+import { AuthUser } from './authUser';
 
 export class TokenService {
   protected redisKey!: REDIS_KEY;

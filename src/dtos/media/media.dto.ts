@@ -1,4 +1,5 @@
 import { Media } from '@prisma/client';
+
 import { MediaDtoBuilder } from './media.builder';
 import { IMediaDtoConcrete } from './media.interface';
 

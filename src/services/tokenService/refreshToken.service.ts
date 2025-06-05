@@ -1,9 +1,12 @@
 import { JwtService } from '@nestjs/jwt';
-import { AppConfigService } from '../../appConfigs/appConfig.service';
-import { TokenService } from './token.service';
+import { Injectable } from '@nestjs/common';
+
+import { AppConfigService } from '@appConfigs/appConfig.service';
+
 import { REDIS_KEY } from '../redisService/redisKey';
 import { AppLoggerService } from '../appLoggerService/appLogger.service';
-import { Injectable } from '@nestjs/common';
+
+import { TokenService } from './token.service';
 
 @Injectable()
 export class RefreshTokenService extends TokenService {

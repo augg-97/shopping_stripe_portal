@@ -1,11 +1,9 @@
 import { USER_TYPE } from '@prisma/client';
-import { TokenExpiredException } from '../../exceptions/unauthorized/tokenExpired.exception';
-import { REDIS_KEY } from '../redisService/redisKey';
 
-export type AuthUser = {
+export interface AuthUser {
   id: string;
   email: string;
   type: USER_TYPE;
   isVerify: boolean;
   storeId?: number;
-};
+}

@@ -9,15 +9,15 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-admin}
       POSTGRES_DB: ${POSTGRES_DB:-sps_db}
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - '${POSTGRES_PORT:-5432}:5432'
     restart: on-failure
 
   sps_cache:
     container_name: sps_cache
-    image: redis:7.2-rc3-alpine
-    command: "redis-server --requirepass Password"
+    image: redis:7.4.2
+    command: 'redis-server --requirepass Password'
     ports:
-      - "${REDIS_PORT:-6379}:6379"
+      - '${REDIS_PORT:-6379}:6379'
     restart: on-failure
 
   sps_web_server:
@@ -27,5 +27,58 @@ services:
       - ./public/nginx/upload.conf:/etc/nginx/conf.d/upload.conf
       - ./public/assets:/usr/share/nginx/html/upload/
     ports:
-      - "8080:80"
+      - '8080:80'
     restart: on-failure
+
+  sqs_elasticsearch:
+    container_name: sqs_elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./public/esdata:/usr/share/elasticsearch/data
+    ports:
+      - '9200:9200'
+
+  sqs_kibana:
+    image: docker.elastic.co/kibana/kibana:8.12.0
+    container_name: sqs_kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - '5601:5601'
+    depends_on:
+      - sqs_elasticsearch
+
+  sqs_apm_server:
+    image: docker.elastic.co/apm/apm-server:8.12.0
+    container_name: sqs_apm_server
+    depends_on:
+      - sqs_elasticsearch
+      - sqs_kibana
+    ports:
+      - '8200:8200'
+    command: >
+      apm-server -e
+        -E apm-server.host=0.0.0.0:8200
+        -E apm-server.enable_cors=true
+        -E setup.kibana.host=kibana:5601
+        -E output.elasticsearch.hosts=["http://elasticsearch:9200"]
+        -E apm-server.auth.anonymous.enabled=true
+    restart: unless-stopped
+
+  sqs_logstash:
+    image: docker.elastic.co/logstash/logstash:8.12.0
+    container_name: sqs_logstash
+    depends_on:
+      - sqs_elasticsearch
+    volumes:
+      - ./public/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    ports:
+      - '5044:5044'

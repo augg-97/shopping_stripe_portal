@@ -1,4 +1,5 @@
 import { Store } from '@prisma/client';
+
 import { StoreDtoBuilder } from './store.builder';
 import { IConcreteStoreDto } from './store.interface';
 

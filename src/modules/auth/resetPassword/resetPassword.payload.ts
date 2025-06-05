@@ -1,7 +1,8 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
-import { RegisterPayload } from '../register/register.payload';
 import { Type } from 'class-transformer';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+
+import { RegisterPayload } from '../register/register.payload';
 
 export class ResetPasswordPayload extends PickType(RegisterPayload, [
   'password',

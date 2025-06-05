@@ -1,79 +1,94 @@
-import tsPlugin from '@typescript-eslint/eslint-plugin';
-import tsParser from '@typescript-eslint/parser';
-import { ESLint, Linter } from 'eslint';
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
+import tseslint, { ConfigArray } from 'typescript-eslint';
+import eslint from '@eslint/js';
+import eslintPluginPrettierRecommended from 'eslint-plugin-prettier';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import importPlugin from 'eslint-plugin-import';
 
-const files = ['**/*.ts'];
-const ignores = ['node_modules/**/*', '**/*.json', 'dist/**/*'];
-
-const configs: Linter.Config[] = [
-  {
-    files,
-    ignores,
-    languageOptions: {
-      parser: tsParser,
-      parserOptions: {
-        tsconfigRootDir: __dirname,
-        projectService: {
-          defaultProject: 'tsconfig.eslint.json',
-        },
+const configs: ConfigArray = tseslint.config({
+  files: ['**/*.ts'],
+  ignores: ['node_modules/**/*', '**/*.json', 'dist/**/*'],
+  languageOptions: {
+    parserOptions: {
+      tsconfigRootDir: __dirname,
+      projectService: {
+        defaultProject: 'tsconfig.eslint.json',
       },
     },
-    plugins: {
-      '@typescript-eslint': tsPlugin as Record<string, ESLint.Plugin>,
-    },
   },
-  {
-    ...eslintPluginPrettierRecommended,
-    files,
-    ignores,
+  extends: [
+    eslint.configs.recommended,
+    // TODO: Uncomment the following configs as needed
+    // tseslint.configs.strictTypeChecked,
+    // tseslint.configs.stylisticTypeChecked,
+    tseslint.configs.recommended,
+  ],
+  plugins: {
+    prettier: eslintPluginPrettierRecommended,
+    import: importPlugin,
   },
-  {
-    files,
-    ignores,
-    rules: {
-      'prettier/prettier': [
-        'error',
-        {
-          singleQuote: true,
+  rules: {
+    'prettier/prettier': [
+      'error',
+      {
+        singleQuote: true,
+      },
+      {
+        usePrettierrc: false,
+        fileInfoOptions: {
+          withNodeModules: true,
         },
-        {
-          usePrettierrc: false,
-          fileInfoOptions: {
-            withNodeModules: true,
+      },
+    ],
+    'no-console': ['warn'],
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': [
+      'warn',
+      {
+        args: 'all',
+        argsIgnorePattern: '^_',
+        caughtErrors: 'all',
+        caughtErrorsIgnorePattern: '^_',
+        destructuredArrayIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        ignoreRestSiblings: true,
+      },
+    ],
+    '@typescript-eslint/explicit-function-return-type': 'warn',
+    '@typescript-eslint/no-unsafe-assignment': 'warn',
+    '@typescript-eslint/default-param-last': ['error'],
+    '@typescript-eslint/no-array-delete': ['error'],
+    '@typescript-eslint/no-extraneous-class': [
+      'error',
+      {
+        allowConstructorOnly: false,
+        allowEmpty: true,
+        allowStaticOnly: false,
+        allowWithDecorator: true,
+      },
+    ],
+    '@typescript-eslint/no-useless-constructor': 'off',
+    'import/no-dynamic-require': 'warn',
+    'import/no-nodejs-modules': 'warn',
+    'import/no-unassigned-import': 'error',
+    'import/order': [
+      'error',
+      {
+        named: true,
+        pathGroups: [
+          {
+            pattern:
+              '@(@appConfigs|@decorators|@dtos|@exceptions|@guards|@helpers|@interceptors|@middlewares|@modules|@pkgs|@repositories|@services)/**',
+            group: 'external',
+            position: 'after',
           },
-        },
-      ],
-      ...tsPlugin.configs.recommended.rules,
-      'sort-imports': [
-        'warn',
-        {
-          memberSyntaxSortOrder: ['none', 'all', 'single', 'multiple'],
-          ignoreDeclarationSort: true,
-          ignoreMemberSort: true,
-          allowSeparatedGroups: true,
-        },
-      ],
-      'no-console': ['warn'],
-      'no-unused-vars': 'off',
-      '@typescript-eslint/no-unused-vars': [
-        'warn',
-        {
-          args: 'all',
-          argsIgnorePattern: '^_',
-          caughtErrors: 'all',
-          caughtErrorsIgnorePattern: '^_',
-          destructuredArrayIgnorePattern: '^_',
-          varsIgnorePattern: '^_',
-          ignoreRestSiblings: true,
-        },
-      ],
-      '@typescript-eslint/explicit-function-return-type': 'warn',
-      '@typescript-eslint/no-unsafe-assignment': 'warn',
-      '@typescript-eslint/default-param-last': ['error'],
-      '@typescript-eslint/no-array-delete': ['error'],
-    },
+        ],
+        pathGroupsExcludedImportTypes: ['builtin'],
+        'newlines-between': 'always',
+      },
+    ],
+    'import/newline-after-import': ['error', { count: 1 }],
   },
-];
+});
 
 export default configs;

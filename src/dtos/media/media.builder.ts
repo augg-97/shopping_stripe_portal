@@ -1,11 +1,12 @@
 import { Media } from '@prisma/client';
+
 import { IMediaDto } from './media.interface';
 
 export class MediaDtoBuilder {
-  private mediaDto: IMediaDto;
+  private mediaDto!: IMediaDto;
 
   constructor() {
-    this.mediaDto = <IMediaDto>{};
+    this.mediaDto = {} as IMediaDto;
   }
 
   setDto(media: Media): this {
@@ -22,6 +23,6 @@ export class MediaDtoBuilder {
   }
 
   toDto(): IMediaDto {
-    return this.mediaDto;
+    return { ...this.mediaDto };
   }
 }

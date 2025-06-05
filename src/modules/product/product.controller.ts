@@ -4,14 +4,16 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { CreateProductService } from './createProduct/createProduct.service';
-import { Request } from 'express';
+
+import { CreateProductGuard } from '@guards/createProduct.guard';
+import { AuthUserRequest } from '@decorators/authUserRequest.decorator';
+import { AuthUser } from '@services/tokenService/authUser';
+
 import { CreateProductPayload } from './createProduct/createProduct.payload';
-import { CreateProductGuard } from '../../guards/createProduct.guard';
+import { CreateProductService } from './createProduct/createProduct.service';
 
 @ApiBearerAuth()
 @ApiTags('products')
@@ -23,9 +25,9 @@ export class ProductController {
   @HttpCode(HttpStatus.CREATED)
   @Post('')
   async createProduct(
-    @Req() req: Request,
+    @AuthUserRequest('user') authUser: AuthUser,
     @Body() payload: CreateProductPayload,
   ) {
-    return await this.createProductService.execute(req.user, payload);
+    return await this.createProductService.execute(authUser, payload);
   }
 }

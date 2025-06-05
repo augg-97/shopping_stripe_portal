@@ -1,7 +1,9 @@
 import { Global, Module } from '@nestjs/common';
-import { RedisService } from './redis.service';
-import { AppConfigService } from '../../appConfigs/appConfig.service';
 import { createClient } from 'redis';
+
+import { AppConfigService } from '@appConfigs/appConfig.service';
+
+import { RedisService } from './redis.service';
 
 @Global()
 @Module({
@@ -14,7 +16,7 @@ import { createClient } from 'redis';
         const redisHost = appConfigService.redisHost;
         const redisPort = appConfigService.redisPort;
         const redisPassword = appConfigService.redisPassword;
-        const url = `redis://:${redisPassword}@${redisHost}:${redisPort}`;
+        const url = `redis://:${redisPassword}@${redisHost}:${redisPort.toString()}`;
 
         const redisClient = createClient({
           url,

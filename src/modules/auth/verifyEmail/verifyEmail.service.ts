@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { VerifyEmailPayload } from './verifyEmail.payload';
-import { UserNotExistsException } from '../../../exceptions/badRequest/userNotExists.exception';
-import { REDIS_KEY } from '../../../services/redisService/redisKey';
+
+import { UserNotExistsException } from '@exceptions/badRequest/userNotExists.exception';
+import { REDIS_KEY } from '@services/redisService/redisKey';
+import { ConflictException } from '@exceptions/conflict/conflict.exception';
+import { UserRepository } from '@repositories/user.repository';
+import { UserEntity } from '@dtos/users/user.interface';
+
 import { ValidateEmailTokenService } from '../resetPassword/validateEmailToken.service';
-import { ConflictException } from '../../../exceptions/conflict/conflict.exception';
-import { UserRepository } from '../../../repositories/user.repository';
-import { UserDtoBuilder } from '../../../dtos/users/user.builder';
-import { UserWithStoreDto } from '../../../dtos/users/userWithStore.dto';
-import { IUserDto } from '../../../dtos/users/user.interface';
+
+import { VerifyEmailPayload } from './verifyEmail.payload';
 
 @Injectable()
 export class VerifyEmailService {
@@ -16,7 +17,7 @@ export class VerifyEmailService {
     private readonly validateEmailTokenService: ValidateEmailTokenService,
   ) {}
 
-  async execute(payload: VerifyEmailPayload): Promise<IUserDto> {
+  async execute(payload: VerifyEmailPayload): Promise<UserEntity> {
     const { email, token } = payload;
 
     await this.validateEmailTokenService.execute(
@@ -42,10 +43,6 @@ export class VerifyEmailService {
       );
     }
 
-    const builder = new UserDtoBuilder();
-    const dto = new UserWithStoreDto(builder, true);
-    dto.build(userUpdated);
-
-    return builder.toDto();
+    return userUpdated;
   }
 }

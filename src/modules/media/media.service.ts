@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { UploadService } from '../../services/uploadService/upload.service';
-import { AuthUser } from '../../services/tokenService/authUser';
+
+import { MediaDtoBuilder } from '@dtos/media/media.builder';
+import { MediaDto } from '@dtos/media/media.dto';
 import {
   MediaBulkInput,
   MediaRepository,
-} from '../../repositories/media.repository';
-import { MediaDtoBuilder } from '../../dtos/media/media.builder';
-import { MediaDto } from '../../dtos/media/media.dto';
+} from '@repositories/media.repository';
+import { UploadService } from '@services/uploadService/upload.service';
+import { AuthUser } from '@services/tokenService/authUser';
 
 @Injectable()
 export class MediaService {

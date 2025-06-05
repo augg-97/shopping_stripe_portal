@@ -1,4 +1,5 @@
 import { User } from '@prisma/client';
+
 import { UserDtoBuilder } from './user.builder';
 import { IUserDtoConcrete } from './user.interface';
 

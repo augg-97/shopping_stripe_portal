@@ -2,6 +2,7 @@ import { OmitTyped } from '../../utilities/customType.utilities';
 import { StoreDtoBuilder } from '../stores/store.builder';
 import { IStoreDto, StoreEntity } from '../stores/store.interface';
 import { StoreProfileDto } from '../stores/storeProfile.dto';
+
 import { UserDtoBuilder } from './user.builder';
 import { IUserDtoConcrete, UserEntity } from './user.interface';
 import { UserProfileDto } from './userProfile.dto';

@@ -1,9 +1,11 @@
-import { Prisma, User, USER_TYPE } from '@prisma/client';
-import { UserDtoBuilder } from './user.builder';
+import { Prisma, USER_TYPE, User } from '@prisma/client';
+
 import { IMediaDto } from '../media/media.interface';
 import { IStoreDto } from '../stores/store.interface';
 
-const userInclude = Prisma.validator<Prisma.UserInclude>()({
+import { UserDtoBuilder } from './user.builder';
+
+export const userInclude = Prisma.validator<Prisma.UserInclude>()({
   profileImage: true,
   coverImage: true,
   stores: {

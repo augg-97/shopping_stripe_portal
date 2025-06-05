@@ -1,4 +1,5 @@
 import { Prisma, Product } from '@prisma/client';
+
 import { IMediaDto } from '../media/media.interface';
 import { IStoreDto } from '../stores/store.interface';
 

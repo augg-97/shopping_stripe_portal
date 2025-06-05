@@ -8,9 +8,12 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { MediaService } from './media.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { Request } from 'express';
+
+import { AuthUserRequest } from '@decorators/authUserRequest.decorator';
+import { AuthUser } from '@services/tokenService/authUser';
+
+import { MediaService } from './media.service';
 
 @ApiBearerAuth()
 @ApiTags('media')
@@ -22,9 +25,9 @@ export class MediaController {
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(FilesInterceptor('images'))
   async uploadImages(
-    @Req() req: Request,
+    @AuthUserRequest('user') authUser: AuthUser,
     @UploadedFiles() images: Express.Multer.File[],
   ) {
-    return await this.mediaService.uploadImages(images, req.user);
+    return await this.mediaService.uploadImages(images, authUser);
   }
 }

@@ -1,15 +1,17 @@
-import { createTransport, Transporter } from 'nodemailer';
-import { AppConfigService } from '../../appConfigs/appConfig.service';
 import { readFile } from 'fs/promises';
-import { AppLoggerService } from '../appLoggerService/appLogger.service';
+
+import { Transporter, createTransport } from 'nodemailer';
 import Mail from 'nodemailer/lib/mailer';
 import { compile } from 'handlebars';
-import { retry } from '../../helpers/retry';
 
-export type EmailInfo = {
+import { AppConfigService } from '@appConfigs/appConfig.service';
+import { retry } from '@helpers/retry';
+import { AppLoggerService } from '@services/appLoggerService/appLogger.service';
+
+export interface EmailInfo {
   template: string;
   subject: string;
-};
+}
 export type ForgotPasswordParam = Record<'resetPasswordUrl', string>;
 export type VerifyEmailParam = Record<'verifyEmailUrl', string>;
 export type EmailParam = ForgotPasswordParam | VerifyEmailParam;

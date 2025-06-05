@@ -9,8 +9,8 @@
     "target": "ESNext",
     "baseUrl": "src",
     "paths": {
-      "@configs/*": ["appConfigs/*"],
-      "@decorators": ["decorators/*"],
+      "@appConfigs/*": ["appConfigs/*"],
+      "@decorators/*": ["decorators/*"],
       "@dtos/*": ["dtos/*"],
       "@exceptions/*": ["exceptions/*"],
       "@guards/*": ["guards/*"],
@@ -19,9 +19,11 @@
       "@middlewares/*": ["middlewares/*"],
       "@modules/*": ["modules/*"],
       "@pkgs/*": ["pkgs/*"],
+      "@repositories/*": ["repositories/*"],
       "@services/*": ["services/*"]
     },
-    "skipLibCheck": true,
+    "skipLibCheck": false,
+    "allowJs": true,
     "strict": true,
     "alwaysStrict": true,
     "strictNullChecks": true,

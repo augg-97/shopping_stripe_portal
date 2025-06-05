@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
+
+import { UserNotExistsException } from '@exceptions/badRequest/userNotExists.exception';
+import { PasswordService } from '@services/passwordService/password.service';
+import { BadRequestException } from '@exceptions/badRequest/badRequest.exception';
+import { CredentialDeniedException } from '@exceptions/unauthorized/credentialDenied.exception';
+import { UserRepository } from '@repositories/user.repository';
+import { UserEntity } from '@dtos/users/user.interface';
+
 import { LoginPayload } from './login.payload';
-import { UserNotExistsException } from '../../../exceptions/badRequest/userNotExists.exception';
-import { PasswordService } from '../../../services/passwordService/password.service';
-import { BadRequestException } from '../../../exceptions/badRequest/badRequest.exception';
-import { CredentialDeniedException } from '../../../exceptions/unauthorized/credentialDenied.exception';
-import { UserRepository } from '../../../repositories/user.repository';
-import { UserDtoBuilder } from '../../../dtos/users/user.builder';
-import { UserWithStoreDto } from '../../../dtos/users/userWithStore.dto';
-import { IUserDto } from '../../../dtos/users/user.interface';
 
 @Injectable()
 export class LoginService {
@@ -16,7 +16,7 @@ export class LoginService {
     private readonly passwordService: PasswordService,
   ) {}
 
-  async execute(payload: LoginPayload): Promise<IUserDto> {
+  async execute(payload: LoginPayload): Promise<UserEntity> {
     const { email, password } = payload;
     const user = await this.userRepository.findUserByEmail(email);
 
@@ -41,10 +41,12 @@ export class LoginService {
       throw new CredentialDeniedException();
     }
 
-    const builder = new UserDtoBuilder();
-    const dto = new UserWithStoreDto(builder, true);
-    dto.build(user);
+    return user;
 
-    return builder.toDto();
+    // const builder = new UserDtoBuilder();
+    // const dto = new UserWithStoreDto(builder, true);
+    // dto.build(user);
+
+    // return builder.toDto();
   }
 }

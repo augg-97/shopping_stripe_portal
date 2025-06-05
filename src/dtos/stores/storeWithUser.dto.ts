@@ -2,6 +2,7 @@ import { OmitTyped } from '../../utilities/customType.utilities';
 import { UserDtoBuilder } from '../users/user.builder';
 import { IUserDto, UserEntity } from '../users/user.interface';
 import { UserProfileDto } from '../users/userProfile.dto';
+
 import { StoreDtoBuilder } from './store.builder';
 import { IConcreteStoreDto, StoreEntity } from './store.interface';
 import { StoreProfileDto } from './storeProfile.dto';
@@ -17,7 +18,7 @@ export class StoreWithUserDto
   build(store: StoreEntity, isPrivateUser = false): void {
     super.build(store);
 
-    const userDto = store.owner && this.setUserDto(store.owner, isPrivateUser);
+    const userDto = this.setUserDto(store.owner, isPrivateUser);
     this.builder.setOwner(userDto);
   }
 

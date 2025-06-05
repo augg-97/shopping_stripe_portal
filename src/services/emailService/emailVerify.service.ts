@@ -1,12 +1,13 @@
-import { Injectable } from '@nestjs/common';
-import {
-  DELAY_RETRY_EMAIL,
-  RETRIES_EMAIL_NUMBER,
-} from '../../helpers/constant';
-import { AppConfigService } from '../../appConfigs/appConfig.service';
-import { EmailService } from './email.service';
 import { join } from 'path';
+
+import { Injectable } from '@nestjs/common';
+
+import { AppConfigService } from '@appConfigs/appConfig.service';
+import { DELAY_RETRY_EMAIL, RETRIES_EMAIL_NUMBER } from '@helpers/constant';
+
 import { AppLoggerService } from '../appLoggerService/appLogger.service';
+
+import { EmailService } from './email.service';
 
 @Injectable()
 export class EmailVerifyService extends EmailService {

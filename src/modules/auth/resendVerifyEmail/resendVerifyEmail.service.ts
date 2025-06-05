@@ -1,16 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { AuthUser } from '../../../services/tokenService/authUser';
-import { UserNotExistsException } from '../../../exceptions/badRequest/userNotExists.exception';
-import { BadRequestException } from '../../../exceptions/badRequest/badRequest.exception';
+
+import { AuthUser } from '@services/tokenService/authUser';
+import { UserNotExistsException } from '@exceptions/badRequest/userNotExists.exception';
+import { BadRequestException } from '@exceptions/badRequest/badRequest.exception';
+import { REDIS_KEY } from '@services/redisService/redisKey';
+import { UserRepository } from '@repositories/user.repository';
+import { EmailVerifyService } from '@services/emailService/emailVerify.service';
+import { VERIFY_EMAIL_TOKEN_EXPIRED } from '@helpers/constant';
+import { AppConfigService } from '@appConfigs/appConfig.service';
+
 import {
   EmailUIUrlParams,
   EmailUIUrlService,
 } from '../register/emailUIUrl.service';
-import { VERIFY_EMAIL_TOKEN_EXPIRED } from '../../../helpers/constant';
-import { AppConfigService } from '../../../appConfigs/appConfig.service';
-import { REDIS_KEY } from '../../../services/redisService/redisKey';
-import { UserRepository } from '../../../repositories/user.repository';
-import { EmailVerifyService } from '../../../services/emailService/emailVerify.service';
 
 @Injectable()
 export class ResendVerifyEmailService {

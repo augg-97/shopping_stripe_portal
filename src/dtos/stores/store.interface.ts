@@ -1,6 +1,8 @@
 import { Prisma, Store } from '@prisma/client';
+
 import { IMediaDto } from '../media/media.interface';
 import { IUserDto } from '../users/user.interface';
+
 import { StoreDtoBuilder } from './store.builder';
 
 export const storeInclude = Prisma.validator<Prisma.StoreInclude>()({

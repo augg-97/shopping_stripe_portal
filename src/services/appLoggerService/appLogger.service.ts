@@ -1,9 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AppConfigService } from '@configs/appConfig.service';
-import { Injectable, LoggerService, Scope } from '@nestjs/common';
 import { join } from 'path';
-import { Logger, createLogger, format, transports } from 'winston';
 import util from 'util';
+
+import { Injectable, LoggerService, Scope } from '@nestjs/common';
+import { Logger, createLogger, format, transports } from 'winston';
+
+import { AppConfigService } from '@appConfigs/appConfig.service';
+
 import { LoggerContextService } from './loggerContext.service';
 
 @Injectable({ scope: Scope.TRANSIENT })

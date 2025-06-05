@@ -1,15 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../../services/prismaService/prisma.service';
-import { ForgotPasswordPayload } from './forgotPassword.payload';
-import { UserNotExistsException } from '../../../exceptions/badRequest/userNotExists.exception';
-import { AppConfigService } from '../../../appConfigs/appConfig.service';
-import { REDIS_KEY } from '../../../services/redisService/redisKey';
-import { FORGOT_PASSWORD_TOKEN_EXPIRED } from '../../../helpers/constant';
+
+import { PrismaService } from '@services/prismaService/prisma.service';
+import { UserNotExistsException } from '@exceptions/badRequest/userNotExists.exception';
+import { REDIS_KEY } from '@services/redisService/redisKey';
+import { EmailForgotPasswordService } from '@services/emailService/emailForgotPassword.service';
+import { AppConfigService } from '@appConfigs/appConfig.service';
+import { FORGOT_PASSWORD_TOKEN_EXPIRED } from '@helpers/constant';
+
 import {
   EmailUIUrlParams,
   EmailUIUrlService,
 } from '../register/emailUIUrl.service';
-import { EmailForgotPasswordService } from '../../../services/emailService/emailForgotPassword.service';
+
+import { ForgotPasswordPayload } from './forgotPassword.payload';
 
 @Injectable()
 export class ForgotPasswordService {
