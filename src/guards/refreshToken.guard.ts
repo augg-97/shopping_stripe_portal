@@ -1,11 +1,11 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { Request } from 'express';
 
-import { TokenNotProvidedException } from '../exceptions/unauthorized/tokenNotProvided.exception';
-import { extractToken } from '../helpers/extractToken';
-import { RefreshTokenService } from '../services/tokenService/refreshToken.service';
-import { REDIS_KEY } from '../services/redisService/redisKey';
-import { RedisService } from '../services/redisService/redis.service';
+import { PREFIX_REDIS_KEY } from '@constants/enums/prefixRedisKey.enum';
+import { RefreshTokenService } from '@services/tokenService/refreshToken.service';
+import { RedisService } from '@services/redisService/redis.service';
+import { TokenNotProvidedException } from '@exceptions/unauthorized/tokenNotProvided.exception';
+import { extractToken } from '@helpers/extractToken';
 
 import { AbstractTokenGuard } from './abstractToken.guard';
 
@@ -18,7 +18,7 @@ export class RefreshTokenGuard extends AbstractTokenGuard {
     super(
       'REFRESH_TOKEN_EXPIRED',
       'Refresh token is expired',
-      REDIS_KEY.REFRESH_TOKEN,
+      PREFIX_REDIS_KEY.REFRESH_TOKEN,
       redisService,
       refreshTokenService,
     );

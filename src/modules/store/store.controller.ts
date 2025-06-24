@@ -15,6 +15,8 @@ import { CacheKey } from '@decorators/cacheKey.decorator';
 import { AuthUserRequest } from '@decorators/authUserRequest.decorator';
 import { AuthUser } from '@services/tokenService/authUser';
 import { CreateStoreGuard } from '@guards/createStore.guard';
+import { ResponseSerializerInterceptor } from '@interceptors/responseSerializer.interceptor';
+import { StoreDto } from '@dtos/stores/store.dto';
 
 import { CreateStorePayload } from './createStore/createStore.payload';
 import { CreateStoreService } from './createStore/createStore.service';
@@ -27,6 +29,7 @@ export class StoreController {
 
   @CacheKey('STORE')
   @UseGuards(CreateStoreGuard)
+  @UseInterceptors(new ResponseSerializerInterceptor(StoreDto))
   @HttpCode(HttpStatus.CREATED)
   @Post()
   async createStore(

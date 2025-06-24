@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Prisma, Store } from '@prisma/client';
 
 import { AuthUser } from '@services/tokenService/authUser';
 import { ConflictException } from '@exceptions/conflict/conflict.exception';
 import { StoreRepository } from '@repositories/store.repository';
-import { StoreDtoBuilder } from '@dtos/stores/store.builder';
-import { StoreWithUserDto } from '@dtos/stores/storeWithUser.dto';
 
 import { CreateStorePayload } from './createStore.payload';
 
@@ -16,7 +14,7 @@ export class CreateStoreService {
   async execute(
     authUser: AuthUser,
     payload: CreateStorePayload,
-  ): Promise<unknown> {
+  ): Promise<Store> {
     const { name } = payload;
 
     const createStoreInput: Prisma.StoreCreateInput = {
@@ -36,10 +34,6 @@ export class CreateStoreService {
       );
     }
 
-    const builder = new StoreDtoBuilder();
-    const dto = new StoreWithUserDto(builder);
-    dto.build(store);
-
-    return builder.toDto();
+    return store;
   }
 }

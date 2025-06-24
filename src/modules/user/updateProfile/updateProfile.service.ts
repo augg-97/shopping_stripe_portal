@@ -3,8 +3,7 @@ import { Prisma } from '@prisma/client';
 
 import { AuthUser } from '@services/tokenService/authUser';
 import { UserNotFoundException } from '@exceptions/notFound/userNotFound.exception';
-import { UserRepository } from '@repositories/user.repository';
-import { UserEntity } from '@dtos/users/user.interface';
+import { UserIncludeType, UserRepository } from '@repositories/user.repository';
 
 import { UpdateProfilePayload } from './updateProfile.payload';
 
@@ -15,7 +14,7 @@ export class UpdateProfileService {
   async execute(
     authUser: AuthUser,
     payload: UpdateProfilePayload,
-  ): Promise<UserEntity> {
+  ): Promise<UserIncludeType> {
     const updateUserInput: Prisma.UserUpdateInput = {
       fullName: payload.fullName,
       profileImage: {

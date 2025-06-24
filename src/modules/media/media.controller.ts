@@ -12,6 +12,8 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 
 import { AuthUserRequest } from '@decorators/authUserRequest.decorator';
 import { AuthUser } from '@services/tokenService/authUser';
+import { ResponseSerializerInterceptor } from '@interceptors/responseSerializer.interceptor';
+import { BaseMediaDto } from '@dtos/media/baseMedia.dto';
 
 import { MediaService } from './media.service';
 
@@ -21,9 +23,12 @@ import { MediaService } from './media.service';
 export class MediaController {
   constructor(private readonly mediaService: MediaService) {}
 
-  @Post('images/upload')
+  @UseInterceptors(
+    FilesInterceptor('images'),
+    new ResponseSerializerInterceptor(BaseMediaDto),
+  )
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(FilesInterceptor('images'))
+  @Post('images/upload')
   async uploadImages(
     @AuthUserRequest('user') authUser: AuthUser,
     @UploadedFiles() images: Express.Multer.File[],

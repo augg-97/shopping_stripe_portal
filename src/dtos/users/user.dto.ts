@@ -1,48 +1,14 @@
-import { User } from '@prisma/client';
+import { Expose, Transform, Type } from 'class-transformer';
 
-import { UserDtoBuilder } from './user.builder';
-import { IUserDtoConcrete } from './user.interface';
+import { BaseStoreDto } from '@dtos/stores/baseStore.dto';
 
-export class UserPrivateDto implements IUserDtoConcrete {
-  readonly builder: UserDtoBuilder;
+import { BaseUserDto } from './baseUser.dto';
 
-  constructor(_builder: UserDtoBuilder) {
-    this.builder = _builder;
-  }
-
-  build(user: User): void {
-    this.builder.setPublicDto(user).setPrivateDto(user);
-  }
-}
-
-export class UserPublicDto implements IUserDtoConcrete {
-  readonly builder: UserDtoBuilder;
-
-  constructor(builder: UserDtoBuilder) {
-    this.builder = builder;
-  }
-
-  build(user: User): void {
-    this.builder.setPublicDto(user);
-  }
-}
-
-export class UserDto implements IUserDtoConcrete {
-  private userDtoConcrete!: IUserDtoConcrete;
-  readonly builder: UserDtoBuilder;
-
-  constructor(_builder: UserDtoBuilder, isPrivateUser = false) {
-    this.builder = _builder;
-    this.createConcrete(isPrivateUser);
-  }
-
-  private createConcrete(isPrivateUser = false): void {
-    this.userDtoConcrete = isPrivateUser
-      ? new UserPrivateDto(this.builder)
-      : new UserPublicDto(this.builder);
-  }
-
-  build(entity: User): void {
-    this.userDtoConcrete.build(entity);
-  }
+export class UserDto extends BaseUserDto {
+  @Expose()
+  @Transform(({ obj: { stores } }) =>
+    Array.isArray(stores) && stores.length > 0 ? stores[0] : null,
+  )
+  @Type(() => BaseStoreDto)
+  store!: BaseStoreDto | null;
 }

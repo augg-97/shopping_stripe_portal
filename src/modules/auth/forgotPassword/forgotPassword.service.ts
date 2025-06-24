@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { PrismaService } from '@services/prismaService/prisma.service';
 import { UserNotExistsException } from '@exceptions/badRequest/userNotExists.exception';
-import { REDIS_KEY } from '@services/redisService/redisKey';
 import { EmailForgotPasswordService } from '@services/emailService/emailForgotPassword.service';
 import { AppConfigService } from '@appConfigs/appConfig.service';
 import { FORGOT_PASSWORD_TOKEN_EXPIRED } from '@helpers/constant';
+import { PREFIX_REDIS_KEY } from '@constants/enums/prefixRedisKey.enum';
 
 import {
   EmailUIUrlParams,
@@ -45,7 +45,7 @@ export class ForgotPasswordService {
 
     const params: EmailUIUrlParams = {
       emailUIUrl: this.appConfigService.resetPasswordUIUrl,
-      key: REDIS_KEY.RESET_PASSWORD,
+      key: PREFIX_REDIS_KEY.RESET_PASSWORD,
       email,
       tokenExpired: FORGOT_PASSWORD_TOKEN_EXPIRED,
     };

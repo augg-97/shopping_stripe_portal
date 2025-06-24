@@ -1,16 +1,12 @@
-import { Store } from '@prisma/client';
+import { Expose, Transform, Type } from 'class-transformer';
 
-import { StoreDtoBuilder } from './store.builder';
-import { IConcreteStoreDto } from './store.interface';
+import { BaseUserDto } from '@dtos/users/baseUser.dto';
 
-export class StoreDto implements IConcreteStoreDto {
-  readonly builder: StoreDtoBuilder;
+import { BaseStoreDto } from './baseStore.dto';
 
-  constructor(_builder: StoreDtoBuilder) {
-    this.builder = _builder;
-  }
-
-  build(store: Store): void {
-    this.builder.setDto(store);
-  }
+export class StoreDto extends BaseStoreDto {
+  @Expose()
+  @Transform(({ obj: { createdBy } }) => createdBy || null)
+  @Type(() => BaseUserDto)
+  owner!: BaseUserDto | null;
 }

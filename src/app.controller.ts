@@ -7,14 +7,16 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Decimal } from '@prisma/client/runtime/library';
-import { User } from '@prisma/client';
+import { Product, User } from '@prisma/client';
 
 import { CacheInterceptor } from '@interceptors/cache.interceptor';
 import { CacheTTL } from '@decorators/cacheTTL.decorator';
 import { Public } from '@decorators/allowAnonymous.decorator';
 import { CacheKey } from '@decorators/cacheKey.decorator';
 import { CACHE_EXPIRED } from '@helpers/constant';
-import { TransformUserDtoInterceptor } from '@interceptors/transformUserDto.interceptor';
+import { ResponseSerializerInterceptor } from '@interceptors/responseSerializer.interceptor';
+import { BaseProductDto } from '@dtos/products/baseProduct.dto';
+import { UserDto } from '@dtos/users/user.dto';
 
 import { ProductInclude } from './repositories/product.repository';
 import { UserIncludeType } from './repositories/user.repository';
@@ -40,12 +42,13 @@ export class AppController {
   @Public()
   @CacheKey('USER')
   @CacheTTL(CACHE_EXPIRED)
-  @UseInterceptors(TransformUserDtoInterceptor, CacheInterceptor)
+  // @UseInterceptors(CacheInterceptor)
+  @UseInterceptors(new ResponseSerializerInterceptor(UserDto))
   @Get('mock/:id')
   mock(
     @Query('name', new ParseArrayPipe({ separator: ',', optional: true }))
     name?: string[],
-  ) {
+  ): User | User[] | Product {
     const user: UserIncludeType = {
       id: 2,
       fullName: 'test 2',
@@ -113,36 +116,35 @@ export class AppController {
       createdAt: new Date(),
       updatedAt: new Date(),
       createdUser: 1,
-      media: [],
-      // media: [
-      //   {
-      //     id: 1,
-      //     fileName: 'file_1',
-      //     url: 'file_1.png',
-      //     uploaderId: 2,
-      //     productId: null,
-      //     createdAt: new Date(),
-      //     updatedAt: new Date(),
-      //   },
-      //   {
-      //     id: 2,
-      //     fileName: 'file_2',
-      //     url: 'file_2.png',
-      //     uploaderId: 2,
-      //     productId: null,
-      //     createdAt: new Date(),
-      //     updatedAt: new Date(),
-      //   },
-      //   {
-      //     id: 3,
-      //     fileName: 'file_3',
-      //     url: 'file_3.png',
-      //     uploaderId: 2,
-      //     productId: null,
-      //     createdAt: new Date(),
-      //     updatedAt: new Date(),
-      //   },
-      // ],
+      media: [
+        {
+          id: 1,
+          fileName: 'file_1',
+          url: 'file_1.png',
+          uploaderId: 2,
+          productId: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: 2,
+          fileName: 'file_2',
+          url: 'file_2.png',
+          uploaderId: 2,
+          productId: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: 3,
+          fileName: 'file_3',
+          url: 'file_3.png',
+          uploaderId: 2,
+          productId: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ],
       createdBy: {
         id: 1,
         fullName: 'test 1',

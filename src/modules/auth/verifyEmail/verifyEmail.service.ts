@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
 import { UserNotExistsException } from '@exceptions/badRequest/userNotExists.exception';
-import { REDIS_KEY } from '@services/redisService/redisKey';
 import { ConflictException } from '@exceptions/conflict/conflict.exception';
-import { UserRepository } from '@repositories/user.repository';
-import { UserEntity } from '@dtos/users/user.interface';
+import { UserIncludeType, UserRepository } from '@repositories/user.repository';
+import { PREFIX_REDIS_KEY } from '@constants/enums/prefixRedisKey.enum';
 
 import { ValidateEmailTokenService } from '../resetPassword/validateEmailToken.service';
 
@@ -17,11 +16,11 @@ export class VerifyEmailService {
     private readonly validateEmailTokenService: ValidateEmailTokenService,
   ) {}
 
-  async execute(payload: VerifyEmailPayload): Promise<UserEntity> {
+  async execute(payload: VerifyEmailPayload): Promise<UserIncludeType> {
     const { email, token } = payload;
 
     await this.validateEmailTokenService.execute(
-      REDIS_KEY.VERIFY_EMAIL,
+      PREFIX_REDIS_KEY.VERIFY_EMAIL,
       email,
       token,
     );

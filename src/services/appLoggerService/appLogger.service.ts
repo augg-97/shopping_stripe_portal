@@ -23,12 +23,13 @@ export class AppLoggerService implements LoggerService {
   constructor(
     private readonly config: AppConfigService,
     private readonly loggerContextService: LoggerContextService,
+    private readonly configService: AppConfigService,
   ) {
     const { combine, printf, timestamp } = format;
     this.logger = createLogger({
       levels: this.logLevels,
       defaultMeta: {
-        label: 'SPS_PORTAL',
+        label: this.configService.serviceName,
       },
       format: combine(
         timestamp(),

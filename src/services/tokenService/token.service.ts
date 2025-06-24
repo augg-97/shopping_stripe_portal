@@ -1,12 +1,13 @@
 import { JwtService } from '@nestjs/jwt';
 
-import { REDIS_KEY } from '../redisService/redisKey';
+import { PREFIX_REDIS_KEY } from '@constants/enums/prefixRedisKey.enum';
+
 import { AppLoggerService } from '../appLoggerService/appLogger.service';
 
 import { AuthUser } from './authUser';
 
 export class TokenService {
-  protected redisKey!: REDIS_KEY;
+  protected redisKey!: PREFIX_REDIS_KEY;
   protected secretKey!: string;
   protected expiration!: number;
 

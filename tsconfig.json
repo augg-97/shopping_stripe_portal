@@ -20,7 +20,8 @@
       "@modules/*": ["modules/*"],
       "@pkgs/*": ["pkgs/*"],
       "@repositories/*": ["repositories/*"],
-      "@services/*": ["services/*"]
+      "@services/*": ["services/*"],
+      "@constants/*": ["constants/*"]
     },
     "skipLibCheck": false,
     "allowJs": true,

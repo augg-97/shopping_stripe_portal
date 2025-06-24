@@ -1,5 +1,7 @@
 import { INestApplication, VersioningType } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { useContainer } from 'class-validator';
+import { AppModule } from 'app.module';
 
 import { AppConfigService } from '@appConfigs/appConfig.service';
 import { AppLoggerService } from '@services/appLoggerService/appLogger.service';
@@ -26,6 +28,8 @@ export const setupApp = async (app: INestApplication): Promise<void> => {
     defaultVersion: ['v1'],
     prefix: '',
   });
+
+  useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   const appConfigService = app.get(AppConfigService);
 

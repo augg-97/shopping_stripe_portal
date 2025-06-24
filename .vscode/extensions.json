@@ -7,7 +7,6 @@
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
     "prisma.prisma",
-    "streetsidesoftware.code-spell-checker",
     "kisstkondoros.vscode-codemetrics"
   ],
   // List of extensions recommended by VS Code that should not be recommended for users of this workspace.

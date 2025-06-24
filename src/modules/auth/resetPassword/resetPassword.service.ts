@@ -2,11 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 
 import { UserNotExistsException } from '@exceptions/badRequest/userNotExists.exception';
-import { REDIS_KEY } from '@services/redisService/redisKey';
 import { PasswordService } from '@services/passwordService/password.service';
 import { ConflictException } from '@exceptions/conflict/conflict.exception';
-import { UserRepository } from '@repositories/user.repository';
-import { UserEntity } from '@dtos/users/user.interface';
+import { UserIncludeType, UserRepository } from '@repositories/user.repository';
+import { PREFIX_REDIS_KEY } from '@constants/enums/prefixRedisKey.enum';
 
 import { ValidateEmailTokenService } from './validateEmailToken.service';
 import { ResetPasswordPayload } from './resetPassword.payload';
@@ -19,11 +18,11 @@ export class ResetPasswordService {
     private readonly validateEmailTokenService: ValidateEmailTokenService,
   ) {}
 
-  async execute(payload: ResetPasswordPayload): Promise<UserEntity> {
+  async execute(payload: ResetPasswordPayload): Promise<UserIncludeType> {
     const { email, token, password } = payload;
 
     await this.validateEmailTokenService.execute(
-      REDIS_KEY.RESET_PASSWORD,
+      PREFIX_REDIS_KEY.RESET_PASSWORD,
       email,
       token,
     );

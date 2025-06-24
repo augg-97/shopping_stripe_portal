@@ -28,18 +28,7 @@ const configs: ConfigArray = tseslint.config({
     import: importPlugin,
   },
   rules: {
-    'prettier/prettier': [
-      'error',
-      {
-        singleQuote: true,
-      },
-      {
-        usePrettierrc: false,
-        fileInfoOptions: {
-          withNodeModules: true,
-        },
-      },
-    ],
+    'prettier/prettier': ['error'],
     'no-console': ['warn'],
     'no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': [
@@ -78,7 +67,7 @@ const configs: ConfigArray = tseslint.config({
         pathGroups: [
           {
             pattern:
-              '@(@appConfigs|@decorators|@dtos|@exceptions|@guards|@helpers|@interceptors|@middlewares|@modules|@pkgs|@repositories|@services)/**',
+              '@(@appConfigs|@decorators|@dtos|@exceptions|@guards|@helpers|@interceptors|@middlewares|@modules|@pkgs|@repositories|@services|@constants)/**',
             group: 'external',
             position: 'after',
           },

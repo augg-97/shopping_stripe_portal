@@ -10,9 +10,8 @@ import { Request } from 'express';
 
 import { CACHE_KEY } from '@decorators/cacheKey.decorator';
 import { DECORATOR } from '@decorators/decorator.enum';
-
-import { REDIS_KEY } from '../services/redisService/redisKey';
-import { RedisService } from '../services/redisService/redis.service';
+import { RedisService } from '@services/redisService/redis.service';
+import { PREFIX_REDIS_KEY } from '@constants/enums/prefixRedisKey.enum';
 
 @Injectable()
 export class CacheInterceptor<T> implements NestInterceptor {
@@ -36,7 +35,7 @@ export class CacheInterceptor<T> implements NestInterceptor {
     }
 
     const cacheKey = this.redisService.buildCacheKey(
-      REDIS_KEY.CACHE,
+      PREFIX_REDIS_KEY.CACHE,
       cacheKeyByDecoration,
     );
     const fieldKey = params.id;

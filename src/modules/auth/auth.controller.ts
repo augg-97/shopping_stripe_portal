@@ -1,26 +1,29 @@
 import { ApiTags } from '@nestjs/swagger';
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Headers,
   HttpCode,
   HttpStatus,
   Post,
   Put,
+  SerializeOptions,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 
 import { AuthUser } from '@services/tokenService/authUser';
-import { TransformUserDtoInterceptor } from '@interceptors/transformUserDto.interceptor';
 import { AuthUserRequest } from '@decorators/authUserRequest.decorator';
 import { Public } from '@decorators/allowAnonymous.decorator';
 import { CacheKey } from '@decorators/cacheKey.decorator';
-import { UserEntity } from '@dtos/users/user.interface';
 import { RefreshTokenGuard } from '@guards/refreshToken.guard';
 import { CachingInterceptor } from '@interceptors/caching.interceptor';
 import { RefreshTokenInterceptor } from '@interceptors/refreshToken.interceptor';
 import { TokenInterceptor } from '@interceptors/token.interceptor';
+import { UserIncludeType } from '@repositories/user.repository';
+import { ResponseSerializerInterceptor } from '@interceptors/responseSerializer.interceptor';
+import { UserDto } from '@dtos/users/user.dto';
 
 import { ForgotPasswordPayload } from './forgotPassword/forgotPassword.payload';
 import { ForgotPasswordService } from './forgotPassword/forgotPassword.service';
@@ -51,46 +54,47 @@ export class AuthController {
   ) {}
 
   @Public()
-  @UseInterceptors(TransformUserDtoInterceptor)
-  @UseInterceptors(TokenInterceptor)
+  @UseInterceptors(TokenInterceptor, new ResponseSerializerInterceptor(UserDto))
   @HttpCode(HttpStatus.OK)
   @Post('register')
-  async register(@Body() payload: RegisterPayload): Promise<UserEntity> {
+  async register(@Body() payload: RegisterPayload): Promise<UserIncludeType> {
     return await this.registerService.execute(payload);
   }
 
   @Public()
   @UseInterceptors(
-    TransformUserDtoInterceptor,
-    CachingInterceptor,
     TokenInterceptor,
+    new ResponseSerializerInterceptor(UserDto),
+    CachingInterceptor,
   )
   @CacheKey('USER')
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  async login(@Body() payload: LoginPayload): Promise<UserEntity> {
+  async login(@Body() payload: LoginPayload): Promise<UserIncludeType> {
     return await this.loginService.execute(payload);
   }
 
   @Public()
   @UseGuards(RefreshTokenGuard)
-  @UseInterceptors(TransformUserDtoInterceptor)
-  @UseInterceptors(RefreshTokenInterceptor)
+  @UseInterceptors(
+    RefreshTokenInterceptor,
+    new ResponseSerializerInterceptor(UserDto),
+  )
   @HttpCode(HttpStatus.OK)
   @Post('token/refresh')
   async refreshToken(
     @AuthUserRequest('user') authUser: AuthUser,
-  ): Promise<UserEntity> {
+  ): Promise<UserIncludeType> {
     return await this.refreshTokenService.execute(authUser);
   }
 
   @Public()
-  @UseInterceptors(TransformUserDtoInterceptor)
+  @UseInterceptors(new ResponseSerializerInterceptor(UserDto))
   @HttpCode(HttpStatus.NO_CONTENT)
   @Put('password/reset')
   async resetPassword(
     @Body() payload: ResetPasswordPayload,
-  ): Promise<UserEntity> {
+  ): Promise<UserIncludeType> {
     return await this.resetPasswordService.execute(payload);
   }
 
@@ -104,11 +108,12 @@ export class AuthController {
   }
 
   @Public()
-  @UseInterceptors(TransformUserDtoInterceptor)
-  @UseInterceptors(TokenInterceptor)
+  @UseInterceptors(TokenInterceptor, new ResponseSerializerInterceptor(UserDto))
   @HttpCode(HttpStatus.OK)
   @Post('email/verify')
-  async verifyEmail(@Body() payload: VerifyEmailPayload): Promise<UserEntity> {
+  async verifyEmail(
+    @Body() payload: VerifyEmailPayload,
+  ): Promise<UserIncludeType> {
     return await this.verifyEmailService.execute(payload);
   }
 

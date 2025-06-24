@@ -3,12 +3,11 @@ import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 
 import { DECORATOR } from '@decorators/decorator.enum';
-
-import { TokenNotProvidedException } from '../exceptions/unauthorized/tokenNotProvided.exception';
-import { extractToken } from '../helpers/extractToken';
-import { AccessTokenService } from '../services/tokenService/accessToken.service';
-import { RedisService } from '../services/redisService/redis.service';
-import { REDIS_KEY } from '../services/redisService/redisKey';
+import { PREFIX_REDIS_KEY } from '@constants/enums/prefixRedisKey.enum';
+import { AccessTokenService } from '@services/tokenService/accessToken.service';
+import { RedisService } from '@services/redisService/redis.service';
+import { extractToken } from '@helpers/extractToken';
+import { TokenNotProvidedException } from '@exceptions/unauthorized/tokenNotProvided.exception';
 
 import { AbstractTokenGuard } from './abstractToken.guard';
 
@@ -22,7 +21,7 @@ export class TokenGuard extends AbstractTokenGuard {
     super(
       'ACCESS_TOKEN_EXPIRED',
       'Access token is expired',
-      REDIS_KEY.ACCESS_TOKEN,
+      PREFIX_REDIS_KEY.ACCESS_TOKEN,
       redisService,
       accessTokenService,
     );

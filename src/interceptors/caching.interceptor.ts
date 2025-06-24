@@ -8,17 +8,13 @@ import { Observable, tap } from 'rxjs';
 import { Reflector } from '@nestjs/core';
 
 import { DECORATOR } from '@decorators/decorator.enum';
-
-import { RedisService } from '../services/redisService/redis.service';
-import { REDIS_KEY } from '../services/redisService/redisKey';
-import { CACHE_KEY } from '../decorators/cacheKey.decorator';
-import { IUserDto } from '../dtos/users/user.interface';
-import { IStoreDto } from '../dtos/stores/store.interface';
+import { RedisService } from '@services/redisService/redis.service';
+import { CACHE_KEY } from '@decorators/cacheKey.decorator';
+import { PREFIX_REDIS_KEY } from '@constants/enums/prefixRedisKey.enum';
+import { BaseDto } from '@dtos/base.dto';
 
 @Injectable()
-export class CachingInterceptor<T extends IUserDto | IStoreDto>
-  implements NestInterceptor
-{
+export class CachingInterceptor<T extends BaseDto> implements NestInterceptor {
   constructor(
     private readonly reflector: Reflector,
     private readonly redisService: RedisService,
@@ -37,7 +33,7 @@ export class CachingInterceptor<T extends IUserDto | IStoreDto>
 
         if (cacheKeyByDecoration) {
           const cacheKey = this.redisService.buildCacheKey(
-            REDIS_KEY.CACHE,
+            PREFIX_REDIS_KEY.CACHE,
             cacheKeyByDecoration,
           );
           const fieldKey = `${data.id}`;

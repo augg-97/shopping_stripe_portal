@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { Product } from '@prisma/client';
 
 import { AuthUser } from '@services/tokenService/authUser';
 import { ConflictException } from '@exceptions/conflict/conflict.exception';
 import { ProductRepository } from '@repositories/product.repository';
-import { IProductDto } from '@dtos/products/product.interface';
 
 import { CreateProductPayload } from './createProduct.payload';
 
@@ -14,7 +14,7 @@ export class CreateProductService {
   async execute(
     authUser: AuthUser,
     payload: CreateProductPayload,
-  ): Promise<IProductDto> {
+  ): Promise<Product> {
     const product = await this.productRepository.create({
       name: payload.name,
       description: payload.description,
@@ -39,6 +39,6 @@ export class CreateProductService {
       );
     }
 
-    return {} as IProductDto;
+    return product;
   }
 }

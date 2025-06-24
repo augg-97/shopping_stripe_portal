@@ -14,7 +14,7 @@ Make sure system installed
 
 **Visual studio code**
 
-## Setup and run localy
+## Setup and run locally
 
 Clone the project
 
@@ -28,42 +28,10 @@ Go to the project directory
   cd shopping_stripe_portal
 ```
 
-Create file `.env` have data follow file `./src/appConfigs/configuration.ts`
-
-Initialize infrastructure
-
-```bash
-  docker compose -f docker-compose.yml up
-```
-
 Install dependencies
 
 ```bash
   pnpm install
 ```
 
-Initialize database schema
-
-```bash
-  pnpm run prima:migration dev
-```
-
-```bash
-  pnpm run prima:generate
-```
-
-Run server dev
-
-```bash
-  pnpm run dev
-```
-
-Start the server
-
-```bash
-  pnpm run build
-```
-
-```bash
-  pnpm run start
-```
+Create file `.env` have data follow file `./src/appConfigs/appConfig.ts`

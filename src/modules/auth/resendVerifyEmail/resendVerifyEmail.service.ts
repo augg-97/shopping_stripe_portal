@@ -3,11 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { AuthUser } from '@services/tokenService/authUser';
 import { UserNotExistsException } from '@exceptions/badRequest/userNotExists.exception';
 import { BadRequestException } from '@exceptions/badRequest/badRequest.exception';
-import { REDIS_KEY } from '@services/redisService/redisKey';
 import { UserRepository } from '@repositories/user.repository';
 import { EmailVerifyService } from '@services/emailService/emailVerify.service';
 import { VERIFY_EMAIL_TOKEN_EXPIRED } from '@helpers/constant';
 import { AppConfigService } from '@appConfigs/appConfig.service';
+import { PREFIX_REDIS_KEY } from '@constants/enums/prefixRedisKey.enum';
 
 import {
   EmailUIUrlParams,
@@ -41,7 +41,7 @@ export class ResendVerifyEmailService {
 
     const params: EmailUIUrlParams = {
       emailUIUrl: this.appConfigService.verifyEmailUIUrl,
-      key: REDIS_KEY.VERIFY_EMAIL,
+      key: PREFIX_REDIS_KEY.VERIFY_EMAIL,
       email,
       tokenExpired: VERIFY_EMAIL_TOKEN_EXPIRED,
     };

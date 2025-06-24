@@ -2,14 +2,14 @@ import { Injectable } from '@nestjs/common';
 
 import { BadRequestException } from '@exceptions/badRequest/badRequest.exception';
 import { RedisService } from '@services/redisService/redis.service';
-import { REDIS_KEY } from '@services/redisService/redisKey';
+import { PREFIX_REDIS_KEY } from '@constants/enums/prefixRedisKey.enum';
 
 @Injectable()
 export class ValidateEmailTokenService {
   constructor(private readonly redisService: RedisService) {}
 
   async execute(
-    redisKey: REDIS_KEY,
+    redisKey: PREFIX_REDIS_KEY,
     email: string,
     token: string,
   ): Promise<void> {

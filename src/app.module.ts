@@ -2,11 +2,10 @@ import {
   MiddlewareConsumer,
   Module,
   NestModule,
-  OnModuleInit,
+  RequestMethod,
 } from '@nestjs/common';
-import { APP_FILTER, APP_GUARD, APP_PIPE, ModuleRef } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { CustomValidationPipe } from 'pipes/customValidation.pipe';
-import { useContainer } from 'class-validator';
 
 import { ClientIdMiddleware } from '@middlewares/clientId.middleware';
 import { CorrelationMiddleware } from '@middlewares/correlation.middleware';
@@ -34,8 +33,8 @@ import { RepositoriesModule } from './repositories/repositories.module';
 @Module({
   imports: [
     AppConfigModule,
-    PrismaModule,
     AppLoggerModule,
+    PrismaModule,
     RedisModule,
     TokenModule,
     UploadModule,
@@ -58,14 +57,10 @@ import { RepositoriesModule } from './repositories/repositories.module';
   ],
   exports: [],
 })
-export class AppModule implements NestModule, OnModuleInit {
-  constructor(private readonly moduleRef: ModuleRef) {}
-
+export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(ClientIdMiddleware, CorrelationMiddleware).forRoutes('*');
-  }
-
-  onModuleInit(): void {
-    useContainer(this.moduleRef.get(AppModule), { fallbackOnErrors: true });
+    consumer
+      .apply(ClientIdMiddleware, CorrelationMiddleware)
+      .forRoutes({ path: '*path', method: RequestMethod.ALL });
   }
 }

@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { MediaDtoBuilder } from '@dtos/media/media.builder';
-import { MediaDto } from '@dtos/media/media.dto';
 import {
   MediaBulkInput,
   MediaRepository,
@@ -26,12 +24,6 @@ export class MediaService {
     const savedImages =
       await this.mediaRepository.createBulkMedia(imageBulkInput);
 
-    return savedImages.map((item) => {
-      const builder = new MediaDtoBuilder();
-      const dto = new MediaDto(builder);
-      dto.build(item);
-
-      return builder.toDto();
-    });
+    return savedImages;
   }
 }

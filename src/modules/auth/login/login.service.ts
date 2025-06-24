@@ -4,8 +4,7 @@ import { UserNotExistsException } from '@exceptions/badRequest/userNotExists.exc
 import { PasswordService } from '@services/passwordService/password.service';
 import { BadRequestException } from '@exceptions/badRequest/badRequest.exception';
 import { CredentialDeniedException } from '@exceptions/unauthorized/credentialDenied.exception';
-import { UserRepository } from '@repositories/user.repository';
-import { UserEntity } from '@dtos/users/user.interface';
+import { UserIncludeType, UserRepository } from '@repositories/user.repository';
 
 import { LoginPayload } from './login.payload';
 
@@ -16,7 +15,7 @@ export class LoginService {
     private readonly passwordService: PasswordService,
   ) {}
 
-  async execute(payload: LoginPayload): Promise<UserEntity> {
+  async execute(payload: LoginPayload): Promise<UserIncludeType> {
     const { email, password } = payload;
     const user = await this.userRepository.findUserByEmail(email);
 
@@ -42,11 +41,5 @@ export class LoginService {
     }
 
     return user;
-
-    // const builder = new UserDtoBuilder();
-    // const dto = new UserWithStoreDto(builder, true);
-    // dto.build(user);
-
-    // return builder.toDto();
   }
 }

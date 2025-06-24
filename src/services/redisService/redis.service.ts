@@ -1,54 +1,80 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { RedisClientType } from 'redis';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import Redis from 'ioredis';
 
-import { REDIS_KEY } from './redisKey';
+import { AppConfigService } from '@appConfigs/appConfig.service';
+import { AppLoggerService } from '@services/appLoggerService/appLogger.service';
+import { PREFIX_REDIS_KEY } from '@constants/enums/prefixRedisKey.enum';
 
 @Injectable()
-export class RedisService {
-  constructor(@Inject('REDIS_CLIENT') private redisClient: RedisClientType) {}
+export class RedisService implements OnModuleInit {
+  private client: Redis;
 
-  buildCacheKey(redisKey: REDIS_KEY, ...args: string[]): string {
+  constructor(
+    private readonly appConfig: AppConfigService,
+    private readonly logger: AppLoggerService,
+  ) {
+    logger.serviceName = RedisService.name;
+    this.client = new Redis({
+      host: this.appConfig.redisHost,
+      port: this.appConfig.redisPort,
+      password: this.appConfig.redisPassword,
+      lazyConnect: true,
+    });
+  }
+
+  onModuleInit(): void {
+    this.client
+      .connect()
+      .then(() => {
+        this.logger.log('Redis connected successfully');
+      })
+      .catch((error) => {
+        this.logger.error('Failed to connect to Redis', error);
+        process.exit(1);
+      });
+  }
+
+  buildCacheKey(redisKey: PREFIX_REDIS_KEY, ...args: string[]): string {
     return `${redisKey}:${args.join('_')}`;
   }
 
   async get(key: string) {
-    return await this.redisClient.get(key);
+    return await this.client.get(key);
   }
 
-  async set(key: string, value: string, expireTime?: number): Promise<void> {
-    await this.redisClient.set(key, value, {
-      EX: expireTime,
-    });
+  async set(key: string, value: string): Promise<void> {
+    await this.client.set(key, value);
+  }
+
+  async setWithEX(
+    key: string,
+    value: string,
+    expireTime: number,
+  ): Promise<void> {
+    await this.client.set(key, value, 'EX', expireTime);
   }
 
   async delete(key: string) {
-    await this.redisClient.del(key);
+    await this.client.del(key);
   }
 
   async lRange(key: string) {
-    try {
-      return await this.redisClient.lRange(key, 0, 1);
-    } catch (error) {
-      return [];
-    }
+    return await this.client.lrange(key, 0, -1);
   }
 
   async rPush(key: string, value: string) {
-    await this.redisClient.rPush(key, value);
+    await this.client.rpush(key, value);
   }
 
   async lRem(key: string, value: string) {
-    await this.redisClient.lRem(key, 0, value);
+    await this.client.lrem(key, 0, value);
   }
 
   async hGet(key: string, field: string) {
-    return await this.redisClient.hGet(key, field);
+    return await this.client.hget(key, field);
   }
 
   async hSet(key: string, field: string, value: string, expireTime?: number) {
-    await this.redisClient.hSet(key, field, value);
-    if (expireTime) {
-      await this.redisClient.hExpire(key, field, expireTime);
-    }
+    await this.client.hset(key, field, value);
   }
 }

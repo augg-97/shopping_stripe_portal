@@ -11,14 +11,14 @@ model User {
   id             Int       @id @default(autoincrement())
   email          String
   fullName       String
-  isVerify       Boolean    @default(false)
-  type           USER_TYPE  @default(USER)
+  isVerify       Boolean   @default(false)
+  type           USER_TYPE @default(USER)
   profileImageId Int?
   coverImageId   Int?
   salt           String?
   passwordHashed String?
   createdAt      DateTime  @default(now())
-  updatedAt      DateTime @default(now()) @updatedAt
+  updatedAt      DateTime  @default(now()) @updatedAt
   deletedAt      DateTime?
   coverImage     Media?    @relation("cover", fields: [coverImageId], references: [id])
   profileImage   Media?    @relation("profile", fields: [profileImageId], references: [id])
@@ -31,35 +31,35 @@ model User {
 }
 
 model Media {
-  id           Int       @id @default(autoincrement())
+  id           Int      @id @default(autoincrement())
   fileName     String
   url          String
   productId    Int?
   uploaderId   Int
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @default(now()) @updatedAt
-  product      Product?  @relation(fields: [productId], references: [id])
-  uploadBy     User      @relation(fields: [uploaderId], references: [id])
-  storeCover   Store[]   @relation("cover")
-  storeProfile Store[]   @relation("profile")
-  userCover    User[]    @relation("cover")
-  userProfile  User[]    @relation("profile")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now()) @updatedAt
+  product      Product? @relation(fields: [productId], references: [id])
+  uploadBy     User     @relation(fields: [uploaderId], references: [id])
+  storeCover   Store[]  @relation("cover")
+  storeProfile Store[]  @relation("profile")
+  userCover    User[]   @relation("cover")
+  userProfile  User[]   @relation("profile")
 }
 
 model Product {
-  id         Int       @id @default(autoincrement())
-  name       String
+  id          Int      @id @default(autoincrement())
+  name        String
   description String
-  info       String?
-  stock      Int
-  price      Decimal    @db.Money
-  storeId    Int
+  info        String?
+  stock       Int
+  price       Decimal  @db.Money
+  storeId     Int
   createdUser Int
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @default(now()) @updatedAt
-  media      Media[]
-  store      Store     @relation(fields: [storeId], references: [id])
-  createdBy  User      @relation(fields: [createdUser], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+  media       Media[]
+  store       Store    @relation(fields: [storeId], references: [id])
+  createdBy   User     @relation(fields: [createdUser], references: [id])
 }
 
 model Store {

@@ -2,7 +2,6 @@ import { CanActivate, ExecutionContext } from '@nestjs/common';
 
 import { TokenInvalidException } from '@exceptions/unauthorized/tokenInvalid.exception';
 import { RedisService } from '@services/redisService/redis.service';
-import { REDIS_KEY } from '@services/redisService/redisKey';
 import { AuthUser } from '@services/tokenService/authUser';
 import { TokenService } from '@services/tokenService/token.service';
 import {
@@ -10,16 +9,17 @@ import {
   TokenExpiredException,
   TokenExpiredMessage,
 } from '@exceptions/unauthorized/tokenExpired.exception';
+import { PREFIX_REDIS_KEY } from '@constants/enums/prefixRedisKey.enum';
 
 export abstract class AbstractTokenGuard implements CanActivate {
   protected tokenExpiredErrorCode: TokenExpiredErrorCode;
   protected tokenExpiredErrorMessage: TokenExpiredMessage;
-  protected redisKey: REDIS_KEY;
+  protected redisKey: PREFIX_REDIS_KEY;
 
   constructor(
     _tokenExpiredErrorCode: TokenExpiredErrorCode,
     _tokenExpiredErrorMessage: TokenExpiredMessage,
-    _redisKey: REDIS_KEY,
+    _redisKey: PREFIX_REDIS_KEY,
     protected readonly redisService: RedisService,
     protected readonly tokenService: TokenService,
   ) {

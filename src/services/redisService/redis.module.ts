@@ -1,34 +1,14 @@
 import { Global, Module } from '@nestjs/common';
-import { createClient } from 'redis';
 
-import { AppConfigService } from '@appConfigs/appConfig.service';
+import { AppConfigModule } from '@appConfigs/appConfig.module';
 
 import { RedisService } from './redis.service';
 
 @Global()
 @Module({
-  imports: [],
+  imports: [AppConfigModule],
   controllers: [],
-  providers: [
-    {
-      provide: 'REDIS_CLIENT',
-      useFactory: async (appConfigService: AppConfigService) => {
-        const redisHost = appConfigService.redisHost;
-        const redisPort = appConfigService.redisPort;
-        const redisPassword = appConfigService.redisPassword;
-        const url = `redis://:${redisPassword}@${redisHost}:${redisPort.toString()}`;
-
-        const redisClient = createClient({
-          url,
-        });
-        await redisClient.connect();
-
-        return redisClient;
-      },
-      inject: [AppConfigService],
-    },
-    RedisService,
-  ],
+  providers: [RedisService],
   exports: [RedisService],
 })
 export class RedisModule {}

@@ -3,11 +3,11 @@ import { randomBytes } from 'crypto';
 import { Injectable } from '@nestjs/common';
 
 import { RedisService } from '@services/redisService/redis.service';
-import { REDIS_KEY } from '@services/redisService/redisKey';
+import { PREFIX_REDIS_KEY } from '@constants/enums/prefixRedisKey.enum';
 
 export interface EmailUIUrlParams {
   emailUIUrl: string;
-  key: REDIS_KEY;
+  key: PREFIX_REDIS_KEY;
   email: string;
   tokenExpired: number;
 }
@@ -37,6 +37,6 @@ export class EmailUIUrlService {
       await this.redisService.delete(redisKey);
     }
 
-    await this.redisService.set(redisKey, token, tokenExpired);
+    await this.redisService.setWithEX(redisKey, token, tokenExpired);
   }
 }

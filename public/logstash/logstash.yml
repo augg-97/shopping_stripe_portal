@@ -1,0 +1,5 @@
+http.host: 0.0.0.0
+xpack.monitoring.elasticsearch.hosts: http://sqs-elasticsearch:9200
+xpack.monitoring.elasticsearch.password: bQ5UroNM9PqslBs
+xpack.monitoring.elasticsearch.username: elastic
+xpack.monitoring.enabled: true

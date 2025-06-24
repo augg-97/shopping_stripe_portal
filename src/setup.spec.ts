@@ -1,6 +1,5 @@
 import { execSync } from 'child_process';
 import { join } from 'path';
-import console from 'console';
 
 import { useContainer } from 'class-validator';
 import {

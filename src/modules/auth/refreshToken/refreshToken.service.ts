@@ -2,14 +2,13 @@ import { Injectable } from '@nestjs/common';
 
 import { AuthUser } from '@services/tokenService/authUser';
 import { UserNotFoundException } from '@exceptions/notFound/userNotFound.exception';
-import { UserRepository } from '@repositories/user.repository';
-import { UserEntity } from '@dtos/users/user.interface';
+import { UserIncludeType, UserRepository } from '@repositories/user.repository';
 
 @Injectable()
 export class RefreshTokenService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async execute(authUser: AuthUser): Promise<UserEntity> {
+  async execute(authUser: AuthUser): Promise<UserIncludeType> {
     const user = await this.userRepository.findUserById(Number(authUser.id));
 
     if (!user) {

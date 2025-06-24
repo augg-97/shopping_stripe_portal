@@ -10,17 +10,6 @@ import { isString } from 'class-validator';
 
 import { AppLoggerService } from '../services/appLoggerService/appLogger.service';
 
-import { BaseHttpException } from './baseHttp.exception';
-
-interface BaseExceptionDto {
-  correlationId: string;
-  statusCode: string;
-  timestamp: string;
-  path: string;
-  errorCode: string;
-  message: string;
-}
-
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
   constructor(private readonly logger: AppLoggerService) {
@@ -33,21 +22,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const request = context.getRequest<Request>();
     const correlationId = request.headers['correlation-id'];
 
-    this.logger.error(`Error occur in request ${request.url}`, exception);
-
-    if (exception instanceof BaseHttpException) {
-      const status = exception.getStatus();
-      const { errorCode, message } = exception.getResponse();
-
-      return response.status(status).json({
-        correlationId,
-        statusCode: status,
-        timestamp: new Date().toISOString(),
-        path: request.url,
-        errorCode,
-        message,
-      });
-    }
+    this.logger.error(exception);
 
     if (exception instanceof HttpException) {
       const status = exception.getStatus();

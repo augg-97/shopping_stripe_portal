@@ -18,11 +18,9 @@ import { CacheKey } from '@decorators/cacheKey.decorator';
 import { CacheTTL } from '@decorators/cacheTTL.decorator';
 import { AuthUserRequest } from '@decorators/authUserRequest.decorator';
 import { AuthUser } from '@services/tokenService/authUser';
-import { TransformUserDtoInterceptor } from '@interceptors/transformUserDto.interceptor';
-import { UserEntity } from '@dtos/users/user.interface';
 import { CachingInterceptor } from '@interceptors/caching.interceptor';
 import { CacheInterceptor } from '@interceptors/cache.interceptor';
-import { BadRequestException } from '@exceptions/badRequest/badRequest.exception';
+import { UserIncludeType } from '@repositories/user.repository';
 
 import { UpdateProfileService } from './updateProfile/updateProfile.service';
 import { UpdateProfilePayload } from './updateProfile/updateProfile.payload';
@@ -38,7 +36,6 @@ export class UserController {
     private readonly updateProfileService: UpdateProfileService,
   ) {}
 
-  @UseInterceptors(TransformUserDtoInterceptor)
   @CacheTTL()
   @CacheKey('USER')
   @UseInterceptors(CacheInterceptor)
@@ -46,11 +43,10 @@ export class UserController {
   @Get('me')
   async getMe(
     @AuthUserRequest('user') authUser: AuthUser,
-  ): Promise<UserEntity> {
+  ): Promise<UserIncludeType> {
     return await this.getMeService.execute(authUser);
   }
 
-  @UseInterceptors(TransformUserDtoInterceptor)
   @CacheTTL()
   @CacheKey('USER')
   @UseInterceptors(CacheInterceptor)
@@ -60,7 +56,7 @@ export class UserController {
   async getUserById(
     @Req() req: Request,
     @Param('id', ParseIntPipe) id: number,
-  ): Promise<UserEntity> {
+  ): Promise<UserIncludeType> {
     if (req.user && Number(req.user.id) === id) {
       return await this.getMeService.execute(req.user);
     }
@@ -68,7 +64,6 @@ export class UserController {
     return await this.getUserByIdService.execute(id);
   }
 
-  @UseInterceptors(TransformUserDtoInterceptor)
   @CacheTTL()
   @CacheKey('USER')
   @UseInterceptors(CachingInterceptor)
@@ -77,7 +72,7 @@ export class UserController {
   async updateProfile(
     @AuthUserRequest('user') authUser: AuthUser,
     @Body() payload: UpdateProfilePayload,
-  ): Promise<UserEntity> {
+  ): Promise<UserIncludeType> {
     return await this.updateProfileService.execute(authUser, payload);
   }
 }

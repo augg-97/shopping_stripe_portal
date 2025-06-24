@@ -6,16 +6,15 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { Observable, mergeMap } from 'rxjs';
-import { USER_TYPE } from '@prisma/client';
 
-import { AuthUser } from '../services/tokenService/authUser';
-import { AppLoggerService } from '../services/appLoggerService/appLogger.service';
-import { IUserDto } from '../dtos/users/user.interface';
-import { AccessTokenService } from '../services/tokenService/accessToken.service';
-import { RefreshTokenService } from '../services/tokenService/refreshToken.service';
-import { RedisService } from '../services/redisService/redis.service';
-import { REDIS_KEY } from '../services/redisService/redisKey';
-import { AppConfigService } from '../appConfigs/appConfig.service';
+import { AccessTokenService } from '@services/tokenService/accessToken.service';
+import { RefreshTokenService } from '@services/tokenService/refreshToken.service';
+import { AppLoggerService } from '@services/appLoggerService/appLogger.service';
+import { RedisService } from '@services/redisService/redis.service';
+import { AppConfigService } from '@appConfigs/appConfig.service';
+import { AuthUser } from '@services/tokenService/authUser';
+import { UserIncludeType } from '@repositories/user.repository';
+import { PREFIX_REDIS_KEY } from '@constants/enums/prefixRedisKey.enum';
 
 @Injectable()
 export class TokenInterceptor implements NestInterceptor {
@@ -29,8 +28,8 @@ export class TokenInterceptor implements NestInterceptor {
 
   async intercept(
     context: ExecutionContext,
-    next: CallHandler<IUserDto>,
-  ): Promise<Observable<IUserDto>> {
+    next: CallHandler<UserIncludeType>,
+  ): Promise<Observable<UserIncludeType>> {
     const req = context.switchToHttp().getRequest<Request>();
     const res = context.switchToHttp().getResponse<Response>();
     const clientId = req.headers['client-id']?.toString();
@@ -40,10 +39,10 @@ export class TokenInterceptor implements NestInterceptor {
         try {
           const payload: AuthUser = {
             id: data.id.toString(),
-            email: data.email || '',
-            type: data.type || USER_TYPE.USER,
-            isVerify: data.isVerified,
-            storeId: data.store?.id,
+            email: data.email,
+            type: data.type,
+            isVerify: data.isVerify,
+            storeId: data.stores[0]?.id,
           };
 
           const accessToken =
@@ -51,7 +50,7 @@ export class TokenInterceptor implements NestInterceptor {
           await this.storeTokenToRedis(
             accessToken,
             payload,
-            REDIS_KEY.ACCESS_TOKEN,
+            PREFIX_REDIS_KEY.ACCESS_TOKEN,
             this.configService.accessTokenExpiredIn,
             clientId,
           );
@@ -61,7 +60,7 @@ export class TokenInterceptor implements NestInterceptor {
           await this.storeTokenToRedis(
             refreshToken,
             payload,
-            REDIS_KEY.REFRESH_TOKEN,
+            PREFIX_REDIS_KEY.REFRESH_TOKEN,
             this.configService.refreshTokenExpiredIn,
             clientId,
           );
@@ -82,7 +81,7 @@ export class TokenInterceptor implements NestInterceptor {
   private async storeTokenToRedis(
     token: string,
     payload: AuthUser,
-    redisKey: REDIS_KEY,
+    redisKey: PREFIX_REDIS_KEY,
     expiration: number,
     clientId?: string,
   ): Promise<void> {
@@ -90,6 +89,6 @@ export class TokenInterceptor implements NestInterceptor {
       ? this.redisService.buildCacheKey(redisKey, payload.id, clientId)
       : this.redisService.buildCacheKey(redisKey, payload.id);
 
-    await this.redisService.set(key, token, expiration);
+    await this.redisService.setWithEX(key, token, expiration);
   }
 }

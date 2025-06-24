@@ -15,6 +15,10 @@ export class AppConfigService implements IAppConfig {
     return this.configService.get('port');
   }
 
+  get serviceName(): string {
+    return this.configService.get('serviceName');
+  }
+
   get debugQuery(): boolean {
     return this.configService.get('debugQuery');
   }
@@ -81,5 +85,9 @@ export class AppConfigService implements IAppConfig {
 
   get verifyEmailUIUrl(): string {
     return this.configService.get('verifyEmailUIUrl');
+  }
+
+  get apmServerUrl(): string {
+    return this.configService.get('apmServerUrl');
   }
 }

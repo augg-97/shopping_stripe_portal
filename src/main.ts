@@ -1,3 +1,4 @@
+// import './utilities/tracing.utilities';
 import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app.module';

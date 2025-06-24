@@ -1,6 +1,7 @@
 export interface IAppConfig {
   nodeEnv: string;
   port: number;
+  serviceName: string;
 
   debugQuery: boolean;
 
@@ -25,4 +26,6 @@ export interface IAppConfig {
 
   resetPasswordUIUrl: string;
   verifyEmailUIUrl: string;
+
+  apmServerUrl: string;
 }

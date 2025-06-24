@@ -1,15 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 
-import { REDIS_KEY } from '@services/redisService/redisKey';
 import { ExistsUserException } from '@exceptions/badRequest/existsUser.exception';
 import { PasswordService } from '@services/passwordService/password.service';
 import { ConflictException } from '@exceptions/conflict/conflict.exception';
-import { UserRepository } from '@repositories/user.repository';
-import { UserEntity } from '@dtos/users/user.interface';
+import { UserIncludeType, UserRepository } from '@repositories/user.repository';
 import { EmailVerifyService } from '@services/emailService/emailVerify.service';
 import { AppConfigService } from '@appConfigs/appConfig.service';
 import { VERIFY_EMAIL_TOKEN_EXPIRED } from '@helpers/constant';
+import { PREFIX_REDIS_KEY } from '@constants/enums/prefixRedisKey.enum';
 
 import { EmailUIUrlParams, EmailUIUrlService } from './emailUIUrl.service';
 import { RegisterPayload } from './register.payload';
@@ -24,7 +23,7 @@ export class RegisterService {
     private readonly appConfigService: AppConfigService,
   ) {}
 
-  async execute(payload: RegisterPayload): Promise<UserEntity> {
+  async execute(payload: RegisterPayload): Promise<UserIncludeType> {
     const { email, password, fullName } = payload;
 
     const user = await this.userRepository.findUserByEmail(email);
@@ -55,7 +54,7 @@ export class RegisterService {
 
     const params: EmailUIUrlParams = {
       emailUIUrl: this.appConfigService.verifyEmailUIUrl,
-      key: REDIS_KEY.VERIFY_EMAIL,
+      key: PREFIX_REDIS_KEY.VERIFY_EMAIL,
       email,
       tokenExpired: VERIFY_EMAIL_TOKEN_EXPIRED,
     };

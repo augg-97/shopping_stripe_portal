@@ -1,4 +1,4 @@
-export enum REDIS_KEY {
+export enum PREFIX_REDIS_KEY {
   ACCESS_TOKEN = 'ACC_T',
   REFRESH_TOKEN = 'RF_T',
   RESET_PASSWORD = 'RESET_PASS',

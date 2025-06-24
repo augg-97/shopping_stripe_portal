@@ -1,27 +1,27 @@
 version: '3.5'
 
 services:
-  sps_db:
-    container_name: sps_db
+  sps-db:
+    container_name: sps-db
     image: postgres:15-alpine
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bQ5UroNM9PqslBs}
       POSTGRES_USER: ${POSTGRES_USER:-admin}
-      POSTGRES_DB: ${POSTGRES_DB:-sps_db}
+      POSTGRES_DB: ${POSTGRES_DB:-sps-db}
     ports:
       - '${POSTGRES_PORT:-5432}:5432'
     restart: on-failure
 
-  sps_cache:
-    container_name: sps_cache
+  sps-cache:
+    container_name: sps-cache
     image: redis:7.4.2
-    command: 'redis-server --requirepass Password'
+    command: 'redis-server --requirepass ${REDIS_PASSWORD:-Password}'
     ports:
       - '${REDIS_PORT:-6379}:6379'
     restart: on-failure
 
-  sps_web_server:
-    container_name: sps_web_server
+  sps-web-server:
+    container_name: sps-web-server
     image: nginx:alpine
     volumes:
       - ./public/nginx/upload.conf:/etc/nginx/conf.d/upload.conf
@@ -30,55 +30,77 @@ services:
       - '8080:80'
     restart: on-failure
 
-  sqs_elasticsearch:
-    container_name: sqs_elasticsearch
+  sqs-elasticsearch:
+    container_name: sqs-elasticsearch
     image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
     environment:
+      - node.name=es01
+      - cluster.name=sqs-elasticsearch-cluster
       - discovery.type=single-node
-      - xpack.security.enabled=false
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=true
+      - ELASTIC_PASSWORD=${ES_PASSWORD:-bQ5UroNM9PqslBs}
       - ES_JAVA_OPTS=-Xms1g -Xmx1g
     ulimits:
       memlock:
         soft: -1
         hard: -1
-    volumes:
-      - ./public/esdata:/usr/share/elasticsearch/data
     ports:
       - '9200:9200'
 
-  sqs_kibana:
+  sqs-kibana:
     image: docker.elastic.co/kibana/kibana:8.12.0
-    container_name: sqs_kibana
+    container_name: sqs-kibana
     environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_HOSTS=http://sqs-elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=${ES_USER_NAME:-elastic}
+      - ELASTICSEARCH_PASSWORD=${ES_PASSWORD:-bQ5UroNM9PqslBs}
+      - xpack.security.enabled=true
     ports:
       - '5601:5601'
     depends_on:
-      - sqs_elasticsearch
+      - sqs-elasticsearch
 
-  sqs_apm_server:
-    image: docker.elastic.co/apm/apm-server:8.12.0
-    container_name: sqs_apm_server
+  sqs-logstash:
+    image: docker.elastic.co/logstash/logstash:8.12.0
+    container_name: sqs-logstash
+    volumes:
+      - ./public/logstash/pipeline:/usr/share/logstash/pipeline
+      - ./public/logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
+    ports:
+      - '5044:5044'
+    environment:
+      - xpack.monitoring.enabled=true
+      - xpack.monitoring.elasticsearch.hosts=http://sqs-elasticsearch:9200
+      - xpack.monitoring.elasticsearch.username=${ES_USER_NAME:-elastic}
+      - xpack.monitoring.elasticsearch.password=${ES_PASSWORD:-bQ5UroNM9PqslBs}
     depends_on:
-      - sqs_elasticsearch
-      - sqs_kibana
+      - sqs-elasticsearch
+
+  sqs-apm-server:
+    image: docker.elastic.co/apm/apm-server:8.12.0
+    container_name: sqs-apm-server
+    depends_on:
+      - sqs-elasticsearch
+      - sqs-kibana
     ports:
       - '8200:8200'
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - KIBANA_HOST=http://kibana:5601
+      - ELASTICSEARCH_USERNAME=${ES_USER_NAME:-elastic}
+      - ELASTICSEARCH_PASSWORD=${ES_PASSWORD:-bQ5UroNM9PqslBs}
+      - KIBANA_USERNAME=${ES_USER_NAME:-elastic}
+      - KIBANA_PASSWORD=${ES_PASSWORD:-bQ5UroNM9PqslBs}
+      - apm-server.auth.anonymous.enabled=true
+      - xpack.security.enabled=true
+      - apm-server.kibana.enabled=true
     command: >
       apm-server -e
         -E apm-server.host=0.0.0.0:8200
         -E apm-server.enable_cors=true
-        -E setup.kibana.host=kibana:5601
+        -E output.elasticsearch.username=${ES_USER_NAME:-elastic}
+        -E output.elasticsearch.password=${ES_PASSWORD:-bQ5UroNM9PqslBs}
         -E output.elasticsearch.hosts=["http://elasticsearch:9200"]
-        -E apm-server.auth.anonymous.enabled=true
+        -E setup.kibana.host=kibana:5601
     restart: unless-stopped
-
-  sqs_logstash:
-    image: docker.elastic.co/logstash/logstash:8.12.0
-    container_name: sqs_logstash
-    depends_on:
-      - sqs_elasticsearch
-    volumes:
-      - ./public/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
-    ports:
-      - '5044:5044'
