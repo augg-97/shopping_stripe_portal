@@ -7,6 +7,10 @@ on:
   push:
     branches: ['main']
 
+permissions:
+  contents: read
+  security-events: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -55,3 +59,19 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - run: pnpm run lint
+
+  security-scan:
+    name: Semgrep PR Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: returntocorp/semgrep-action@v1
+        with:
+          config: p/default
+          generateSarif: true
+
+      - uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: semgrep.sarif
