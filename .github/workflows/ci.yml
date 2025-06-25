@@ -72,7 +72,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - run: semgrep ci --sarif > semgrep.sarif
+      - run: semgrep scan --config p/typescript --sarif --no-suppress-errors > semgrep.sarif
 
       - uses: github/codeql-action/upload-sarif@v3
         with:
