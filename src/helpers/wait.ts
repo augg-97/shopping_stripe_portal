@@ -1,4 +1,4 @@
-export const wait = (ms: number) =>
+export const wait = (ms = 0) =>
   new Promise<void>((resolve) => {
     if (!ms) {
       resolve();

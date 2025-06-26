@@ -4,7 +4,6 @@ import { useContainer } from 'class-validator';
 import { AppModule } from 'app.module';
 
 import { AppConfigService } from '@appConfigs/appConfig.service';
-import { AppLoggerService } from '@services/appLoggerService/appLogger.service';
 
 export const setupApp = async (app: INestApplication): Promise<void> => {
   app.enableCors({
@@ -18,9 +17,6 @@ export const setupApp = async (app: INestApplication): Promise<void> => {
     methods: 'GET, PUT, POST, DELETE, UPDATE, OPTIONS, PATCH',
     credentials: true,
   });
-
-  const logger = await app.resolve(AppLoggerService);
-  app.useLogger(logger);
 
   app.setGlobalPrefix('api');
   app.enableVersioning({

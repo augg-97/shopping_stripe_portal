@@ -22,16 +22,14 @@ export class RedisService implements OnModuleInit {
     });
   }
 
-  onModuleInit(): void {
-    this.client
-      .connect()
-      .then(() => {
-        this.logger.log('Redis connected successfully');
-      })
-      .catch((error) => {
-        this.logger.error('Failed to connect to Redis', error);
-        process.exit(1);
-      });
+  async onModuleInit(): Promise<void> {
+    try {
+      await this.client.connect();
+      this.logger.log('Redis connected successfully');
+    } catch (error) {
+      this.logger.error('Failed to connect to Redis', error);
+      process.exit(1);
+    }
   }
 
   buildCacheKey(redisKey: PREFIX_REDIS_KEY, ...args: string[]): string {
