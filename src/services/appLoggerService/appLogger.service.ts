@@ -25,41 +25,46 @@ export class AppLoggerService implements LoggerService {
     private readonly loggerContextService: LoggerContextService,
     private readonly configService: AppConfigService,
   ) {
-    const { combine, printf, timestamp } = format;
+    const { combine, printf, timestamp, json } = format;
     this.logger = createLogger({
       levels: this.logLevels,
       defaultMeta: {
         label: this.configService.serviceName,
       },
-      format: combine(
-        timestamp(),
-        printf((data) => {
-          const {
-            message,
-            level,
-            timestamp,
-            label,
-            correlationId,
-            serviceName,
-            ...metadata
-          } = data;
-
-          const splat = metadata[Symbol.for('splat')];
-          const meta = Array.isArray(splat) ? splat : [splat];
-
-          return `[${label}] [${timestamp}] [${level.toUpperCase()}]${serviceName ? ` [${serviceName}]` : ''}${correlationId ? ` [${correlationId}]` : ''} ${util.format(message, ...meta[0])}`;
-        }),
-      ),
     });
 
     if (this.config.nodeEnv === 'development') {
-      this.logger.add(new transports.Console({ level: 'debug' }));
+      this.logger.add(
+        new transports.Console({
+          level: 'debug',
+          format: combine(
+            timestamp(),
+            printf((data) => {
+              const {
+                message,
+                level,
+                timestamp,
+                label,
+                correlationId,
+                serviceName,
+                ...metadata
+              } = data;
+
+              const splat = metadata[Symbol.for('splat')];
+              const meta = Array.isArray(splat) ? splat : [splat];
+
+              return `[${label}] [${timestamp}] [${level.toUpperCase()}]${serviceName ? ` [${serviceName}]` : ''}${correlationId ? ` [${correlationId}]` : ''} ${util.format(message, ...meta[0])}`;
+            }),
+          ),
+        }),
+      );
     }
 
     this.logger.add(
       new transports.File({
         filename: join(__dirname, '../../../public/logs/rtc_logs.log'),
         level: 'info',
+        format: combine(timestamp(), json()),
       }),
     );
   }
