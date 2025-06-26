@@ -72,7 +72,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - run: semgrep scan --config p/typescript --config p/nestjs --sarif > semgrep.sarif
+      - run: semgrep scan --config p/nestjs --sarif > semgrep.sarif
         env:
           SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
 
