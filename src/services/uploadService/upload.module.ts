@@ -1,12 +1,13 @@
 import { Global, Module } from '@nestjs/common';
 
-import { UploadService } from './upload.service';
+import { WebServerUploadService } from './webServerUpload.service';
+import { MinioUploadService } from './minioUpload.service';
 
 @Global()
 @Module({
   imports: [],
   controllers: [],
-  providers: [UploadService],
-  exports: [UploadService],
+  providers: [WebServerUploadService, MinioUploadService],
+  exports: [WebServerUploadService, MinioUploadService],
 })
 export class UploadModule {}

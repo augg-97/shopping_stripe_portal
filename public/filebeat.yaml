@@ -1,0 +1,12 @@
+filebeat.inputs:
+  - type: filestream
+    id: sps-portal-logs
+    enabled: true
+    paths:
+      - "/var/log/*.log"
+    
+output.logstash:
+  hosts: ["sqs-logstash:5044"]
+
+setup.template.enabled: false
+monitoring.enabled: false

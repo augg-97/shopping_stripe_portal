@@ -4,102 +4,64 @@ import util from 'util';
 
 import { Injectable, LoggerService, Scope } from '@nestjs/common';
 import { Logger, createLogger, format, transports } from 'winston';
+import DailyRotateFile from 'winston-daily-rotate-file';
+import { captureException } from '@sentry/nestjs';
 
 import { AppConfigService } from '@appConfigs/appConfig.service';
 
 import { LoggerContextService } from './loggerContext.service';
+import { LoggerClient } from './logger.client';
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class AppLoggerService implements LoggerService {
-  private readonly logger: Logger;
-  private readonly logLevels = {
-    error: 0,
-    warn: 1,
-    info: 2,
-    verbose: 3,
-    debug: 4,
-  };
+  private _serviceName = '';
 
   constructor(
-    private readonly config: AppConfigService,
+    private readonly loggerClient: LoggerClient,
     private readonly loggerContextService: LoggerContextService,
-    private readonly configService: AppConfigService,
-  ) {
-    const { combine, printf, timestamp, json } = format;
-    this.logger = createLogger({
-      levels: this.logLevels,
-      defaultMeta: {
-        label: this.configService.serviceName,
-      },
-    });
-
-    if (this.config.nodeEnv === 'development') {
-      this.logger.add(
-        new transports.Console({
-          level: 'debug',
-          format: combine(
-            timestamp(),
-            printf((data) => {
-              const {
-                message,
-                level,
-                timestamp,
-                label,
-                correlationId,
-                serviceName,
-                ...metadata
-              } = data;
-
-              const splat = metadata[Symbol.for('splat')];
-              const meta = Array.isArray(splat) ? splat : [splat];
-
-              return `[${label}] [${timestamp}] [${level.toUpperCase()}]${serviceName ? ` [${serviceName}]` : ''}${correlationId ? ` [${correlationId}]` : ''} ${util.format(message, ...meta[0])}`;
-            }),
-          ),
-        }),
-      );
-    }
-
-    this.logger.add(
-      new transports.File({
-        filename: join(__dirname, '../../../public/logs/rtc_logs.log'),
-        level: 'info',
-        format: combine(timestamp(), json()),
-      }),
-    );
-  }
+  ) {}
 
   set serviceName(name: string) {
-    this.logger.defaultMeta.serviceName = name;
+    this._serviceName = name;
   }
 
   log(message: any, ...optionalParams: any[]): void {
-    this.setCorrelationId();
-    this.logger.info(message, optionalParams);
+    this.loggerClient.getLogger().info(message, {
+      meta: optionalParams,
+      traceId: this.loggerContextService.getTraceId(),
+      serviceName: this._serviceName,
+    });
   }
 
   error(message: any, ...optionalParams: any[]): void {
-    this.setCorrelationId();
-    this.logger.error(message, optionalParams);
+    this.loggerClient.getLogger().error(message, {
+      meta: optionalParams,
+      traceId: this.loggerContextService.getTraceId(),
+      serviceName: this._serviceName,
+    });
   }
 
   warn(message: any, ...optionalParams: any[]): void {
-    this.setCorrelationId();
-    this.logger.warn(message, optionalParams);
+    this.loggerClient.getLogger().warn(message, {
+      meta: optionalParams,
+      traceId: this.loggerContextService.getTraceId(),
+      serviceName: this._serviceName,
+    });
   }
 
   debug(message: any, ...optionalParams: any[]): void {
-    this.setCorrelationId();
-    this.logger.debug(message, optionalParams);
+    this.loggerClient.getLogger().debug(message, {
+      meta: optionalParams,
+      traceId: this.loggerContextService.getTraceId(),
+      serviceName: this._serviceName,
+    });
   }
 
   verbose(message: any, ...optionalParams: any[]): void {
-    this.setCorrelationId();
-    this.logger.verbose(message, optionalParams);
-  }
-
-  private setCorrelationId(): void {
-    this.logger.defaultMeta.correlationId =
-      this.loggerContextService.getCorrelationId();
+    this.loggerClient.getLogger().verbose(message, {
+      meta: optionalParams,
+      traceId: this.loggerContextService.getTraceId(),
+      serviceName: this._serviceName,
+    });
   }
 }

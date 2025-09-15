@@ -36,8 +36,13 @@ lerna-debug.log*
 .env
 public/*
 !public/emailTemplate
-!public/nginx
-!public/logstash
-!public/otel-config.yaml
+!public/upload.conf
+!public/logstash.conf
+!public/apm-server.yml
+!public/otel-collector-config.yaml
+!public/filebeat.yaml
 
 package-lock.json
+
+# Sentry Config File
+.sentryclirc

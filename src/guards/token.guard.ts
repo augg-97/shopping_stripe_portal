@@ -2,7 +2,7 @@ import { ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 
-import { DECORATOR } from '@decorators/decorator.enum';
+import { DECORATOR } from '@constants/enums/decorator.enum';
 import { PREFIX_REDIS_KEY } from '@constants/enums/prefixRedisKey.enum';
 import { AccessTokenService } from '@services/tokenService/accessToken.service';
 import { RedisService } from '@services/redisService/redis.service';

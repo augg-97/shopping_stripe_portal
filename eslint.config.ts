@@ -43,7 +43,6 @@ const configs: ConfigArray = tseslint.config({
         ignoreRestSiblings: true,
       },
     ],
-    '@typescript-eslint/explicit-function-return-type': 'warn',
     '@typescript-eslint/no-unsafe-assignment': 'warn',
     '@typescript-eslint/default-param-last': ['error'],
     '@typescript-eslint/no-array-delete': ['error'],
@@ -59,7 +58,7 @@ const configs: ConfigArray = tseslint.config({
     '@typescript-eslint/no-useless-constructor': 'off',
     'import/no-dynamic-require': 'warn',
     'import/no-nodejs-modules': 'warn',
-    'import/no-unassigned-import': 'error',
+    'import/no-unassigned-import': 'warn',
     'import/order': [
       'error',
       {

@@ -9,7 +9,7 @@ import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 
 import { CACHE_KEY } from '@decorators/cacheKey.decorator';
-import { DECORATOR } from '@decorators/decorator.enum';
+import { DECORATOR } from '@constants/enums/decorator.enum';
 import { RedisService } from '@services/redisService/redis.service';
 import { PREFIX_REDIS_KEY } from '@constants/enums/prefixRedisKey.enum';
 

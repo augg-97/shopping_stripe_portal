@@ -1,0 +1,13 @@
+output.elasticsearch:
+  hosts: ["http://sqs-elasticsearch:9200"]
+  username: "elastic"
+  password: "bQ5UroNM9PqslBs"
+
+apm-server:
+  host: "0.0.0.0:8200"
+  auth:
+    anonymous:
+      enabled: true
+  kibana:
+    enabled: true
+    host: "http://sqs-kibana:5601"

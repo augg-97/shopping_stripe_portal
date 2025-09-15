@@ -24,23 +24,40 @@ services:
     container_name: sps-web-server
     image: nginx:alpine
     volumes:
-      - ./public/nginx/upload.conf:/etc/nginx/conf.d/upload.conf
-      - ./public/assets:/usr/share/nginx/html/upload/
+      - ./public/upload.conf:/etc/nginx/conf.d/upload.conf:ro
+      - ./public/assets:/usr/share/nginx/html/upload/:ro
     ports:
       - '8080:80'
     restart: on-failure
 
+  sqs-s3:
+    container_name: sps-s3
+    image: quay.io/minio/minio
+    environment:
+      - MINIO_ROOT_USER=${AWS_ACCESS_KEY:-admin}
+      - MINIO_ROOT_PASSWORD=${AWS_SECRET_KEY:-jgygtwbevngwluxz}
+    command: server /data --console-address ":9001"
+    ports:
+      - '9000:9000' # S3 API endpoint
+      - '9001:9001' # MinIO Console UI
+    volumes:
+      - ./public/s3-bucket:/mnt
+
   sqs-elasticsearch:
     container_name: sqs-elasticsearch
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.0.2
     environment:
-      - node.name=es01
-      - cluster.name=sqs-elasticsearch-cluster
+      - node.name=sqs-elasticsearch-node-01
+      - cluster.name=sqs-elasticsearch-cluster-01
       - discovery.type=single-node
       - bootstrap.memory_lock=true
       - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=false
+      - xpack.security.transport.ssl.enabled=false
       - ELASTIC_PASSWORD=${ES_PASSWORD:-bQ5UroNM9PqslBs}
       - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    networks:
+      - elk-stack
     ulimits:
       memlock:
         soft: -1
@@ -49,58 +66,71 @@ services:
       - '9200:9200'
 
   sqs-kibana:
-    image: docker.elastic.co/kibana/kibana:8.12.0
+    image: docker.elastic.co/kibana/kibana:9.0.2
     container_name: sqs-kibana
     environment:
       - ELASTICSEARCH_HOSTS=http://sqs-elasticsearch:9200
-      - ELASTICSEARCH_USERNAME=${ES_USER_NAME:-elastic}
-      - ELASTICSEARCH_PASSWORD=${ES_PASSWORD:-bQ5UroNM9PqslBs}
-      - xpack.security.enabled=true
+      - ELASTICSEARCH_USERNAME=${KIBANA_USER:-kibana_system}
+      - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD:-bQ5UroNM9PqslBs}
     ports:
       - '5601:5601'
+    networks:
+      - elk-stack
     depends_on:
       - sqs-elasticsearch
 
   sqs-logstash:
-    image: docker.elastic.co/logstash/logstash:8.12.0
+    image: docker.elastic.co/logstash/logstash:9.0.2
     container_name: sqs-logstash
     volumes:
-      - ./public/logstash/pipeline:/usr/share/logstash/pipeline
-      - ./public/logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./public/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
     ports:
       - '5044:5044'
-    environment:
-      - xpack.monitoring.enabled=true
-      - xpack.monitoring.elasticsearch.hosts=http://sqs-elasticsearch:9200
-      - xpack.monitoring.elasticsearch.username=${ES_USER_NAME:-elastic}
-      - xpack.monitoring.elasticsearch.password=${ES_PASSWORD:-bQ5UroNM9PqslBs}
     depends_on:
       - sqs-elasticsearch
+    networks:
+      - elk-stack
+
+  sps-filebeat:
+    container_name: sps-filebeat
+    image: docker.elastic.co/beats/filebeat:9.0.2
+    volumes:
+      - ./public/filebeat.yaml:/usr/share/filebeat/filebeat.yml:ro
+      - ./public/logs:/var/log:ro
+    depends_on:
+      - sqs-logstash
+    networks:
+      - elk-stack
 
   sqs-apm-server:
-    image: docker.elastic.co/apm/apm-server:8.12.0
+    image: docker.elastic.co/apm/apm-server:9.0.2
     container_name: sqs-apm-server
     depends_on:
       - sqs-elasticsearch
       - sqs-kibana
     ports:
       - '8200:8200'
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-      - KIBANA_HOST=http://kibana:5601
-      - ELASTICSEARCH_USERNAME=${ES_USER_NAME:-elastic}
-      - ELASTICSEARCH_PASSWORD=${ES_PASSWORD:-bQ5UroNM9PqslBs}
-      - KIBANA_USERNAME=${ES_USER_NAME:-elastic}
-      - KIBANA_PASSWORD=${ES_PASSWORD:-bQ5UroNM9PqslBs}
-      - apm-server.auth.anonymous.enabled=true
-      - xpack.security.enabled=true
-      - apm-server.kibana.enabled=true
-    command: >
-      apm-server -e
-        -E apm-server.host=0.0.0.0:8200
-        -E apm-server.enable_cors=true
-        -E output.elasticsearch.username=${ES_USER_NAME:-elastic}
-        -E output.elasticsearch.password=${ES_PASSWORD:-bQ5UroNM9PqslBs}
-        -E output.elasticsearch.hosts=["http://elasticsearch:9200"]
-        -E setup.kibana.host=kibana:5601
+    volumes:
+      - ./public/apm-server.yml:/usr/share/apm-server/apm-server.yml:ro
+    networks:
+      - elk-stack
     restart: unless-stopped
+
+  sps-otel-collector:
+    container_name: sps-otel-collector
+    image: otel/opentelemetry-collector-contrib:0.130.1
+    volumes:
+      - ./public/otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml:ro
+    command: ['--config=/etc/otelcol-contrib/config.yaml']
+    ports:
+      - 4317:4317 # OTLP gRPC receiver
+      - 4318:4318 # OTLP http receiver
+    depends_on:
+      - sqs-apm-server
+    networks:
+      - elk-stack
+    restart: unless-stopped
+
+networks:
+  elk-stack:
+    driver: bridge

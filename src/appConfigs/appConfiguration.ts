@@ -1,3 +1,5 @@
+// eslint-disable-next-line import/no-unassigned-import
+import 'dotenv/config';
 import { IAppConfig } from './appConfig';
 
 export const appConfiguration = (): IAppConfig => ({
@@ -37,5 +39,11 @@ export const appConfiguration = (): IAppConfig => ({
   verifyEmailUIUrl:
     process.env.VERIFY_EMAIL_UI_URL || 'http://localhost:3000/email-verify',
 
-  apmServerUrl: process.env.APM_SERVER_URL || 'http://localhost:8200',
+  otelCollectorGrpcUrl:
+    process.env.OTEL_COLLECTOR_GRPC_URL || 'http://localhost:4317',
+
+  sentryDsn: process.env.SENTRY_DSN || '',
+
+  awsS3AccessKey: process.env.AWS_S3_ACCESS_KEY || '',
+  awsS3SecretKey: process.env.AWS_S3_SECRET_KEY || '',
 });
