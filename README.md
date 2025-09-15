@@ -14,6 +14,23 @@ Make sure system installed
 
 **Visual studio code**
 
+## 🛠️ Editor & Code Convention Settings
+
+We recommend using [Visual Studio Code (VSCode)](https://code.visualstudio.com/).
+
+This project recommends the following VSCode extensions:
+
+- [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)\*
+- [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)\*
+- [Prisma](https://marketplace.visualstudio.com/items?itemName=Prisma.prisma)\*
+- [CodeMetrics](https://marketplace.visualstudio.com/items?itemName=kisstkondoros.vscode-codemetrics)
+
+🔔 **Note:**  
+This guide is written for **VSCode editor**.  
+If you use any other editor, please configure equivalent settings accordingly.
+
+## 🛠️ Infrastructure for development environment
+
 ## Setup and run locally
 
 Clone the project
@@ -34,4 +51,8 @@ Install dependencies
   pnpm install
 ```
 
-Create file `.env` have data follow file `./src/appConfigs/appConfig.ts`
+Run local server
+
+```bash
+  pnpm run dev
+```

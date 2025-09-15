@@ -27,5 +27,10 @@ export interface IAppConfig {
   resetPasswordUIUrl: string;
   verifyEmailUIUrl: string;
 
-  apmServerUrl: string;
+  otelCollectorGrpcUrl: string;
+
+  sentryDsn: string;
+
+  awsS3AccessKey: string;
+  awsS3SecretKey: string;
 }

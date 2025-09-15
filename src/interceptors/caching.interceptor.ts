@@ -7,7 +7,7 @@ import {
 import { Observable, tap } from 'rxjs';
 import { Reflector } from '@nestjs/core';
 
-import { DECORATOR } from '@decorators/decorator.enum';
+import { DECORATOR } from '@constants/enums/decorator.enum';
 import { RedisService } from '@services/redisService/redis.service';
 import { CACHE_KEY } from '@decorators/cacheKey.decorator';
 import { PREFIX_REDIS_KEY } from '@constants/enums/prefixRedisKey.enum';

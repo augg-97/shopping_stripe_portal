@@ -3,7 +3,7 @@ import { AsyncLocalStorage } from 'async_hooks';
 import { Injectable } from '@nestjs/common';
 
 export interface ILoggerContext {
-  correlationId: string;
+  traceId: string;
 }
 
 @Injectable()
@@ -18,7 +18,7 @@ export class LoggerContextService extends AsyncLocalStorage<ILoggerContext> {
     });
   }
 
-  getCorrelationId(): string {
-    return this.getStore()?.correlationId || '';
+  getTraceId(): string {
+    return this.getStore()?.traceId || '';
   }
 }

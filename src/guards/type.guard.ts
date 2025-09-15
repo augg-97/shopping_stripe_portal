@@ -3,7 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { USER_TYPE } from '@prisma/client';
 import { Request } from 'express';
 
-import { DECORATOR } from '@decorators/decorator.enum';
+import { DECORATOR } from '@constants/enums/decorator.enum';
 
 import { ForbiddenException } from '../exceptions/forbidden/forbidden.exception';
 

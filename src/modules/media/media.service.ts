@@ -4,18 +4,18 @@ import {
   MediaBulkInput,
   MediaRepository,
 } from '@repositories/media.repository';
-import { UploadService } from '@services/uploadService/upload.service';
+import { WebServerUploadService } from '@services/uploadService/webServerUpload.service';
 import { AuthUser } from '@services/tokenService/authUser';
 
 @Injectable()
 export class MediaService {
   constructor(
     private readonly mediaRepository: MediaRepository,
-    private readonly uploadService: UploadService,
+    private readonly webServerUploadService: WebServerUploadService,
   ) {}
 
   async uploadImages(images: Express.Multer.File[], authUser: AuthUser) {
-    const updatedImages = await this.uploadService.storeImages(images);
+    const updatedImages = await this.webServerUploadService.storeImages(images);
 
     const imageBulkInput: MediaBulkInput[] = updatedImages.map((item) => ({
       ...item,

@@ -7,8 +7,11 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { isString } from 'class-validator';
+import { SentryExceptionCaptured } from '@sentry/nestjs';
 
-import { AppLoggerService } from '../services/appLoggerService/appLogger.service';
+import { AppLoggerService } from '@services/appLoggerService/appLogger.service';
+
+import { BaseHttpException } from './baseHttp.exception';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
@@ -16,31 +19,24 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     this.logger.serviceName = GlobalExceptionFilter.name;
   }
 
+  @SentryExceptionCaptured()
   catch(exception: Error, host: ArgumentsHost) {
     const context = host.switchToHttp();
     const response = context.getResponse<Response>();
     const request = context.getRequest<Request>();
-    const correlationId = request.headers['correlation-id'];
+    const traceId = request.headers['trace-id'];
 
     this.logger.error(exception);
 
-    if (exception instanceof HttpException) {
+    if (exception instanceof BaseHttpException) {
       const status = exception.getStatus();
       const exceptionResponse = exception.getResponse();
-      const errorCode =
-        !isString(exceptionResponse) &&
-        this.isHttpExceptionResponse(exceptionResponse)
-          ? exceptionResponse.error.toUpperCase()
-          : HttpStatus[status];
 
-      const message =
-        !isString(exceptionResponse) &&
-        this.isHttpExceptionResponse(exceptionResponse)
-          ? exceptionResponse.message
-          : exceptionResponse;
+      const errorCode = exceptionResponse.errorCode;
+      const message = exceptionResponse.message;
 
       return response.status(status).json({
-        correlationId,
+        traceId,
         statusCode: status,
         timestamp: new Date().toISOString(),
         path: request.url,
@@ -50,7 +46,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     }
 
     return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-      correlationId,
+      traceId,
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
       timestamp: new Date().toISOString(),
       path: request.url,

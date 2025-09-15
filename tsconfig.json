@@ -21,7 +21,8 @@
       "@pkgs/*": ["pkgs/*"],
       "@repositories/*": ["repositories/*"],
       "@services/*": ["services/*"],
-      "@constants/*": ["constants/*"]
+      "@constants/*": ["constants/*"],
+      "@pipes/*": ["pipes/*"]
     },
     "skipLibCheck": false,
     "allowJs": true,

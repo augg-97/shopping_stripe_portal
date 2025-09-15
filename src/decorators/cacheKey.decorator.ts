@@ -1,6 +1,6 @@
 import { SetMetadata } from '@nestjs/common';
 
-import { DECORATOR } from './decorator.enum';
+import { DECORATOR } from '../constants/enums/decorator.enum';
 
 export type CACHE_KEY = 'USER' | 'PRODUCT' | 'STORE';
 

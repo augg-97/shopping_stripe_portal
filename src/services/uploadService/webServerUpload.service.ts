@@ -3,20 +3,21 @@ import { mkdir, stat } from 'fs';
 import { writeFile } from 'fs/promises';
 
 import { Injectable } from '@nestjs/common';
-import { extension } from 'mime-types';
 
 import { AppConfigService } from '@appConfigs/appConfig.service';
-import { uuidGenerator } from '@pkgs/uuidGenerator';
 import { AppLoggerService } from '@services/appLoggerService/appLogger.service';
 
+import { BaseUploadService } from './baseUpload.service';
+
 @Injectable()
-export class UploadService {
+export class WebServerUploadService extends BaseUploadService {
   private imageDir = join(__dirname, '../../../public/assets/images');
 
   constructor(
     private readonly config: AppConfigService,
     private readonly logger: AppLoggerService,
   ) {
+    super();
     const isExistsDir = this.isExistsDir(this.imageDir);
     if (!isExistsDir) {
       mkdir(this.imageDir, { recursive: true }, (err) => {
@@ -74,17 +75,6 @@ export class UploadService {
       fileName,
       url: this.imageUrlGenerator(fileName),
     };
-  }
-
-  fileNameGenerator(image: Express.Multer.File): string {
-    const uniqName = uuidGenerator();
-    const fileExtension = extension(image.mimetype);
-
-    if (!fileExtension) {
-      return '';
-    }
-
-    return `${uniqName}.${fileExtension}`;
   }
 
   imageUrlGenerator(fileName: string): string {

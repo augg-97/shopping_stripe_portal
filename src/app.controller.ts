@@ -17,6 +17,8 @@ import { CACHE_EXPIRED } from '@helpers/constant';
 import { ResponseSerializerInterceptor } from '@interceptors/responseSerializer.interceptor';
 import { BaseProductDto } from '@dtos/products/baseProduct.dto';
 import { UserDto } from '@dtos/users/user.dto';
+import { BadRequestException } from '@exceptions/badRequest/badRequest.exception';
+import { UserNotFoundException } from '@exceptions/notFound/userNotFound.exception';
 
 import { ProductInclude } from './repositories/product.repository';
 import { UserIncludeType } from './repositories/user.repository';
@@ -201,8 +203,11 @@ export class AppController {
 
     const { profileImage, coverImage, stores, ...entity } = user;
 
-    this.logger.log('🚀 ~ AppController ~ mock ~ entity:', entity);
+    this.logger.log('🚀 ~ AppController ~ mock ~ entity:', entity, {
+      message: 'hello',
+    });
 
-    return user;
+    throw new UserNotFoundException();
+    // return user;
   }
 }

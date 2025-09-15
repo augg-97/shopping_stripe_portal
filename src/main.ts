@@ -1,10 +1,12 @@
-// import './utilities/tracing.utilities';
+/* eslint-disable import/no-unassigned-import */
+import './utilities/tracing.utilities';
+import './utilities/captureException.utilities';
 import { NestFactory } from '@nestjs/core';
 
 import { AppLoggerService } from '@services/appLoggerService/appLogger.service';
+import { AppConfigService } from '@appConfigs/appConfig.service';
 
 import { AppModule } from './app.module';
-import { AppConfigService } from './appConfigs/appConfig.service';
 import { setupApp } from './setup';
 
 async function bootstrap(): Promise<void> {

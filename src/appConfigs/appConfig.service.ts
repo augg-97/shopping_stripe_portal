@@ -87,7 +87,19 @@ export class AppConfigService implements IAppConfig {
     return this.configService.get('verifyEmailUIUrl');
   }
 
-  get apmServerUrl(): string {
-    return this.configService.get('apmServerUrl');
+  get otelCollectorGrpcUrl(): string {
+    return this.configService.get('otelCollectorGrpcUrl');
+  }
+
+  get sentryDsn(): string {
+    return this.configService.get('sentryDsn');
+  }
+
+  get awsS3AccessKey(): string {
+    return this.configService.get('awsS3AccessKey');
+  }
+
+  get awsS3SecretKey(): string {
+    return this.configService.get('awsS3SecretKey');
   }
 }
